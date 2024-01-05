@@ -1,0 +1,9 @@
+FROM python:3.11-alpine
+ENV TZ=Europe/London
+RUN apk add --update --no-cache linux-headers tzdata
+WORKDIR /app
+RUN mkdir "/app/app_flask/instance"
+COPY requirements.txt requirements.txt
+COPY requirements-docker.txt requirements-docker.txt
+RUN python -m pip install --upgrade pip
+RUN pip install -r requirements-docker.txt
