@@ -1,4 +1,5 @@
 import os
+import shutil
 import signal
 import subprocess
 from pathlib import Path
@@ -40,6 +41,10 @@ def npm_build(
     flask_static_folder: Path,
     flask_templates_folder: Path,
 ):
+    assets_folder = flask_static_folder / "assets"
+    if assets_folder.exists():
+        shutil.rmtree(assets_folder)
+
     subprocess.run([npm, "run", "build"], cwd=Path.cwd())
 
     if not vite_dir.exists():
