@@ -4,9 +4,9 @@ ENABLED = "yes"
 URL_PREFIX = "/api"
 #SUBDOMAIN = ""
 #URL_DEFAULTS = {}
-STATIC_FOLDER = "static"
-TEMPLATE_FOLDER = "templates"
-STATIC_URL_PATH = "/static"
+#STATIC_FOLDER = "static"
+#TEMPLATE_FOLDER = "templates"
+#STATIC_URL_PATH = "/static"
 #ROOT_PATH = ""
 #CLI_GROUP = ""
 

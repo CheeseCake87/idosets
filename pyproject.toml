@@ -9,7 +9,6 @@ indent-width = 4
 ignore = ["F403", "F405"]
 
 [tool.dev]
-docker-layers = ["idosets-base:latest@Dockerfile-base-layer", "idosets:latest@Dockerfile"]
 npm-binary = "npm"
 vite-dir = "app_vite"
 flask-dir = "app_flask"

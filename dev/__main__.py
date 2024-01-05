@@ -1,7 +1,7 @@
 import click
 
 from __init__ import Config
-from runners import npm_run_dev, flask_run_debug, huey_run, npm_build
+from runners import npm_run_dev, flask_run_debug, huey_run, npm_build, supervisor_run, supervisor_end
 
 
 @click.group()
@@ -42,30 +42,17 @@ def huey():
     huey_run(config.huey_consumer, config.huey)
 
 
+@main.command("supervisor-start")
+def supervisor_start():
+    click.echo("Starting supervisor...")
+    supervisor_run()
+
+
+@main.command("supervisor-stop")
+def supervisor_stop():
+    click.echo("Stopping supervisor...")
+    supervisor_end()
+
+
 if __name__ == "__main__":
     main()
-
-# with Pool() as pool:
-#     if build:
-#         pool.apply_async(npm_build, [config.npm_binary])
-#
-#     if huey:
-#         click.echo("Starting the Huey server...")
-#         pool.apply_async(huey_run, [config.huey_consumer_cmd, config.huey_module])
-#
-#     if vite:
-#         click.echo("Starting the Vite server in dev...")
-#         pool.apply_async(npm_run_dev, [config.npm_binary])
-#
-#     if flask:
-#         click.echo("Starting the Flask server in debug...")
-#         pool.apply_async(flask_run_debug, [config.flask_dir])
-#
-#     if not vite and not flask and not huey and not build:
-#         click.echo("Starting in development mode...")
-#         pool.apply_async(huey_run)
-#         pool.apply_async(npm_run_dev, [config.npm_binary])
-#         pool.apply_async(flask_run_debug)
-#
-#     pool.close()
-#     pool.join()

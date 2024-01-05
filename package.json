@@ -1,7 +1,7 @@
 {
   "name": "idosets",
   "version": "1.0.0",
-  "description": "A simple app to manage your daily workout sets.",
+  "description": "A webapp that takes the thinking out of doing gym sets.",
   "scripts": {
     "start": "vite",
     "dev": "vite --clearScreen false",

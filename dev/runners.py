@@ -1,3 +1,5 @@
+import os
+import signal
 import subprocess
 from pathlib import Path
 
@@ -16,6 +18,20 @@ def gunicorn():
 
 def huey_run(huey_consumer_cmd: str, huey_module: str):
     subprocess.run([huey_consumer_cmd, huey_module])
+
+
+def supervisor_run():
+    subprocess.run(["supervisord", "-c", "supervisord.dev.conf"])
+
+
+def supervisor_end():
+    supervisor_pid = Path(Path.cwd() / "supervisord.pid")
+    if supervisor_pid.exists():
+        with open(supervisor_pid, "r") as f:
+            pid = f.read()
+            os.kill(int(pid), signal.SIGTERM)
+    else:
+        print("No supervisord.pid found.")
 
 
 def npm_build(
