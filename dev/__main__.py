@@ -1,7 +1,7 @@
 import click
 
 from __init__ import Config
-from runners import npm_run_dev, flask_run_debug, huey_run
+from runners import npm_run_dev, flask_run_debug, huey_run, npm_build
 
 
 @click.group()
@@ -14,6 +14,18 @@ def vite():
     config = Config()
     click.echo("Starting the Vite server in dev...")
     npm_run_dev(config.npm_binary)
+
+
+@main.command("vite-build")
+def vite_build():
+    config = Config()
+    click.echo("Building the Vite app and copying to Flask...")
+    npm_build(
+        config.npm_binary,
+        config.vite_dir,
+        config.flask_static_folder,
+        config.flask_templates_folder,
+    )
 
 
 @main.command()

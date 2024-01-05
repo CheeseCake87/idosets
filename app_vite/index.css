@@ -1,0 +1,126 @@
+@import 'material-icons/iconfont/material-icons.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[data-theme='dark'] {
+    --html-body-bg-color: rgb(30, 36, 47);
+    --html-default-text-color: #ffffff;
+    --html-scrollbar-track: rgba(20, 25, 33);
+    --html-scrollbar-thumb: rgba(56, 65, 80, 0.9);
+    --html-scrollbar-thumb-hover: rgba(56, 65, 80, 1);
+
+    --html-default-input-bg-color: rgba(56, 65, 80, 0.9);
+    --html-default-button-bg-color: rgba(56, 65, 80, 0.9);
+    --html-default-button-hover-bg-color: rgba(64, 73, 89, 0.9);
+}
+
+[data-theme='light'] {
+    --html-body-bg-color: rgb(242, 242, 242);
+    --html-default-text-color: #0b0b0b;
+    --html-scrollbar-track: rgba(20, 25, 33);
+    --html-scrollbar-thumb: rgba(56, 65, 80, 0.9);
+    --html-scrollbar-thumb-hover: rgba(56, 65, 80, 1);
+
+    --html-default-input-bg-color: rgba(229, 229, 229, 0.9);
+    --html-default-button-bg-color: rgba(229, 229, 229, 0.9);
+    --html-default-button-hover-bg-color: rgba(219, 218, 218, 0.9);
+}
+
+@layer components {
+
+    /* width */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: var(--html-scrollbar-track);
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: var(--html-scrollbar-thumb);
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--html-scrollbar-thumb-hover);
+    }
+
+    dialog::backdrop {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    dialog {
+        @apply hidden opacity-0 pointer-events-none rounded-md;
+        transition: opacity 0.5s;
+        color: var(--html-default-text-color);
+    }
+
+    dialog[open] {
+        opacity: 1;
+        display: flex;
+        flex-direction: column;
+        pointer-events: inherit;
+    }
+
+    .dialog-body {
+        @apply flex-1 overflow-y-auto p-5;
+    }
+
+    .dialog-footer {
+        @apply p-4 flex flex-row justify-end gap-4;
+    }
+
+    body {
+        background-color: var(--html-body-bg-color);
+    }
+
+    input, select {
+        @apply px-3 py-2 rounded-md w-full;
+        background-color: var(--html-default-input-bg-color);
+        color: #ffffff;
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    button {
+        @apply px-3 py-2 rounded-md;
+        background-color: var(--html-default-button-bg-color);
+        color: var(--html-default-text-color);
+    }
+
+    button:hover {
+        background-color: var(--html-default-button-hover-bg-color);
+    }
+
+}

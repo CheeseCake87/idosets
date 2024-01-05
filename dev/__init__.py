@@ -9,7 +9,7 @@ class Config:
     pyproject: Path
     config: Optional[dict]
     docker_layers: dict
-    npm_binary: Path
+    npm_binary: str
     vite_dir: Path
     flask_dir: Path
     flask_static_folder: Path
@@ -31,7 +31,7 @@ class Config:
             raise ValueError("No config found in pyproject.toml")
 
         self.docker_layers = self.config.get("docker-layers", {})
-        self.npm_binary = Path(self.config.get("npm-binary", "npm"))
+        self.npm_binary = self.config.get("npm-binary", "npm")
         self.vite_dir = Path(self.cwd / self.config.get("vite-dir", "vite"))
         self.flask_dir = Path(self.cwd / self.config.get("flask-dir", "app"))
         self.flask_static_folder = Path(

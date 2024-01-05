@@ -2,34 +2,45 @@ import subprocess
 from pathlib import Path
 
 
-def npm_run_dev(npm: Path):
-    pro_ = subprocess.Popen([npm, "run", "dev"], cwd=Path.cwd())
-    pro_.wait()
+def npm_run_dev(npm: str):
+    subprocess.run([npm, "run", "dev"], cwd=Path.cwd())
 
 
 def flask_run_debug(flask_app: str = "app"):
-    pro_ = subprocess.Popen(["flask", "--app", flask_app, "run", "--debug"])
-    pro_.wait()
+    subprocess.run(["flask", "--app", flask_app, "run", "--debug"])
 
 
 def gunicorn():
-    pro_ = subprocess.Popen(["gunicorn"])
-    pro_.wait()
+    subprocess.run(["gunicorn"])
 
 
 def huey_run(huey_consumer_cmd: str, huey_module: str):
-    pro_ = subprocess.Popen([huey_consumer_cmd, huey_module])
-    pro_.wait()
+    subprocess.run([huey_consumer_cmd, huey_module])
 
 
-def npm_build(cwd, config, npm: Path):
-    vite_index_file = Path(cwd / config["vite_index_file"])
-    vite_assets_folder = Path(cwd / config["vite_assets_folder"])
-    flask_static_folder = Path(cwd / config["flask_static_folder"])
-    flask_templates_folder = Path(cwd / config["flask_templates_folder"])
+def npm_build(
+    npm: str,
+    vite_dir: Path,
+    flask_static_folder: Path,
+    flask_templates_folder: Path,
+):
+    subprocess.run([npm, "run", "build"], cwd=Path.cwd())
 
-    pro_ = subprocess.Popen([npm, "run", "build"], cwd=Path.cwd())
-    pro_.wait()
+    if not vite_dir.exists():
+        raise FileNotFoundError(f"{vite_dir} not found.")
+
+    vite_index_file = vite_dir / "dist" / "index.html"
+    vite_assets_folder = vite_dir / "dist" / "assets"
+
+    if not vite_assets_folder.exists():
+        raise FileNotFoundError(f"{vite_assets_folder} not found.")
+
+    if not flask_static_folder.exists():
+        raise FileNotFoundError(f"{flask_static_folder} not found.")
+
+    if not flask_templates_folder.exists():
+        raise FileNotFoundError(f"{flask_templates_folder} not found.")
+
     print("Build complete, copying files...")
     subprocess.run(["cp", "-r", vite_assets_folder, flask_static_folder])
     subprocess.run(["cp", vite_index_file, flask_templates_folder])

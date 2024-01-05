@@ -1,5 +1,5 @@
 FROM idosets-base-layer:latest
-ENV TZ=Europe/London
+WORKDIR /main
 COPY app_flask app_flask
 
-ENTRYPOINT ["supervisord", "-c", "/traveller-lite/supervisord.conf"]
+ENTRYPOINT ["supervisord", "-c", "/main/supervisord.conf"]
