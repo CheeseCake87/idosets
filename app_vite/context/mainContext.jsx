@@ -58,12 +58,23 @@ export function MainContextProvider(props) {
 
         theme: 'dark',
 
-        async tryLogin() {
+        async getTheme() {
+            return await getFetch(
+                `${API_URL}/api/get/theme`,
+            )
+        },
+
+        async setTheme(theme) {
+            return await getFetch(
+                `${API_URL}/api/set/theme/${theme}`,
+            )
+        },
+
+        async tryLogin(email_address) {
             return await postFetch(
                 `${API_URL}/api/login`,
                 {
-                    username: 'admin',
-                    password: 'admin'
+                    email_address: email_address,
                 }
             )
         },
@@ -86,6 +97,9 @@ export function MainContextProvider(props) {
     let html
 
     onMount(() => {
+        store.getTheme().then(json => {
+            setStore('theme', json.theme)
+        })
         html = document.querySelector('html')
     })
 

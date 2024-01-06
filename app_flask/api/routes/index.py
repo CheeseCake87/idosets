@@ -16,6 +16,23 @@ def index():
     }
 
 
+@bp.get("/get/theme/")
+def get_theme_():
+    theme = session.get("theme", "dark")
+    return {
+        "theme": theme,
+    }
+
+
+@bp.get("/set/theme/<theme>")
+def set_theme_(theme):
+    allowed_themes = ["dark", "light"]
+    session["theme"] = theme if theme in allowed_themes else "dark"
+    return {
+        "theme": theme,
+    }
+
+
 @bp.post("/login")
 def login():
     r = request.json
