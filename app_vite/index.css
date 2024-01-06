@@ -14,6 +14,7 @@
     --html-default-input-bg-color: rgba(56, 65, 80, 0.9);
     --html-default-button-bg-color: rgba(56, 65, 80, 0.9);
     --html-default-button-hover-bg-color: rgba(64, 73, 89, 0.9);
+    --html-default-border-color: rgba(118, 118, 118, 0.1);
 
     --nav-bg-color: rgba(20, 25, 33, 0.9);
 
@@ -30,10 +31,11 @@
     --html-default-input-bg-color: rgba(229, 229, 229, 0.9);
     --html-default-button-bg-color: rgba(229, 229, 229, 0.9);
     --html-default-button-hover-bg-color: rgba(219, 218, 218, 0.9);
+    --html-default-border-color: rgba(118, 118, 118, 0.1);
 
     --nav-bg-color: rgba(188, 188, 188, 0.9);
 
-    --card-bg-color: rgba(99, 99, 99, 0.1);
+    --card-bg-color: rgba(187, 187, 187, 0.1);
 }
 
 @layer components {
@@ -93,11 +95,6 @@
         background-color: var(--nav-bg-color);
     }
 
-    input, select {
-        @apply px-3 py-2 rounded-md w-full;
-        background-color: var(--html-default-input-bg-color);
-        color: #ffffff;
-    }
 
     h1 {
         font-size: 2rem;
@@ -131,9 +128,17 @@
         @apply flex flex-col gap-4;
     }
 
+    input, select {
+        @apply px-3 py-2 rounded-md w-full border;
+        background-color: var(--html-default-input-bg-color);
+        border-color: var(--html-default-border-color);
+        color: #ffffff;
+    }
+
     button, button[type='button'], input[type='submit'] {
-        @apply px-3 py-2 rounded-md;
+        @apply px-3 py-2 rounded-md border;
         background-color: var(--html-default-button-bg-color);
+        border-color: var(--html-default-border-color);
         color: var(--html-default-text-color);
     }
 
@@ -142,8 +147,9 @@
     }
 
     .login {
-        @apply p-5 mx-auto my-4 text-center rounded-md;
+        @apply p-5 mx-auto my-4 text-center rounded-md border;
         background-color: var(--card-bg-color);
+        border-color: var(--html-default-border-color);
         max-width: 400px;
     }
 
