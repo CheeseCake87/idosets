@@ -8,6 +8,8 @@ def create_app():
     imp.init_app(app)
     imp.import_app_resources()
     imp.import_blueprint("api")
+    imp.import_models("models")
+    db.init_app(app)
 
     @app.before_request
     def before_request():
