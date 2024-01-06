@@ -8,9 +8,9 @@ logging.getLogger("huey").setLevel(logging.DEBUG)
 
 
 def load_tasks():
-    from .tasks import my_task
+    from .tasks import send_email
 
-    _ = [my_task]
+    _ = [send_email]
 
 
 load_tasks()

@@ -18,11 +18,7 @@ export function MainContextProvider(props) {
         )
 
         if (response.headers.get('content-type')?.includes('application/json')) {
-            const json = await response.json()
-            if (json.status === 'unauthorized') {
-                navigate('/login')
-            }
-            return json
+            return await response.json()
         }
 
         navigate('/error')
@@ -36,19 +32,12 @@ export function MainContextProvider(props) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    username: 'admin',
-                    password: 'admin'
-                })
+                body: JSON.stringify(data)
             }
         )
 
         if (response.headers.get('content-type')?.includes('application/json')) {
-            const json = await response.json()
-            if (json.status === 'unauthorized') {
-                navigate('/login')
-            }
-            return json
+            return await response.json()
         }
 
         navigate('/error')
@@ -70,6 +59,21 @@ export function MainContextProvider(props) {
             )
         },
 
+        async tryAuth(auth_code) {
+            return await postFetch(
+                `${API_URL}/api/auth`,
+                {
+                    auth_code: auth_code,
+                }
+            )
+        },
+
+        async checkLogin() {
+            return await getFetch(
+                `${API_URL}/api/check/login`,
+            )
+        },
+
         async tryLogin(email_address) {
             return await postFetch(
                 `${API_URL}/api/login`,
@@ -86,7 +90,6 @@ export function MainContextProvider(props) {
         },
 
         async getWorkouts() {
-            console.log(`${API_URL}/api/workouts`)
             return await getFetch(
                 `${API_URL}/api/workouts`,
             )

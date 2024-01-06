@@ -21,7 +21,7 @@ class EmailServiceSettings:
         username: str,
         password: str,
         server: str,
-        port: int,
+        port: Union[int, str],
     ):
         """
         Dev_mode will prevent the email from being sent. It will print the email instead.
@@ -39,7 +39,14 @@ class EmailServiceSettings:
         self.username = username
         self.password = password
         self.server = server
-        self.port = port
+
+        if isinstance(port, int):
+            self.port = port
+        else:
+            try:
+                self.port = int(port)
+            except ValueError:
+                raise ValueError("Port must be an integer or string-int.")
 
 
 class EmailService:

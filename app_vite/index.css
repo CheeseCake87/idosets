@@ -16,6 +16,8 @@
     --html-default-button-hover-bg-color: rgba(64, 73, 89, 0.9);
     --html-default-border-color: rgba(118, 118, 118, 0.1);
 
+    --html-default-spinner-color: #ffffff;
+
     --nav-bg-color: rgba(20, 25, 33, 0.9);
 
     --card-bg-color: rgba(99, 99, 99, 0.1);
@@ -32,6 +34,8 @@
     --html-default-button-bg-color: rgba(229, 229, 229, 0.9);
     --html-default-button-hover-bg-color: rgba(219, 218, 218, 0.9);
     --html-default-border-color: rgba(118, 118, 118, 0.1);
+
+    --html-default-spinner-color: #0b0b0b;
 
     --nav-bg-color: rgba(188, 188, 188, 0.9);
 
@@ -124,7 +128,7 @@
         margin-bottom: 0.8rem;
     }
 
-    form {
+    form, .form {
         @apply flex flex-col gap-4;
     }
 
@@ -157,5 +161,41 @@
         @apply p-5 mx-auto;
         max-width: 1200px;
     }
+
+    .loading {
+        @apply flex flex-col items-center justify-center;
+        height: 100vh;
+    }
+
+    .spinner {
+        transform-origin: center;
+        animation: spinner_animation_1 2s linear infinite
+    }
+
+    .spinner circle {
+        stroke-linecap: round;
+        stroke: var(--html-default-spinner-color);
+        animation: spinner_animation_2 1.5s ease-in-out infinite
+    }
+
+    @keyframes spinner_animation_1 {
+        100% {
+            transform: rotate(360deg)
+        }
+    }
+    @keyframes spinner_animation_2 {
+         0% {
+             stroke-dasharray: 0 150;
+             stroke-dashoffset: 0
+         }
+         47.5% {
+             stroke-dasharray: 42 150;
+             stroke-dashoffset: -16
+         }
+         95%, 100% {
+             stroke-dasharray: 42 150;
+             stroke-dashoffset: -59
+         }
+     }
 
 }

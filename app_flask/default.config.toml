@@ -41,6 +41,7 @@ ES_PORT = "<ES_PORT>"
 # or session.get("your_var_name")
 [SESSION]
 logged_in = false
+account_id = 0
 theme = "dark"
 
 # These settings are specific to the Flask-SQLAlchemy extension.

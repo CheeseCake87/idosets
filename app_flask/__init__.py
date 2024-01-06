@@ -44,6 +44,12 @@ def create_app():
         imp.init_session()
         return redirect(url_for("index"))
 
+    @app.route("/auth", defaults={"wildcard": ""})
+    @app.route("/auth/<path:wildcard>")
+    def auth_(wildcard):
+        _ = wildcard
+        return render_template("index.html")
+
     @app.route("/workouts", defaults={"wildcard": ""})
     @app.route("/workouts/<path:wildcard>")
     def workouts(wildcard):
