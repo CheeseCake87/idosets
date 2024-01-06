@@ -10,7 +10,7 @@ DEBUG = false
 #PROPAGATE_EXCEPTIONS = true
 TRAP_HTTP_EXCEPTIONS = false
 #TRAP_BAD_REQUEST_ERRORS = true
-SECRET_KEY = "3c30755267ec16d8c35f3abd1e2118451f5440251391fa71"
+SECRET_KEY = "<SECRET_KEY>"
 SESSION_COOKIE_NAME = "session"
 #SESSION_COOKIE_DOMAIN = "domain-here.com"
 #SESSION_COOKIE_PATH = "/"
@@ -30,6 +30,12 @@ PREFERRED_URL_SCHEME = "http"
 EXPLAIN_TEMPLATE_LOADING = false
 MAX_COOKIE_SIZE = 4093
 
+EX_AUTH_KEY = "<ES_AUTH_KEY>"
+ES_USERNAME = "<ES_USERNAME>"
+ES_PASSWORD = "<ES_PASSWORD>"
+ES_SERVER = "<ES_SERVER>"
+ES_PORT = "<ES_PORT>"
+
 # This will set the default session variables for the app.
 # Anything here will be accessible using session["your_var_name"]
 # or session.get("your_var_name")
@@ -47,7 +53,7 @@ SQLALCHEMY_RECORD_QUERIES = false
 # This sets the file extension for SQLite databases, and where to create the folder
 # that the database will be stored in. true will create the folder on the same level as your
 # app, false will create the folder in the app root.
-SQLITE_DB_EXTENSION = ".sqlite"
+SQLITE_DB_EXTENSION = ".db"
 SQLITE_STORE_IN_PARENT = false
 
 # [DATABASE.MAIN] is loaded as SQLALCHEMY_DATABASE_URI
@@ -57,7 +63,7 @@ SQLITE_STORE_IN_PARENT = false
 ENABLED = true
 DIALECT = "sqlite"
 DATABASE_NAME = "database"
-#LOCATION = ""
+LOCATION = ""
 #PORT = ""
 #USERNAME = ""
 #PASSWORD = ""
