@@ -35,6 +35,7 @@ MAX_COOKIE_SIZE = 4093
 # or session.get("your_var_name")
 [SESSION]
 logged_in = false
+theme = "dark"
 
 # These settings are specific to the Flask-SQLAlchemy extension.
 # Anything here will be accessible using app.config
