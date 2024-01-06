@@ -23,9 +23,7 @@ class Accounts(db.Model, UtilityMixin):
 
     @classmethod
     def get_account(cls, email_address: str):
-        q = select(cls).where(
-            cls.email_address == email_address
-        )
+        q = select(cls).where(cls.email_address == email_address)
         return db.session.execute(q).scalar_one_or_none()
 
     @classmethod

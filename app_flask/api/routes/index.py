@@ -86,7 +86,11 @@ def login():
     )
 
     account = Accounts.get_account(email_address)
-    url = "http://localhost:3000/auth" if current_app.debug else "https://idosets.app/auth"
+    url = (
+        "http://localhost:3000/auth"
+        if current_app.debug
+        else "https://idosets.app/auth"
+    )
 
     if not account:
         pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
@@ -103,11 +107,7 @@ def login():
             email_service_settings,
             recipients=[email_address],
             subject="Welcome to idosets.app!",
-            body=render_template(
-                "welcome-email.html",
-                url=url,
-                auth=pk
-            ),
+            body=render_template("welcome-email.html", url=url, auth=pk),
         )
 
     else:
@@ -118,11 +118,7 @@ def login():
             email_service_settings,
             recipients=[email_address],
             subject="Welcome to idosets.app!",
-            body=render_template(
-                "login-email.html",
-                url=url,
-                auth=pk
-            ),
+            body=render_template("login-email.html", url=url, auth=pk),
         )
 
     return {"status": "success", "message": "Login email sent."}
