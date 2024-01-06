@@ -28,6 +28,8 @@
     --html-default-input-bg-color: rgba(229, 229, 229, 0.9);
     --html-default-button-bg-color: rgba(229, 229, 229, 0.9);
     --html-default-button-hover-bg-color: rgba(219, 218, 218, 0.9);
+
+    --nav-bg-color: rgba(188, 188, 188, 0.9);
 }
 
 @layer components {
@@ -132,7 +134,7 @@
     }
 
     .container {
-        @apply p-5;
+        @apply p-5 mx-auto;
         max-width: 1200px;
     }
 

@@ -1,6 +1,7 @@
 import {createMemo, createResource, onMount, useContext} from "solid-js";
-import {useLocation, useNavigate, useParams} from "@solidjs/router";
+import {useLocation} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
+import TopMenu from "../components/TopMenu";
 
 export default function Workouts() {
 
@@ -16,21 +17,24 @@ export default function Workouts() {
     })
 
     return (
-        <div>
-            <p>test {ctx.store.theme}</p>
-            <button onClick={() => {
-                ctx.setStore('theme', 'light')
-            }}>light
-            </button>
-            <button onClick={() => {
-                ctx.setStore('theme', 'dark')
-            }}>dark
-            </button>
-            <button onClick={() => {
-                workouts()
-                console.log(workouts())
-            }}>dark
-            </button>
-        </div>
+        <>
+            <TopMenu/>
+            <div className={"container"}>
+                <p>test {ctx.store.theme}</p>
+                <button onClick={() => {
+                    ctx.setStore('theme', 'light')
+                }}>light
+                </button>
+                <button onClick={() => {
+                    ctx.setStore('theme', 'dark')
+                }}>dark
+                </button>
+                <button onClick={() => {
+                    workouts()
+                    console.log(workouts())
+                }}>dark
+                </button>
+            </div>
+        </>
     );
 };

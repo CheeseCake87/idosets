@@ -1,21 +1,27 @@
 import {useContext} from "solid-js";
-import {useLocation} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
+import {useNavigate} from "@solidjs/router";
 
 export default function TopMenu(props) {
 
     const ctx = useContext(mainContext);
-    const location = useLocation();
-
-    console.log(location.pathname)
-
-    if (location.pathname === '/login') {
-        ctx.store
-    }
+    const navigate = useNavigate();
 
     return (
-        <nav style={}>
-            <p>test</p>
+        <nav>
+            <p>test.email@...</p>
+            <button onClick={
+                () => {
+                    ctx.store.tryLogout().then(json => {
+                        if (json.status === 'success') {
+                            navigate('/login')
+                        }
+                    })
+                }
+            }>
+                Logout
+            </button>
         </nav>
     )
+
 }

@@ -1,8 +1,6 @@
 import {createContext, createEffect, onMount} from "solid-js";
 import {Outlet, useNavigate} from "@solidjs/router";
-
 import {createStore} from "solid-js/store";
-import TopMenu from "../components/TopMenu";
 
 export const mainContext = createContext();
 
@@ -70,14 +68,18 @@ export function MainContextProvider(props) {
             )
         },
 
+        async tryLogout() {
+            return await getFetch(
+                `${API_URL}/api/logout`,
+            )
+        },
+
         async getWorkouts() {
             console.log(`${API_URL}/api/workouts`)
             return await getFetch(
                 `${API_URL}/api/workouts`,
             )
         },
-
-
 
     });
 
@@ -98,10 +100,7 @@ export function MainContextProvider(props) {
                 setStore
             }
         }>
-            <TopMenu/>
-            <div className={"container"}>
-                <Outlet/>
-            </div>
+            <Outlet/>
         </mainContext.Provider>
     );
 }

@@ -27,14 +27,13 @@ def login():
 
 @bp.get("/logout")
 def logout():
-    session["logged_in"] = False
+    session.clear()
     return {"status": "success", "message": "You have been logged out."}
 
 
 @bp.route("/workouts", methods=["GET"])
 @login_check("logged_in", True, fail_endpoint="api.unauthorized")
 def workouts_():
-    print(session)
     return {
         "status": "success",
         "Workouts": [
