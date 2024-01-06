@@ -117,19 +117,18 @@ class DatetimeDeltaMC:
 
 
 if __name__ == "__main__":
+
     def returning_new_inst():
         today = DatetimeDelta().format("%Y-%m-%d %H:%M:%S")
         today.days(random.randint(-10, 10)).hours(
             random.randint(-10, 10)
         ).minutes(random.randint(-10, 10))
 
-
     def returning_self():
         today = DatetimeDeltaMC().format("%Y-%m-%d %H:%M:%S")
         today.days(random.randint(-10, 10)).hours(
             random.randint(-10, 10)
         ).minutes(random.randint(-10, 10))
-
 
     print(timeit.timeit(stmt=returning_new_inst, number=10000))
 
