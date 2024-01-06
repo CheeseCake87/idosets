@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, session
 
-from app_flask.extensions import imp
+from app_flask.extensions import imp, db
 
 
 def create_app():
@@ -25,33 +25,31 @@ def create_app():
             response.headers.add(
                 "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE"
             )
-            response.headers.add(
-                "Access-Control-Allow-Credentials", "true"
-            )
+            response.headers.add("Access-Control-Allow-Credentials", "true")
         return response
 
-    @app.route('/')
+    @app.route("/")
     def index():
         return render_template("index.html")
 
-    @app.route('/login')
+    @app.route("/login")
     def login():
         return render_template("index.html")
 
-    @app.route('/logout')
+    @app.route("/logout")
     def logout():
         session.clear()
         imp.init_session()
         return redirect(url_for("index"))
 
-    @app.route('/workouts', defaults={'wildcard': ''})
-    @app.route('/workouts/<path:wildcard>')
+    @app.route("/workouts", defaults={"wildcard": ""})
+    @app.route("/workouts/<path:wildcard>")
     def workouts(wildcard):
         _ = wildcard
         return render_template("index.html")
 
-    @app.route('/account', defaults={'wildcard': ''})
-    @app.route('/account/<path:wildcard>')
+    @app.route("/account", defaults={"wildcard": ""})
+    @app.route("/account/<path:wildcard>")
     def account(wildcard):
         _ = wildcard
         return render_template("index.html")

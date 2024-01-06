@@ -57,5 +57,5 @@ def workouts_():
             {"workout_id": "1", "name": "Workout 1"},
             {"workout_id": "2", "name": "Workout 2"},
             {"workout_id": "3", "name": "Workout 3"},
-        ]
+        ],
     }
