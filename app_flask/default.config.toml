@@ -53,10 +53,10 @@ SQLITE_STORE_IN_PARENT = false
 # [DATABASE.MAIN] is loaded as SQLALCHEMY_DATABASE_URI
 # Dialets = mysql / postgresql / sqlite / oracle / mssql
 # Uncomment below to generate the SQLALCHEMY_DATABASE_URI.
-#[DATABASE.MAIN]
-#ENABLED = true
-#DIALECT = "sqlite"
-#DATABASE_NAME = "database"
+[DATABASE.MAIN]
+ENABLED = true
+DIALECT = "sqlite"
+DATABASE_NAME = "database"
 #LOCATION = ""
 #PORT = ""
 #USERNAME = ""
