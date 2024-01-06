@@ -1,4 +1,4 @@
-import {createResource, createSignal, Show, useContext, createEffect} from "solid-js";
+import {createEffect, createResource, createSignal, Show, useContext} from "solid-js";
 import {mainContext} from "../context/mainContext";
 import {useNavigate} from "@solidjs/router";
 import Loading from "../components/Loading";
@@ -36,10 +36,11 @@ export default function Login() {
 
                         <Show when={login_status() === 'waiting'}>
 
-                            <div className={"form"}>
-
+                            <form onSubmit={(e) => {
+                                e.preventDefault()
+                            }}>
                                 <input
-                                    type="text"
+                                    type="email"
                                     id="email_address"
                                     name="email_address"
                                     placeholder={"Email Address"}
@@ -60,22 +61,34 @@ export default function Login() {
                                     }>
                                     Login / Signup
                                 </button>
-                            </div>
+                            </form>
 
                         </Show>
 
                         <Show when={login_status() === 'success'}>
-                            <p className={"pb-6"}>
-                                Your login link has been sent to your email address.
-                                Remember to check your spam folder!
-                            </p>
+                            <div className={"pb-6 flex flex-col gap-4"}>
+                                <p>
+                                    Your login link has been emailed to you.
+                                </p>
+                                <p>Remember to check your spam folder!</p>
+                            </div>
                         </Show>
 
                         <Show when={login_status() === 'error'}>
-                            <p className={"pb-6"}>
-                                Looks like there has been an error when attempting
-                                to send your login link. Is your email address valid and correct?
-                            </p>
+                            <div className={"pb-6 flex flex-col gap-4"}>
+                                <p>
+                                    Looks like there has been an error when attempting
+                                    to send your login link.
+                                </p>
+                                <p>Is your email address valid and correct?</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={
+                                    () => set_login_status('waiting')
+                                }>
+                                Try Again
+                            </button>
                         </Show>
 
                     </div>

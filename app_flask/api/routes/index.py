@@ -1,6 +1,7 @@
 import time
 from email.utils import parseaddr
 
+from email_validator import validate_email, EmailNotValidError
 from flask import request, session, current_app, render_template
 from flask_imp.auth import generate_private_key
 from flask_imp.security import api_login_check
@@ -38,6 +39,7 @@ def set_theme_(theme):
 
 @bp.post("/auth")
 def auth_():
+    time.sleep(2)
     jsond = request.json
 
     auth_code = jsond.get("auth_code")
@@ -67,10 +69,13 @@ def login():
 
     name, email_address = parseaddr(jsond.get("email_address"))
 
-    print(name, email_address)
-
     if not email_address:
-        return {"status": "error", "message": "Login attempt failed."}
+        return {"status": "error", "message": "Email address is not valid."}
+
+    try:
+        validate_email(email_address)
+    except EmailNotValidError:
+        return {"status": "error", "message": "Email address is not valid."}
 
     email_service_settings = EmailServiceSettings(
         dev_mode=False,

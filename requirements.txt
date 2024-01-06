@@ -9,3 +9,4 @@ click
 huey
 gunicorn
 supervisor
+email-validator

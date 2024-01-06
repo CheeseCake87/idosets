@@ -163,8 +163,7 @@
     }
 
     .loading {
-        @apply flex flex-col items-center justify-center;
-        height: 100vh;
+        @apply flex flex-col items-center justify-center pt-20;
     }
 
     .spinner {
