@@ -12,7 +12,13 @@ export default function Auth(props) {
 
     const params = useParams();
 
-    const [try_auth] = createResource(params.auth_code, ctx.store.tryAuth)
+    const [try_auth] = createResource(
+        {
+            account_id: params.account_id,
+            auth_code: params.auth_code
+        },
+        ctx.store.tryAuth
+    )
 
     createEffect(() => {
         if (try_auth.loading === false) {

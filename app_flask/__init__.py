@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session
+from flask import Flask
 
 from app_flask.extensions import imp, db
 
@@ -6,7 +6,14 @@ from app_flask.extensions import imp, db
 def create_app():
     app = Flask(__name__, static_url_path="/")
     imp.init_app(app)
-    imp.import_app_resources()
+    imp.import_app_resources(
+        files_to_import=[
+            "routes.py",
+            "error_handlers.py",
+            "cli.py"
+        ],
+        folders_to_import=[None]
+    )
     imp.import_blueprint("api")
     imp.import_models("models")
     db.init_app(app)
@@ -29,37 +36,5 @@ def create_app():
             )
             response.headers.add("Access-Control-Allow-Credentials", "true")
         return response
-
-    @app.route("/")
-    def index():
-        return render_template("index.html")
-
-    @app.route("/login")
-    def login():
-        return render_template("index.html")
-
-    @app.route("/logout")
-    def logout():
-        session.clear()
-        imp.init_session()
-        return redirect(url_for("index"))
-
-    @app.route("/auth", defaults={"wildcard": ""})
-    @app.route("/auth/<path:wildcard>")
-    def auth_(wildcard):
-        _ = wildcard
-        return render_template("index.html")
-
-    @app.route("/workouts", defaults={"wildcard": ""})
-    @app.route("/workouts/<path:wildcard>")
-    def workouts(wildcard):
-        _ = wildcard
-        return render_template("index.html")
-
-    @app.route("/account", defaults={"wildcard": ""})
-    @app.route("/account/<path:wildcard>")
-    def account(wildcard):
-        _ = wildcard
-        return render_template("index.html")
 
     return app

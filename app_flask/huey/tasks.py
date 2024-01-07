@@ -10,5 +10,7 @@ def send_email(
     body: str,
 ) -> None:
     e = EmailService(email_service_settings)
-    e.recipients(recipients).subject(subject).body(body).send()
+    e.from_(f"idosets.app <{email_service_settings.username}>").recipients(
+        recipients
+    ).subject(subject).body(body).send()
     return

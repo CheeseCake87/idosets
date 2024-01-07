@@ -27,8 +27,12 @@ class Accounts(db.Model, UtilityMixin):
         return db.session.execute(q).scalar_one_or_none()
 
     @classmethod
-    def get_by_auth_code(cls, auth_code: str):
+    def process_auth_code(cls, account_id: int, auth_code: str):
         q = select(cls).where(
-            cls.auth_code == auth_code, cls.auth_code_expiry > datetime.now()
+            cls.account_id == account_id,
+            and_(
+                cls.auth_code == auth_code,
+                cls.auth_code_expiry > datetime.now(),
+            ),
         )
         return db.session.execute(q).scalar_one_or_none()

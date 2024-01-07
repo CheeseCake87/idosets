@@ -16,5 +16,9 @@ class WorkoutLogs(db.Model, UtilityMixin):
     account_id = db.Column(db.Integer, db.ForeignKey("accounts.account_id"))
     workout_id = db.Column(db.Integer, db.ForeignKey("workouts.workout_id"))
 
-    created = db.Column(db.DateTime, nullable=False, default=DatetimeDelta().datetime)
-    finished = db.Column(db.DateTime, nullable=False, default=DatetimeDelta().datetime)
+    created = db.Column(
+        db.DateTime, nullable=False, default=DatetimeDelta().datetime
+    )
+    finished = db.Column(
+        db.DateTime, nullable=False, default=DatetimeDelta().datetime
+    )

@@ -13,7 +13,7 @@ export default function Workouts() {
 
     console.log(pathname(), "Home.jsx")
 
-    const [workouts] = createResource(ctx.store.getWorkouts);
+    const [workouts, {refetch, mutate}] = createResource(ctx.store.getWorkouts);
 
     createEffect(() => {
         if (workouts.loading === false) {
@@ -40,7 +40,7 @@ export default function Workouts() {
                             }}>dark
                             </button>
                             <button onClick={() => {
-                                workouts()
+                                refetch()
                                 console.log(workouts())
                             }}>dark
                             </button>

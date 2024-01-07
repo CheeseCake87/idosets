@@ -24,7 +24,7 @@ render(() => (
         <Routes>
             <Route path="" component={MainContextProvider}>
                 <Route path="/" element={<Navigate href={'/workouts'}/>}/>
-                <Route path="/auth/:auth_code" component={Auth}/>
+                <Route path="/auth/:account_id/:auth_code" component={Auth}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/workouts" component={Workouts}/>
                 <Route path="*" component={PageNotFound}/>

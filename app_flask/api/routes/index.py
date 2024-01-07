@@ -1,4 +1,3 @@
-import time
 from email.utils import parseaddr
 
 from email_validator import validate_email, EmailNotValidError
@@ -39,12 +38,12 @@ def set_theme_(theme):
 
 @bp.post("/auth")
 def auth_():
-    time.sleep(2)
     jsond = request.json
 
+    account_id = jsond.get("account_id")
     auth_code = jsond.get("auth_code")
 
-    account_ = Accounts.get_by_auth_code(auth_code)
+    account_ = Accounts.process_auth_code(account_id, auth_code)
 
     if account_:
         account_.remove_auth_code()
@@ -57,7 +56,6 @@ def auth_():
 
 @bp.get("/check/login")
 def check_login():
-    time.sleep(2)
     if session.get("logged_in"):
         return {"status": "passed", "message": "Logged in."}
     return {"status": "failed", "message": "Not logged in."}
@@ -107,7 +105,12 @@ def login():
             email_service_settings,
             recipients=[email_address],
             subject="Welcome to idosets.app!",
-            body=render_template("welcome-email.html", url=url, auth=pk),
+            body=render_template(
+                "welcome-email.html",
+                url=url,
+                account_id=account.account_id,
+                auth=pk,
+            ),
         )
 
     else:
@@ -117,8 +120,13 @@ def login():
         send_email(
             email_service_settings,
             recipients=[email_address],
-            subject="Welcome to idosets.app!",
-            body=render_template("login-email.html", url=url, auth=pk),
+            subject="Here's your login link!",
+            body=render_template(
+                "login-email.html",
+                url=url,
+                account_id=account.account_id,
+                auth=pk,
+            ),
         )
 
     return {"status": "success", "message": "Login email sent."}

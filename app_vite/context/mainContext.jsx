@@ -59,12 +59,12 @@ export function MainContextProvider(props) {
             )
         },
 
-        async tryAuth(auth_code) {
-            console.log(auth_code)
+        async tryAuth(params) {
             return await postFetch(
                 `${API_URL}/api/auth`,
                 {
-                    auth_code: auth_code,
+                    account_id: params.account_id,
+                    auth_code: params.auth_code,
                 }
             )
         },
