@@ -18,25 +18,22 @@ export default function Auth(props) {
             auth_code: params.auth_code
         },
         ctx.store.tryAuth
-    )
+    );
 
     createEffect(() => {
         if (try_auth.loading === false) {
             if (try_auth().status === 'passed') {
-                ctx.setStore("logged_in", true)
-                ctx.setStore("theme", try_auth().theme)
-                ctx.setStore("account_id", try_auth().account_id)
-                ctx.setStore("email_address", try_auth().email_address)
+                ctx.session.refetch()
                 navigate('/workouts')
             } else {
                 set_auth("error")
             }
         }
-    })
+    });
 
     return (
         <>
-            {try_auth.loading ? <Loading/> :
+            {try_auth.loading || ctx.session.loading ? <Loading/> :
                 <div className={"login py-6"}>
                     <h2 className={"pb-4"}>💪 I Do Sets</h2>
 

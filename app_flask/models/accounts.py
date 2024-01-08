@@ -1,11 +1,15 @@
 from datetime import datetime
 
+import pytz
+
 from . import *
 from .__mixins__ import UtilityMixin
 
 
 class Accounts(db.Model, UtilityMixin):
+    # PriKey
     account_id = db.Column(db.Integer, primary_key=True)
+
     email_address = db.Column(db.String(255), nullable=False)
     settings = db.Column(db.JSON, default={"theme": "dark"})
     auth_code = db.Column(db.String(512), nullable=True)
@@ -35,9 +39,7 @@ class Accounts(db.Model, UtilityMixin):
     def process_auth_code(cls, account_id: int, auth_code: str):
         q = select(cls).where(
             cls.account_id == account_id,
-            and_(
-                cls.auth_code == auth_code
-            ),
+            and_(cls.auth_code == auth_code),
         )
         r = db.session.execute(q).scalar_one_or_none()
 
@@ -45,7 +47,7 @@ class Accounts(db.Model, UtilityMixin):
             return None
 
         if isinstance(r.auth_code_expiry, datetime):
-            if DatetimeDelta().datetime < r.auth_code_expiry:
+            if DatetimeDelta().datetime < pytz.UTC.localize(r.auth_code_expiry):
                 return r
 
         return None

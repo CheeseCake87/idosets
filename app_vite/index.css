@@ -39,7 +39,7 @@
     --html-default-button-bg-color: rgba(229, 229, 229, 0.9);
     --html-default-button-hover-bg-color: rgba(219, 218, 218, 0.9);
 
-    --html-default-border-color: rgb(175, 175, 175);
+    --html-default-border-color: rgb(215, 215, 215);
 
     --html-default-spinner-color: #0b0b0b;
 
@@ -189,18 +189,27 @@
         }
     }
     @keyframes spinner_animation_2 {
-         0% {
-             stroke-dasharray: 0 150;
-             stroke-dashoffset: 0
-         }
-         47.5% {
-             stroke-dasharray: 42 150;
-             stroke-dashoffset: -16
-         }
-         95%, 100% {
-             stroke-dasharray: 42 150;
-             stroke-dashoffset: -59
-         }
-     }
+        0% {
+            stroke-dasharray: 0 150;
+            stroke-dashoffset: 0
+        }
+        47.5% {
+            stroke-dasharray: 42 150;
+            stroke-dashoffset: -16
+        }
+        95%, 100% {
+            stroke-dasharray: 42 150;
+            stroke-dashoffset: -59
+        }
+    }
+
+    .add-box {
+        @apply flex justify-center p-6 cursor-pointer rounded-md border;
+        border-color: var(--html-default-border-color);
+    }
+
+    .add-box:hover {
+        background-color: var(--card-bg-color);
+    }
 
 }

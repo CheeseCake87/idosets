@@ -1,6 +1,8 @@
 import {createContext, createEffect, onMount} from "solid-js";
 import {Outlet, useNavigate} from "@solidjs/router";
 import {createStore} from "solid-js/store";
+import Loading from "../components/Loading";
+import Fetcher from "../utilities/fetcher";
 
 export const mainContext = createContext();
 
@@ -101,29 +103,35 @@ export function MainContextProvider(props) {
 
     });
 
+
+    const session = new Fetcher(store.getSession)
+
     let html
 
     onMount(() => {
-        store.getSession().then(jsond => {
-            setStore('theme', jsond.theme)
-            setStore('account_id', jsond.account_id)
-            setStore('email_address', jsond.email_address)
-        })
         html = document.querySelector('html')
     })
 
     createEffect(() => {
         html.setAttribute('data-theme', store.theme)
     })
+    createEffect(() => {
+        if (!session.data.loading) {
+            setStore("theme", session.data().theme)
+            setStore("account_id", session.data().account_id)
+            setStore("email_address", session.data().email_address)
+        }
+    })
 
     return (
         <mainContext.Provider value={
             {
                 store,
-                setStore
+                setStore,
+                session
             }
         }>
-            <Outlet/>
+            {session.data.loading ? <Loading/> : <Outlet/>}
         </mainContext.Provider>
     );
 }

@@ -3,8 +3,10 @@ from .__mixins__ import UtilityMixin
 
 
 class Sets(db.Model, UtilityMixin):
+    # PriKey
     set_id = db.Column(db.Integer, primary_key=True)
 
+    # ForKeys
     account_id = db.Column(db.Integer, db.ForeignKey("accounts.account_id"))
     workout_id = db.Column(db.Integer, db.ForeignKey("workouts.workout_id"))
     exercise_id = db.Column(db.Integer, db.ForeignKey("exercises.exercise_id"))
@@ -15,8 +17,10 @@ class Sets(db.Model, UtilityMixin):
 
 
 class SetLogs(db.Model, UtilityMixin):
+    # PriKey
     set_log_id = db.Column(db.Integer, primary_key=True)
 
+    # ForKeys
     account_id = db.Column(db.Integer, db.ForeignKey("accounts.account_id"))
     workout_id = db.Column(db.Integer, db.ForeignKey("workouts.workout_id"))
     exercise_id = db.Column(db.Integer, db.ForeignKey("exercises.exercise_id"))
