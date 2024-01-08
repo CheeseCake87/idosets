@@ -45,7 +45,10 @@ export function MainContextProvider(props) {
 
     const [store, setStore] = createStore({
 
+        logged_in: false,
         theme: 'dark',
+        account_id: 0,
+        email_address: '',
 
         async getTheme() {
             return await getFetch(

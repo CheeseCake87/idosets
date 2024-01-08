@@ -23,6 +23,10 @@ export default function Auth(props) {
     createEffect(() => {
         if (try_auth.loading === false) {
             if (try_auth().status === 'passed') {
+                ctx.setStore("logged_in", true)
+                ctx.setStore("theme", try_auth().theme)
+                ctx.setStore("account_id", try_auth().account_id)
+                ctx.setStore("email_address", try_auth().email_address)
                 navigate('/workouts')
             } else {
                 set_auth("error")

@@ -9,7 +9,7 @@ export default function TopMenu(props) {
 
     return (
         <nav>
-            <p>test.email@</p>
+            <p>{ctx.store.email_address}</p>
 
             <div className={"flex gap-4"}>
                 <Show when={ctx.store.theme === 'dark'}>
@@ -42,6 +42,7 @@ export default function TopMenu(props) {
                     () => {
                         ctx.store.tryLogout().then(json => {
                             if (json.status === 'success') {
+                                ctx.setStore("logged_in", false)
                                 navigate('/login')
                             }
                         })

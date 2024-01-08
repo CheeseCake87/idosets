@@ -46,12 +46,28 @@ def auth_():
     account_ = Accounts.process_auth_code(account_id, auth_code)
 
     if account_:
+        settings = account_.settings
+
+        theme = settings.get("theme", "dark")
+
         account_.remove_auth_code()
         session["logged_in"] = True
         session["account_id"] = account_.account_id
-        return {"status": "passed", "message": "Logged in."}
+        return {
+            "status": "passed",
+            "message": "Logged in.",
+            "account_id": account_.account_id,
+            "email_address": account_.email_address,
+            "theme": theme,
+        }
 
-    return {"status": "failed", "message": "Unable to log in."}
+    return {
+        "status": "failed",
+        "message": "Unable to log in.",
+        "account_id": account_.account_id,
+        "email_address": account_.email_address,
+        "theme": "dark",
+    }
 
 
 @bp.get("/check/login")
@@ -149,5 +165,6 @@ def workouts_():
             {"workout_id": "1", "name": "Workout 1"},
             {"workout_id": "2", "name": "Workout 2"},
             {"workout_id": "3", "name": "Workout 3"},
+            {"workout_id": "4", "name": "Workout 4"},
         ],
     }

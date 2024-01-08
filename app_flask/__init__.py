@@ -7,12 +7,8 @@ def create_app():
     app = Flask(__name__, static_url_path="/")
     imp.init_app(app)
     imp.import_app_resources(
-        files_to_import=[
-            "routes.py",
-            "error_handlers.py",
-            "cli.py"
-        ],
-        folders_to_import=[None]
+        files_to_import=["routes.py", "error_handlers.py", "cli.py"],
+        folders_to_import=[None],
     )
     imp.import_blueprint("api")
     imp.import_models("models")
@@ -21,7 +17,7 @@ def create_app():
     @app.before_request
     def before_request():
         imp.init_session()
-        # session.permanent = True
+        session.permanent = True
 
     @app.after_request
     def after_request(response):

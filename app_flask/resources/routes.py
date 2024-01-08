@@ -1,6 +1,12 @@
 from datetime import datetime
 
-from flask import current_app as app, render_template, session, redirect, url_for
+from flask import (
+    current_app as app,
+    render_template,
+    session,
+    redirect,
+    url_for,
+)
 from flask_imp.security import login_check
 
 from app_flask.extensions import imp
