@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 
 from app_flask.extensions import imp, db
 
@@ -21,6 +21,7 @@ def create_app():
     @app.before_request
     def before_request():
         imp.init_session()
+        # session.permanent = True
 
     @app.after_request
     def after_request(response):

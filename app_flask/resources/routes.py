@@ -14,7 +14,7 @@ def index():
 @app.route("/set")
 def set_():
     session["logged_in"] = True
-    session["last_request"] = datetime.now().timestamp()
+    # session["last_request"] = datetime.now().timestamp()
     return redirect(url_for("test"))
 
 
@@ -26,8 +26,9 @@ def failed_():
 @app.route("/test")
 @login_check("logged_in", True, "failed_")
 def test():
-    session["last_request"] = datetime.now().timestamp()
-    return f"Test {session['last_request']}"
+    if "last_request" in session:
+        session["last_request"] = datetime.now().timestamp()
+    return f"Test {[f'{key, val}' for key, val in session.items()]}"
 
 
 @app.route("/login")
