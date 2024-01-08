@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from flask import current_app as app, render_template, session, redirect, url_for
+from flask_imp.security import login_check
 
 from app_flask.extensions import imp
 
@@ -6,6 +9,25 @@ from app_flask.extensions import imp
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/set")
+def set_():
+    session["logged_in"] = True
+    session["last_request"] = datetime.now().timestamp()
+    return redirect(url_for("test"))
+
+
+@app.route("/failed")
+def failed_():
+    return "Failed"
+
+
+@app.route("/test")
+@login_check("logged_in", True, "failed_")
+def test():
+    session["last_request"] = datetime.now().timestamp()
+    return f"Test {session['last_request']}"
 
 
 @app.route("/login")
