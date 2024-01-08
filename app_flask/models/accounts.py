@@ -27,12 +27,25 @@ class Accounts(db.Model, UtilityMixin):
         return db.session.execute(q).scalar_one_or_none()
 
     @classmethod
+    def get_email_address(cls, account_id: int):
+        q = select(cls.email_address).where(cls.account_id == account_id)
+        return db.session.execute(q).scalar_one_or_none()
+
+    @classmethod
     def process_auth_code(cls, account_id: int, auth_code: str):
         q = select(cls).where(
             cls.account_id == account_id,
             and_(
-                cls.auth_code == auth_code,
-                cls.auth_code_expiry > datetime.now(),
+                cls.auth_code == auth_code
             ),
         )
-        return db.session.execute(q).scalar_one_or_none()
+        r = db.session.execute(q).scalar_one_or_none()
+
+        if not r:
+            return None
+
+        if isinstance(r.auth_code_expiry, datetime):
+            if DatetimeDelta().datetime < r.auth_code_expiry:
+                return r
+
+        return None

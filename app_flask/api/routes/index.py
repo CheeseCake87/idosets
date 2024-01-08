@@ -36,6 +36,23 @@ def set_theme_(theme):
     }
 
 
+@bp.get("/session")
+def session_():
+    account_id = session.get("account_id", 0)
+    theme = session.get("theme", "dark")
+    email_address = (
+        (Accounts.get_email_address(account_id) if account_id != 0 else None)
+        if session.get("logged_in")
+        else None
+    )
+
+    return {
+        "account_id": account_id,
+        "email_address": email_address,
+        "theme": theme,
+    }
+
+
 @bp.post("/auth")
 def auth_():
     jsond = request.json
@@ -47,26 +64,18 @@ def auth_():
 
     if account_:
         settings = account_.settings
-
-        theme = settings.get("theme", "dark")
-
-        account_.remove_auth_code()
         session["logged_in"] = True
         session["account_id"] = account_.account_id
+        session["theme"] = settings.get("theme", "dark")
+
         return {
             "status": "passed",
             "message": "Logged in.",
-            "account_id": account_.account_id,
-            "email_address": account_.email_address,
-            "theme": theme,
         }
 
     return {
         "status": "failed",
         "message": "Unable to log in.",
-        "account_id": account_.account_id,
-        "email_address": account_.email_address,
-        "theme": "dark",
     }
 
 
@@ -92,7 +101,7 @@ def login():
         return {"status": "error", "message": "Email address is not valid."}
 
     email_service_settings = EmailServiceSettings(
-        dev_mode=False,
+        dev_mode=True,
         username=current_app.config["ES_USERNAME"],
         password=current_app.config["ES_PASSWORD"],
         server=current_app.config["ES_SERVER"],

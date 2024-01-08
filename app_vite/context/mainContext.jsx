@@ -50,9 +50,9 @@ export function MainContextProvider(props) {
         account_id: 0,
         email_address: '',
 
-        async getTheme() {
+        async getSession() {
             return await getFetch(
-                `${API_URL}/api/get/theme`,
+                `${API_URL}/api/session`,
             )
         },
 
@@ -104,8 +104,10 @@ export function MainContextProvider(props) {
     let html
 
     onMount(() => {
-        store.getTheme().then(json => {
-            setStore('theme', json.theme)
+        store.getSession().then(jsond => {
+            setStore('theme', jsond.theme)
+            setStore('account_id', jsond.account_id)
+            setStore('email_address', jsond.email_address)
         })
         html = document.querySelector('html')
     })

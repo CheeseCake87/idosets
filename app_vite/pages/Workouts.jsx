@@ -16,17 +16,17 @@ export default function Workouts() {
         refetch;
         mutate;
 
-        constructor() {
+        constructor(getWorkouts) {
             let [
                 data, {refetch, mutate}
-            ] = createResource(ctx.store.getWorkouts);
+            ] = createResource(getWorkouts);
             this.data = data
             this.refetch = refetch
             this.mutate = mutate
         }
     }
 
-    const workouts = new Workouts()
+    const workouts = new Workouts(ctx.store.getWorkouts)
 
     createEffect(() => {
         if (workouts.data.loading === false) {

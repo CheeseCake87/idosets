@@ -21,7 +21,7 @@ def create_app():
 
     @app.after_request
     def after_request(response):
-        if app.debug:
+        if app.config["RUN_ENV"] == "dev":
             response.headers.add(
                 "Access-Control-Allow-Origin", "http://localhost:3000"
             )

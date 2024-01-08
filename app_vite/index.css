@@ -6,14 +6,17 @@
 
 [data-theme='dark'] {
     --html-body-bg-color: rgb(30, 36, 47);
-    --html-default-text-color: #ffffff;
+    --html-default-text-color: rgba(255, 255, 255, 0.9);
     --html-scrollbar-track: rgba(20, 25, 33);
     --html-scrollbar-thumb: rgba(56, 65, 80, 0.9);
     --html-scrollbar-thumb-hover: rgba(56, 65, 80, 1);
 
     --html-default-input-bg-color: rgba(56, 65, 80, 0.9);
+    --html-default-input-text-color: rgba(255, 255, 255, 0.9);
+
     --html-default-button-bg-color: rgba(56, 65, 80, 0.9);
     --html-default-button-hover-bg-color: rgba(64, 73, 89, 0.9);
+
     --html-default-border-color: rgba(118, 118, 118, 0.1);
 
     --html-default-spinner-color: #ffffff;
@@ -31,9 +34,12 @@
     --html-scrollbar-thumb-hover: rgba(56, 65, 80, 1);
 
     --html-default-input-bg-color: rgba(229, 229, 229, 0.9);
+    --html-default-input-text-color: rgba(30, 30, 30, 0.9);
+
     --html-default-button-bg-color: rgba(229, 229, 229, 0.9);
     --html-default-button-hover-bg-color: rgba(219, 218, 218, 0.9);
-    --html-default-border-color: rgba(118, 118, 118, 0.1);
+
+    --html-default-border-color: rgb(175, 175, 175);
 
     --html-default-spinner-color: #0b0b0b;
 
@@ -136,7 +142,7 @@
         @apply px-3 py-2 rounded-md w-full border;
         background-color: var(--html-default-input-bg-color);
         border-color: var(--html-default-border-color);
-        color: #ffffff;
+        color: var(--html-default-input-text-color)
     }
 
     button, button[type='button'], input[type='submit'] {
