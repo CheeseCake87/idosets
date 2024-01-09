@@ -101,6 +101,15 @@ export function MainContextProvider(props) {
             )
         },
 
+        async addWorkout(name) {
+            return await postFetch(
+                `${API_URL}/api/workouts/add`,
+                {
+                    name: name,
+                }
+            )
+        },
+
     });
 
 
@@ -115,6 +124,7 @@ export function MainContextProvider(props) {
     createEffect(() => {
         html.setAttribute('data-theme', store.theme)
     })
+
     createEffect(() => {
         if (!session.data.loading) {
             setStore("theme", session.data().theme)

@@ -24,6 +24,7 @@
     --nav-bg-color: rgba(20, 25, 33, 0.9);
 
     --card-bg-color: rgba(99, 99, 99, 0.1);
+
 }
 
 [data-theme='light'] {
@@ -46,6 +47,21 @@
     --nav-bg-color: rgba(188, 188, 188, 0.9);
 
     --card-bg-color: rgba(187, 187, 187, 0.1);
+}
+
+body {
+    background-color: var(--html-body-bg-color);
+    color: var(--html-default-text-color);
+
+    --button-good-bg-color: rgba(0, 255, 0, 0.2);
+    --button-good-border-color: rgba(0, 255, 0, 0.2);
+    --button-good-hf-bg-color: rgba(0, 255, 0, 0.3);
+    --button-good-hf-border-color: rgba(0, 255, 0, 0.3);
+
+    --button-bad-bg-color: rgba(255, 0, 0, 0.2);
+    --button-bad-border-color: rgba(255, 0, 0, 0.2);
+    --button-bad-hf-bg-color: rgba(255, 0, 0, 0.3);
+    --button-bad-hf-border-color: rgba(255, 0, 0, 0.3);
 }
 
 @layer components {
@@ -95,16 +111,10 @@
         @apply p-4 flex flex-row justify-end gap-4;
     }
 
-    body {
-        background-color: var(--html-body-bg-color);
-        color: var(--html-default-text-color);
-    }
-
     nav {
         @apply flex flex-row justify-between items-center px-5 py-3 sticky;
         background-color: var(--nav-bg-color);
     }
-
 
     h1 {
         font-size: 2rem;
@@ -146,7 +156,7 @@
     }
 
     button, button[type='button'], input[type='submit'] {
-        @apply px-3 py-2 rounded-md border;
+        @apply px-5 py-2 rounded-md border;
         background-color: var(--html-default-button-bg-color);
         border-color: var(--html-default-border-color);
         color: var(--html-default-text-color);
@@ -154,6 +164,26 @@
 
     button:hover, button[type='button']:hover, input[type='submit']:hover {
         background-color: var(--html-default-button-hover-bg-color);
+    }
+
+    .button-good {
+        background-color: var(--button-good-bg-color) !important;
+        border-color: var(--button-good-border-color) !important;;
+    }
+
+    .button-good:hover, .button-good:focus {
+        background-color: var(--button-good-hf-bg-color) !important;;
+        border-color: var(--button-good-hf-border-color) !important;;
+    }
+
+    .button-bad {
+        background-color: var(--button-bad-bg-color) !important;
+        border-color: var(--button-bad-border-color) !important;;
+    }
+
+    .button-bad:hover, .button-bad:focus {
+        background-color: var(--button-bad-hf-bg-color) !important;;
+        border-color: var(--button-bad-hf-border-color) !important;;
     }
 
     .login {
@@ -203,13 +233,28 @@
         }
     }
 
-    .add-box {
+    .action-box {
+        @apply flex justify-center p-6 rounded-md border;
+        border-color: var(--html-default-border-color);
+    }
+
+    .action-box-clickable {
         @apply flex justify-center p-6 cursor-pointer rounded-md border;
         border-color: var(--html-default-border-color);
     }
 
-    .add-box:hover {
+    .action-box-clickable:hover {
         background-color: var(--card-bg-color);
+    }
+
+    .form-reactive {
+        @apply flex-1 flex flex-row gap-4;
+    }
+
+    @media (max-width: 768px) {
+        .form-reactive {
+            @apply flex-col;
+        }
     }
 
 }

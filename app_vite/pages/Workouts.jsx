@@ -1,4 +1,4 @@
-import {createEffect, onMount, useContext} from "solid-js";
+import {createEffect, createSignal, onMount, Show, useContext} from "solid-js";
 import {useNavigate} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
@@ -11,6 +11,9 @@ export default function Workouts() {
     const navigate = useNavigate();
 
     const workouts = new Fetcher(ctx.store.getWorkouts)
+
+    const [addingWorkout, setAddingWorkout] = createSignal(false)
+    const [newWorkoutName, setNewWorkoutName] = createSignal('')
 
     createEffect(() => {
         if (workouts.data.loading === false) {
@@ -33,9 +36,50 @@ export default function Workouts() {
                     <>
                         <TopMenu/>
                         <div className={"container"}>
-                            <div className={"add-box"}>
-                                <span className="material-icons px-2">add</span> Workout
-                            </div>
+                            <Show when={addingWorkout() === true} fallback={
+                                <div className={"action-box-clickable"} onClick={() => setAddingWorkout(true)}>
+                                    <span className="material-icons px-2">add</span> Workout
+                                </div>
+                            }>
+                                <div className={"action-box"}>
+                                    <form className={"form-reactive"}>
+                                        <input
+                                            className={"flex-1"}
+                                            type="text"
+                                            id="new_workout_name"
+                                            name="new_workout_name"
+                                            placeholder={"Workout Name"}
+                                            onKeyUp={(e) => {
+                                                setNewWorkoutName(e.target.value)
+                                            }}
+                                        />
+                                        <button
+                                            className={"button-good"}
+                                            type="button"
+                                            onClick={() => {
+                                                ctx.store.addWorkout(newWorkoutName()).then(json => {
+                                                    if (json.status === 'success') {
+                                                        workouts.refetch()
+                                                        setAddingWorkout(false)
+                                                        setNewWorkoutName('')
+                                                    }
+                                                })
+                                            }}>
+                                            Add
+                                        </button>
+                                        <button
+                                            className={"button-bad"}
+                                            type="button"
+                                            onClick={() => {
+                                                setAddingWorkout(false)
+                                                setNewWorkoutName('')
+                                            }}>
+                                            Cancel
+                                        </button>
+                                    </form>
+                                    <p>{newWorkoutName()}</p>
+                                </div>
+                            </Show>
                         </div>
                     </>
             }

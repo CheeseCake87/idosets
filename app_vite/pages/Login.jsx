@@ -38,6 +38,13 @@ export default function Login() {
 
                             <form onSubmit={(e) => {
                                 e.preventDefault()
+                                ctx.store.tryLogin(email_address()).then(json => {
+                                    if (json.status === 'success') {
+                                        set_login_status('success')
+                                    } else {
+                                        set_login_status('error')
+                                    }
+                                })
                             }}>
                                 <input
                                     type="email"
