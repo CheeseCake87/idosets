@@ -1,4 +1,4 @@
-import {createEffect, createSignal, onMount, Show, useContext} from "solid-js";
+import {createEffect, createSignal, For, onMount, Show, useContext} from "solid-js";
 import {useNavigate} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
@@ -80,6 +80,19 @@ export default function Workouts() {
                                     <p>{newWorkoutName()}</p>
                                 </div>
                             </Show>
+                            <div className={"py-4 flex flex-col gap-2"}>
+                                <For each={workouts.get("Workouts")} fallback={
+                                    <div className={"action-box"} onClick={() => setAddingWorkout(true)}>
+                                        <span className="material-icons px-2">sentiment_dissatisfied</span> No Workouts
+                                    </div>
+                                }>
+                                    {(workout, i) =>
+                                        <div className={"display-box-clickable"}>
+                                            <h1>{workout.name}</h1>
+                                        </div>
+                                    }
+                                </For>
+                            </div>
                         </div>
                     </>
             }

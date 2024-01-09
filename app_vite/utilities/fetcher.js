@@ -14,4 +14,11 @@ export default class Fetcher {
         this.refetch = refetch
         this.mutate = mutate
     }
+
+    get(key) {
+        if (typeof this.data() === "object") {
+            return this.data()[key]
+        }
+        return null
+    }
 }

@@ -236,6 +236,7 @@ body {
     .action-box {
         @apply flex justify-center p-6 rounded-md border;
         border-color: var(--html-default-border-color);
+        background-color: var(--card-bg-color);
     }
 
     .action-box-clickable {
@@ -245,6 +246,25 @@ body {
 
     .action-box-clickable:hover {
         background-color: var(--card-bg-color);
+    }
+
+    .display-box {
+        @apply flex p-6 rounded-md border;
+        border-color: var(--html-default-border-color);
+        background-color: var(--card-bg-color);
+    }
+
+    .display-box-clickable {
+        @apply flex p-6 cursor-pointer rounded-md border;
+        border-color: var(--html-default-border-color);
+    }
+
+    .display-box-clickable:hover {
+        background-color: var(--card-bg-color);
+    }
+
+    .display-box-clickable h1 {
+        margin: 0;
     }
 
     .form-reactive {

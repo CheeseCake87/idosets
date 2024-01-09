@@ -7,10 +7,6 @@ export default function TopMenu(props) {
     const ctx = useContext(mainContext);
     const navigate = useNavigate();
 
-    console.log(
-        ctx.store
-    )
-
     return (
         <nav>
             <p>{ctx.store.email_address}</p>
