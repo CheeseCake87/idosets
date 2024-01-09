@@ -14,6 +14,19 @@ class Exercises(db.Model, UtilityMixin):
     name = db.Column(db.String(255), nullable=False)
     info_url = db.Column(db.String, nullable=True)
 
+    rel_workouts = relationship(
+        "Workouts",
+        backref="Exercises",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
+
+    rel_exerciseLogs = relationship(
+        "ExerciseLogs",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
+
 
 class ExerciseLogs(db.Model, UtilityMixin):
     # PriKey

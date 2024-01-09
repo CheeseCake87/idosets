@@ -1,4 +1,5 @@
 from email.utils import parseaddr
+from time import sleep
 
 from email_validator import validate_email, EmailNotValidError
 from flask import request, current_app, render_template
@@ -13,6 +14,7 @@ from .. import bp
 
 @bp.post("/login")
 def login():
+    sleep(2)
     jsond = request.json
 
     name, email_address = parseaddr(jsond.get("email_address"))
@@ -34,6 +36,7 @@ def login():
     )
 
     account = Accounts.get_account(email_address)
+
     url = (
         "http://localhost:3000/auth"
         if current_app.debug
@@ -42,7 +45,7 @@ def login():
 
     if not account:
         pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
-        account, account_id = Accounts.insert(
+        new_account, account_id = Accounts.insert(
             {
                 "email_address": email_address,
                 "settings": {"theme": "dark"},
@@ -63,20 +66,27 @@ def login():
             ),
         )
 
-    else:
-        pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
-        account.update_auth_code(pk, DatetimeDelta().days(1).datetime)
+        return {
+            "status": "success",
+            "message": "New account created, login email sent.",
+        }
 
-        send_email(
-            email_service_settings,
-            recipients=[email_address],
-            subject="Here's your login link!",
-            body=render_template(
-                "login-email.html",
-                url=url,
-                account_id=account.account_id,
-                auth=pk,
-            ),
-        )
+    pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
+    account.update_auth_code(pk, DatetimeDelta().days(1).datetime)
 
-    return {"status": "success", "message": "Login email sent."}
+    send_email(
+        email_service_settings,
+        recipients=[email_address],
+        subject="Here's your login link!",
+        body=render_template(
+            "login-email.html",
+            url=url,
+            account_id=account.account_id,
+            auth=pk,
+        ),
+    )
+
+    return {
+        "status": "success",
+        "message": "Login email sent.",
+    }

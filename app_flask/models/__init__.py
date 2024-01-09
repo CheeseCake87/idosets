@@ -17,6 +17,7 @@ from sqlalchemy import (
     DateTime,
     JSON,
 )
+from sqlalchemy.orm import relationship
 
 from app_flask.extensions import db
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
@@ -41,4 +42,5 @@ __all__ = [
     "DateTime",
     "JSON",
     "DatetimeDelta",
+    "relationship",
 ]

@@ -50,4 +50,6 @@ class Accounts(db.Model, UtilityMixin):
             if DatetimeDelta().datetime < pytz.UTC.localize(r.auth_code_expiry):
                 return r
 
+            r.remove_auth_code()
+
         return None

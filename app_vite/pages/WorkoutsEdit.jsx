@@ -7,10 +7,10 @@ import Fetcher from "../utilities/fetcher";
 
 export default function WorkoutsEdit() {
 
-    const ctx = useContext(mainContext);
+    const [ctx, setCtx] = useContext(mainContext);
     const navigate = useNavigate();
 
-    const workouts = new Fetcher(ctx.store.getWorkouts)
+    const workouts = new Fetcher(ctx.getWorkouts)
 
     createEffect(() => {
         if (workouts.data.loading === false) {

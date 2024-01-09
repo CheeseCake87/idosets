@@ -1,3 +1,5 @@
+from time import sleep
+
 from flask import session
 from flask_imp.security import api_login_check
 
@@ -12,22 +14,23 @@ from ...models.accounts import Accounts
     {
         "status": "unauthorized",
         "message": "unauthorized",
+        "logged_in": False,
         "account_id": 0,
         "email_address": None,
         "theme": "dark",
     },
 )
 def session_():
+    sleep(2)
     account_id = session.get("account_id", 0)
     theme = session.get("theme", "dark")
     email_address = (
         Accounts.get_email_address(account_id) if account_id != 0 else None
     )
-
-    print(account_id, theme, email_address)
-
     return {
         "status": "success",
+        "message": "Session retrieved.",
+        "logged_in": True,
         "account_id": account_id,
         "email_address": email_address,
         "theme": theme,

@@ -1,5 +1,5 @@
 import {createContext, createEffect, onMount} from "solid-js";
-import {Outlet, useNavigate} from "@solidjs/router";
+import {Outlet, useLocation, useNavigate} from "@solidjs/router";
 import {createStore} from "solid-js/store";
 import Loading from "../components/Loading";
 import Fetcher from "../utilities/fetcher";
@@ -9,7 +9,10 @@ export const mainContext = createContext();
 export function MainContextProvider(props) {
 
     const API_URL = import.meta.env.DEV ? 'http://localhost:5000' : ''
+    const DEBUG = import.meta.env.DEV
+
     const navigate = useNavigate();
+    const location = useLocation();
 
     async function getFetch(url) {
         const response = await fetch(
@@ -20,7 +23,11 @@ export function MainContextProvider(props) {
         )
 
         if (response.headers.get('content-type')?.includes('application/json')) {
-            return await response.json()
+            const json = await response.json()
+            if (DEBUG) {
+                console.log(url, json)
+            }
+            return json
         }
 
         navigate('/error')
@@ -39,7 +46,11 @@ export function MainContextProvider(props) {
         )
 
         if (response.headers.get('content-type')?.includes('application/json')) {
-            return await response.json()
+            const json = await response.json()
+            if (DEBUG) {
+                console.log(url, json)
+            }
+            return json
         }
 
         navigate('/error')
@@ -112,9 +123,6 @@ export function MainContextProvider(props) {
 
     });
 
-
-    const session = new Fetcher(store.getSession)
-
     let html
 
     onMount(() => {
@@ -125,23 +133,32 @@ export function MainContextProvider(props) {
         html.setAttribute('data-theme', store.theme)
     })
 
-    createEffect(() => {
-        if (!session.data.loading) {
-            setStore("theme", session.data().theme)
-            setStore("account_id", session.data().account_id)
-            setStore("email_address", session.data().email_address)
-        }
-    })
+    if (location.pathname.includes('/auth/')) {
 
-    return (
-        <mainContext.Provider value={
-            {
-                store,
-                setStore,
-                session
+        return (
+            <mainContext.Provider value={[store, setStore]}>
+                <Outlet/>
+            </mainContext.Provider>
+        );
+
+    } else {
+
+        const session = new Fetcher(store.getSession)
+
+        createEffect(() => {
+            if (!session.data.loading) {
+                setStore("logged_in", session.data().logged_in)
+                setStore("theme", session.data().theme)
+                setStore("account_id", session.data().account_id)
+                setStore("email_address", session.data().email_address)
             }
-        }>
-            {session.data.loading ? <Loading/> : <Outlet/>}
-        </mainContext.Provider>
-    );
+        })
+
+        return (
+            <mainContext.Provider value={[store, setStore]}>
+                {session.data.loading ? <div className={"pt-20"}><Loading/></div> : <Outlet/>}
+            </mainContext.Provider>
+        );
+    }
 }
+

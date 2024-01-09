@@ -1,4 +1,4 @@
-import {createEffect, createSignal, For, onMount, Show, useContext} from "solid-js";
+import {createEffect, createSignal, For, Show, useContext} from "solid-js";
 import {useNavigate} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
@@ -7,10 +7,10 @@ import Fetcher from "../utilities/fetcher";
 
 export default function Workouts() {
 
-    const ctx = useContext(mainContext);
+    const [ctx, setCtx] = useContext(mainContext);
     const navigate = useNavigate();
 
-    const workouts = new Fetcher(ctx.store.getWorkouts)
+    const workouts = new Fetcher(ctx.getWorkouts)
 
     const [addingWorkout, setAddingWorkout] = createSignal(false)
     const [newWorkoutName, setNewWorkoutName] = createSignal('')
@@ -23,12 +23,6 @@ export default function Workouts() {
         }
     })
 
-    onMount(() => {
-        if (workouts.data.loading === false) {
-            console.log(workouts.data().status)
-        }
-    })
-
     return (
         <>
             {
@@ -37,7 +31,9 @@ export default function Workouts() {
                         <TopMenu/>
                         <div className={"container"}>
                             <Show when={addingWorkout() === true} fallback={
-                                <div className={"action-box-clickable"} onClick={() => setAddingWorkout(true)}>
+                                <div className={"action-box-clickable"} onClick={() => {
+                                    setAddingWorkout(true)
+                                }}>
                                     <span className="material-icons px-2">add</span> Workout
                                 </div>
                             }>
@@ -57,7 +53,7 @@ export default function Workouts() {
                                             className={"button-good"}
                                             type="button"
                                             onClick={() => {
-                                                ctx.store.addWorkout(newWorkoutName()).then(json => {
+                                                ctx.addWorkout(newWorkoutName()).then(json => {
                                                     if (json.status === 'success') {
                                                         workouts.refetch()
                                                         setAddingWorkout(false)

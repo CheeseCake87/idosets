@@ -1,5 +1,5 @@
 /* @refresh reload */
-import {ErrorBoundary, render} from 'solid-js/web';
+import {render} from 'solid-js/web';
 import {Navigate, Route, Router, Routes} from "@solidjs/router";
 import {MainContextProvider} from "./context/mainContext";
 import Workouts from "./pages/Workouts";
@@ -23,8 +23,8 @@ render(() => (
     <Router>
         <Routes>
             <Route path="" component={MainContextProvider}>
-                <Route path="/" element={<Navigate href={'/workouts'}/>}/>
                 <Route path="/auth/:account_id/:auth_code" component={Auth}/>
+                <Route path="/" element={<Navigate href={'/workouts'}/>}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/workouts" component={Workouts}/>
                 <Route path="*" component={PageNotFound}/>

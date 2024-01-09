@@ -4,20 +4,20 @@ import {useNavigate} from "@solidjs/router";
 
 export default function TopMenu(props) {
 
-    const ctx = useContext(mainContext);
+    const [ctx, setCtx] = useContext(mainContext);
     const navigate = useNavigate();
 
     return (
         <nav>
-            <p>{ctx.store.email_address}</p>
+            <p>{ctx.email_address}</p>
 
             <div className={"flex gap-4"}>
-                <Show when={ctx.store.theme === 'dark'}>
+                <Show when={ctx.theme === 'dark'}>
                     <button
                         className={"flex rounded-full"}
                         onClick={() => {
-                            ctx.store.setTheme('light').then(json => {
-                                ctx.setStore('theme', json.theme)
+                            ctx.setTheme('light').then(json => {
+                                setCtx('theme', json.theme)
                             })
                         }}
                     >
@@ -25,12 +25,12 @@ export default function TopMenu(props) {
                     </button>
                 </Show>
 
-                <Show when={ctx.store.theme === 'light'}>
+                <Show when={ctx.theme === 'light'}>
                     <button
                         className={"flex rounded-full"}
                         onClick={() => {
-                            ctx.store.setTheme('dark').then(json => {
-                                ctx.setStore('theme', json.theme)
+                            ctx.setTheme('dark').then(json => {
+                                setCtx('theme', json.theme)
                             })
                         }}
                     >
@@ -40,9 +40,12 @@ export default function TopMenu(props) {
 
                 <button onClick={
                     () => {
-                        ctx.store.tryLogout().then(json => {
+                        ctx.tryLogout().then(json => {
                             if (json.status === 'success') {
-                                ctx.setStore("logged_in", false)
+                                setCtx("logged_in", false)
+                                setCtx("account_id", 0)
+                                setCtx("email_address", '')
+                                setCtx("theme", 'dark')
                                 navigate('/login')
                             }
                         })

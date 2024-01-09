@@ -4,10 +4,9 @@ import {useNavigate, useParams} from "@solidjs/router";
 import Loading from "../components/Loading";
 
 export default function Auth(props) {
-
-    const ctx = useContext(mainContext);
     const navigate = useNavigate();
 
+    const [ctx, setCtx] = useContext(mainContext);
     const [auth, set_auth] = createSignal("processing");
 
     const params = useParams();
@@ -17,26 +16,31 @@ export default function Auth(props) {
             account_id: params.account_id,
             auth_code: params.auth_code
         },
-        ctx.store.tryAuth
+        ctx.tryAuth
     );
 
     createEffect(() => {
         if (try_auth.loading === false) {
             if (try_auth().status === 'passed') {
-                ctx.session.refetch()
+                setCtx("logged_in", true)
+                setCtx("account_id", try_auth().account_id)
+                setCtx("email_address", try_auth().email_address)
+                setCtx("theme", try_auth().theme)
+
                 navigate('/workouts')
             } else {
                 set_auth("error")
             }
+        } else {
+            set_auth("processing")
         }
     });
 
     return (
         <>
-            {try_auth.loading || ctx.session.loading ? <Loading/> :
+            {try_auth.loading ? <div className={"pt-20"}><Loading/></div> :
                 <div className={"login py-6"}>
                     <h2 className={"pb-4"}>💪 I Do Sets</h2>
-
                     <Show when={auth() == "processing"}>
                         <p>Logging in, please wait...</p>
                     </Show>

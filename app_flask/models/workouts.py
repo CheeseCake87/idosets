@@ -22,8 +22,22 @@ class Workouts(db.Model, UtilityMixin):
                 cls.account_id == account_it
             ).order_by(
                 desc(cls.created)
-            )
+            ),
+            include_joins=["Exercises"],
         )
+
+    rel_workoutLogs = relationship(
+        "WorkoutLogs",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
+
+    rel_exercises = relationship(
+        "Exercises",
+        backref="Workouts",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
 
 
 class WorkoutLogs(db.Model, UtilityMixin):
