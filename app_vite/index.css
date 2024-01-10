@@ -293,6 +293,12 @@ body {
         border-color: var(--html-default-border-color);
     }
 
+    .display-box-selected {
+        @apply flex p-6;
+        border-color: var(--html-default-border-color);
+        background-color: var(--card-bg-color);
+    }
+
     .display-box-clickable:hover {
         background-color: var(--card-bg-color);
     }

@@ -121,6 +121,12 @@ export function MainContextProvider(props) {
             )
         },
 
+        async getWorkout(workout_id) {
+            return await getFetch(
+                `${API_URL}/api/workouts/${workout_id}`
+            )
+        },
+
     });
 
     let html

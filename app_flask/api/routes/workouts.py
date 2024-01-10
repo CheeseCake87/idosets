@@ -45,3 +45,16 @@ def workouts_add_():
         "status": "failed",
         "message": "Unable to add workout.",
     }
+
+
+@bp.get("/workouts/<workout_id>")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def workout_(workout_id):
+    _workout = Workouts.select_by_id(workout_id)
+    if _workout:
+        return {
+            "status": "success",
+            **_workout
+        }

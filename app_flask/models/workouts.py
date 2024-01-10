@@ -26,6 +26,15 @@ class Workouts(db.Model, UtilityMixin):
             include_joins=["rel_exercises"],
         )
 
+    @classmethod
+    def select_by_id(cls, workout_id: str):
+        return cls.as_jsonable_dict(
+            select(cls).where(
+                cls.workout_id == workout_id,
+            ),
+            include_joins=["rel_exercises"],
+        )
+
     rel_workoutLogs = relationship(
         "WorkoutLogs",
         viewonly=True,

@@ -82,7 +82,10 @@ export default function Workouts() {
                                     </div>
                                 }>
                                     {(workout, i) =>
-                                        <div className={"display-box-clickable"}>
+                                        <div className={"display-box-clickable flex-col"}
+                                             onClick={() => {
+                                                 navigate(`/workouts/${workout.workout_id}`)
+                                             }}>
                                             <h1>{workout.name}</h1>
                                             <p>{workout.rel_exercises.length} Exercises</p>
                                         </div>

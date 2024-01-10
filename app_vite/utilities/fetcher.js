@@ -6,7 +6,8 @@ export default class Fetcher {
     refetch;
     mutate;
 
-    constructor(fetcher) {
+    constructor(fetcher, args) {
+        console.log("Fetcher", fetcher, args)
         let [
             data, {refetch, mutate}
         ] = createResource(fetcher);
