@@ -9,51 +9,69 @@ export default function TopMenu(props) {
 
     return (
         <nav>
-            <p>{ctx.email_address}</p>
+            <button onClick={
+                () => {
+                    ctx.tryLogout().then(json => {
+                        if (json.status === 'success') {
+                            setCtx("logged_in", false)
+                            setCtx("account_id", 0)
+                            setCtx("email_address", '')
+                            setCtx("theme", 'dark')
+                            navigate('/login')
+                        }
+                    })
+                }
+            }>
+                <span className={"desktop-block"}>Your Account</span>
+                <span className={"mobile-flex"}>
+                    <span className="material-icons-round">person</span>
+                </span>
+            </button>
 
-            <div className={"flex gap-4"}>
-                <Show when={ctx.theme === 'dark'}>
-                    <button
-                        className={"flex rounded-full"}
-                        onClick={() => {
-                            ctx.setTheme('light').then(json => {
-                                setCtx('theme', json.theme)
-                            })
-                        }}
-                    >
-                        <span className="material-icons-round">light_mode</span>
-                    </button>
-                </Show>
-
-                <Show when={ctx.theme === 'light'}>
-                    <button
-                        className={"flex rounded-full"}
-                        onClick={() => {
-                            ctx.setTheme('dark').then(json => {
-                                setCtx('theme', json.theme)
-                            })
-                        }}
-                    >
-                        <span className="material-icons-round">dark_mode</span>
-                    </button>
-                </Show>
-
-                <button onClick={
-                    () => {
-                        ctx.tryLogout().then(json => {
-                            if (json.status === 'success') {
-                                setCtx("logged_in", false)
-                                setCtx("account_id", 0)
-                                setCtx("email_address", '')
-                                setCtx("theme", 'dark')
-                                navigate('/login')
-                            }
+            <Show when={ctx.theme === 'dark'}>
+                <button
+                    className={"flex rounded-full"}
+                    onClick={() => {
+                        ctx.setTheme('light').then(json => {
+                            setCtx('theme', json.theme)
                         })
-                    }
-                }>
-                    Logout
+                    }}
+                >
+                    <span className="material-icons-round">light_mode</span>
                 </button>
-            </div>
+            </Show>
+
+            <Show when={ctx.theme === 'light'}>
+                <button
+                    className={"flex rounded-full"}
+                    onClick={() => {
+                        ctx.setTheme('dark').then(json => {
+                            setCtx('theme', json.theme)
+                        })
+                    }}
+                >
+                    <span className="material-icons-round">dark_mode</span>
+                </button>
+            </Show>
+
+            <button onClick={
+                () => {
+                    ctx.tryLogout().then(json => {
+                        if (json.status === 'success') {
+                            setCtx("logged_in", false)
+                            setCtx("account_id", 0)
+                            setCtx("email_address", '')
+                            setCtx("theme", 'dark')
+                            navigate('/login')
+                        }
+                    })
+                }
+            }>
+                <span className={"desktop-block"}>Logout</span>
+                <span className={"mobile-flex"}>
+                    <span className="material-icons-round">logout</span>
+                </span>
+            </button>
         </nav>
     )
 

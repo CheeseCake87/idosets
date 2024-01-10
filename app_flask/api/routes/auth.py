@@ -8,7 +8,7 @@ from .. import bp
 
 @bp.post("/auth")
 def auth_():
-    sleep(2)
+    sleep(1)
     jsond = request.json
 
     account_id = jsond.get("account_id")

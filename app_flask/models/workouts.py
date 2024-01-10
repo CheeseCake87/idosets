@@ -23,7 +23,7 @@ class Workouts(db.Model, UtilityMixin):
             ).order_by(
                 desc(cls.created)
             ),
-            include_joins=["Exercises"],
+            include_joins=["rel_exercises"],
         )
 
     rel_workoutLogs = relationship(

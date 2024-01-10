@@ -73,7 +73,6 @@ export default function Workouts() {
                                             Cancel
                                         </button>
                                     </form>
-                                    <p>{newWorkoutName()}</p>
                                 </div>
                             </Show>
                             <div className={"py-4 flex flex-col gap-2"}>
@@ -85,6 +84,7 @@ export default function Workouts() {
                                     {(workout, i) =>
                                         <div className={"display-box-clickable"}>
                                             <h1>{workout.name}</h1>
+                                            <p>{workout.rel_exercises.length} Exercises</p>
                                         </div>
                                     }
                                 </For>

@@ -21,7 +21,7 @@ from ...models.accounts import Accounts
     },
 )
 def session_():
-    sleep(2)
+    sleep(1)
     account_id = session.get("account_id", 0)
     theme = session.get("theme", "dark")
     email_address = (

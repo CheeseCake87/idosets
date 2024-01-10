@@ -64,6 +64,40 @@ body {
     --button-bad-hf-border-color: rgba(255, 0, 0, 0.3);
 }
 
+.desktop-block {
+    @apply hidden;
+}
+
+.mobile-block {
+    @apply block;
+}
+
+.desktop-flex {
+    @apply hidden;
+}
+
+.mobile-flex {
+    @apply flex;
+}
+
+@media (width >= 768px) {
+    .desktop-block {
+        @apply block;
+    }
+
+    .mobile-block {
+        @apply hidden;
+    }
+
+    .desktop-flex {
+        @apply flex;
+    }
+
+    .mobile-flex {
+        @apply hidden;
+    }
+}
+
 @layer components {
 
     /* width */
