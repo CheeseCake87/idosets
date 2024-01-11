@@ -28,31 +28,7 @@ export default function TopMenu(props) {
                 </span>
             </button>
 
-            <Show when={ctx.theme === 'dark'}>
-                <button
-                    className={"flex rounded-full"}
-                    onClick={() => {
-                        ctx.setTheme('light').then(json => {
-                            setCtx('theme', json.theme)
-                        })
-                    }}
-                >
-                    <span className="material-icons-round">light_mode</span>
-                </button>
-            </Show>
 
-            <Show when={ctx.theme === 'light'}>
-                <button
-                    className={"flex rounded-full"}
-                    onClick={() => {
-                        ctx.setTheme('dark').then(json => {
-                            setCtx('theme', json.theme)
-                        })
-                    }}
-                >
-                    <span className="material-icons-round">dark_mode</span>
-                </button>
-            </Show>
 
             <button onClick={
                 () => {
@@ -76,3 +52,29 @@ export default function TopMenu(props) {
     )
 
 }
+
+// <Show when={ctx.theme === 'dark'}>
+//     <button
+//         className={"flex rounded-full"}
+//         onClick={() => {
+//             ctx.setTheme('light').then(json => {
+//                 setCtx('theme', json.theme)
+//             })
+//         }}
+//     >
+//         <span className="material-icons-round">light_mode</span>
+//     </button>
+// </Show>
+//
+// <Show when={ctx.theme === 'light'}>
+//     <button
+//         className={"flex rounded-full"}
+//         onClick={() => {
+//             ctx.setTheme('dark').then(json => {
+//                 setCtx('theme', json.theme)
+//             })
+//         }}
+//     >
+//         <span className="material-icons-round">dark_mode</span>
+//     </button>
+// </Show>
