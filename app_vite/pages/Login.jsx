@@ -19,18 +19,18 @@ export default function Login() {
                     <h2 className={"my-0"}>💪 I Do Sets</h2>
                 </div>
                 <Show when={login_status() === 'waiting'}>
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault()
-                            set_login_status('processing')
-                            ctx.tryLogin(email_address()).then(json => {
-                                if (json.status === 'success') {
-                                    set_login_status('success')
-                                } else {
-                                    set_login_status('error')
-                                }
-                            })
-                        }}>
+
+                    <form onSubmit={(e) => {
+                        e.preventDefault()
+                        set_login_status('processing')
+                        ctx.tryLogin(email_address()).then(json => {
+                            if (json.status === 'success') {
+                                set_login_status('success')
+                            } else {
+                                set_login_status('error')
+                            }
+                        })
+                    }}>
                         <input
                             type="email"
                             id="email_address"
@@ -53,6 +53,7 @@ export default function Login() {
                             Login / Signup
                         </button>
                     </form>
+
                 </Show>
 
                 <Show when={login_status() === 'processing'}>
