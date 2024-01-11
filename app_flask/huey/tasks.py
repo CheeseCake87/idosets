@@ -1,5 +1,5 @@
 from . import run
-from .email_service import EmailService, EmailServiceSettings
+from .email_service import SMTPEmailService, EmailServiceSettings
 
 
 @run.task()
@@ -9,7 +9,7 @@ def send_email(
     subject: str,
     body: str,
 ) -> None:
-    e = EmailService(email_service_settings)
+    e = SMTPEmailService(email_service_settings)
     e.from_(f"idosets.app <{email_service_settings.username}>").recipients(
         recipients
     ).subject(subject).body(body).send()
