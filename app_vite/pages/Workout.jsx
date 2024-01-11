@@ -11,10 +11,6 @@ export default function Workout() {
     const params = useParams();
 
     const [workout] = createResource(params.workout_id, ctx.getWorkout)
-
-    // const [addingWorkout, setAddingWorkout] = createSignal(false)
-    // const [newWorkoutName, setNewWorkoutName] = createSignal('')
-
     const [_workout, _setWorkout] = createSignal({})
 
     createEffect(() => {
@@ -30,17 +26,29 @@ export default function Workout() {
         }
     })
 
+    function Page() {
+        return (
+            <div className={"container"}>
+                <div className={"action-options gap-4 pb-4"}>
+                    <div className={"action"} onClick={() => {
+                        navigate('/workouts')
+                    }}>
+                        <span className="material-icons">arrow_back</span>
+                    </div>
+                    <div className={"action"}>
+                        <span className="material-icons">edit</span>
+                    </div>
+                    <div className={"action-options-text"}><h1 className={"m-0"}>{_workout().name}</h1></div>
+                </div>
+
+            </div>
+        )
+    }
+
     return (
         <>
-            {
-                workout.loading ? <Loading/> :
-                    <>
-                        <TopMenu/>
-                        <div className={"container"}>
-                            {_workout().name}
-                        </div>
-                    </>
-            }
+            <TopMenu/>
+            {workout.loading ? <div className={"pt-10"}><Loading/></div> : <Page/>}
         </>
     );
 };
