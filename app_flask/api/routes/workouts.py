@@ -1,3 +1,5 @@
+from time import sleep
+
 from flask import session, request
 from flask_imp.security import api_login_check
 
@@ -29,7 +31,7 @@ def workouts_add_():
     account_id = session.get("account_id", 0)
 
     if name and len(name) > 0 and account_id:
-        _workouts = Workouts.insert(
+        _workout, _workout_id = Workouts.insert(
             {
                 "account_id": session.get("account_id", 0),
                 "name": name,
@@ -39,11 +41,13 @@ def workouts_add_():
         return {
             "status": "success",
             "message": "Workout added successfully.",
+            "workout_id": _workout_id,
         }
 
     return {
         "status": "failed",
         "message": "Unable to add workout.",
+        "workout_id": 0,
     }
 
 
