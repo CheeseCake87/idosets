@@ -282,6 +282,27 @@ body {
         background-color: var(--card-bg-color);
     }
 
+    .action-options {
+        @apply flex flex-row align-middle;
+    }
+
+    .action-options .action-options-text {
+        @apply flex flex-col justify-center;
+    }
+
+    .action-options .action {
+        @apply flex border rounded-full p-4 cursor-pointer;
+        border-color: var(--html-default-border-color);
+    }
+
+    .action-options .action:hover {
+        background-color: var(--card-bg-color);
+    }
+
+    .action-options .action span {
+        font-size: 20pt;
+    }
+
     .display-box {
         @apply flex p-6 rounded-md border;
         border-color: var(--html-default-border-color);
