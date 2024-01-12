@@ -1,11 +1,14 @@
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from imaplib import IMAP4_SSL
 from pathlib import Path
 from smtplib import SMTP
 from smtplib import SMTPException
 from ssl import create_default_context
 from typing import Optional, Union
+
+import mailparser
 
 
 class EmailServiceSettings:
@@ -231,28 +234,84 @@ class SMTPEmailService:
         return True
 
 
+class IMAPEmailService:
+    dev_mode: bool
+    username: str
+    password: str
+    server: str
+    port: int
+
+    inbox: list[bytes]
+
+    def __init__(self, settings: EmailServiceSettings):
+        self.dev_mode = settings.dev_mode
+        self.username = settings.username
+        self.password = settings.password
+        self.server = settings.server
+        self.port = settings.port
+        self.emails = []
+
+    def get_emails(self):
+        with IMAP4_SSL(self.server, self.port, timeout=10) as do:
+            do.login(self.username, self.password)
+            do.select("INBOX")
+            _, data = do.search(None, "ALL")
+            listed = data[0].split()
+
+            for num in listed:
+                _, resp = do.fetch(num, "(RFC822)")
+                if resp:
+                    raw = resp[0]
+                    if isinstance(raw, tuple):
+                        email = mailparser.parse_from_bytes(raw[1])
+                        print("FROM ::", email.from_)
+                        print("TO :: ", email.to, email.delivered_to)
+                        print("Subject :: ", email.subject)
+                        print("Date :: ", email.date)
+                        print("---- HTML ----")
+                        print(email.text_html)
+                        print("---- TEXT ----")
+                        print(email.text_plain)
+                        print("----")
+
+    def __repr__(self) -> str:
+        return f"<Class: EmailService>" f"\n{self.emails}\n"
+
+
 # usage:
 if __name__ == "__main__":
+    import os
+    from pathlib import Path
+    from dotenv import load_dotenv
+
+    env = Path(Path.cwd().parent.parent.parent / ".env2")
+
+    load_dotenv(env)
+
     email_service_settings = EmailServiceSettings(
         dev_mode=True,
-        username="test@test.com",
-        password="none",
-        server="none.none.none",
-        port=000,
+        username=os.environ.get("EMAIL_IMAP_USERNAME"),
+        password=os.environ.get("EMAIL_IMAP_PASSWORD"),
+        server=os.environ.get("EMAIL_IMAP_SERVER"),
+        port=os.environ.get("EMAIL_IMAP_PORT"),
     )
 
-    email_service = SMTPEmailService(email_service_settings)
-    email_service.from_("Test Person <test@test.com>")
-    email_service.recipients(["recipient@test.com"])
-    email_service.cc_recipients(["cc-recipient@test.com"])
-    email_service.bcc_recipients(["bcc-recipient@test.com"])
-    email_service.subject("Test Email Subject")
-    email_service.body("Test Email Body")
+    imap_service = IMAPEmailService(email_service_settings)
 
-    if email_service.send():
-        print("Email sent!")
-    else:
-        print("Email failed to send!")
+    imap_service.get_emails()
+
+    # email_service = SMTPEmailService(email_service_settings)
+    # email_service.from_("Test Person <test@test.com>")
+    # email_service.recipients(["recipient@test.com"])
+    # email_service.cc_recipients(["cc-recipient@test.com"])
+    # email_service.bcc_recipients(["bcc-recipient@test.com"])
+    # email_service.subject("Test Email Subject")
+    # email_service.body("Test Email Body")
+    #
+    # if email_service.send():
+    #     print("Email sent!")
+    # else:
+    #     print("Email failed to send!")
 
 # additional:
 """

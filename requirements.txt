@@ -10,3 +10,4 @@ huey
 gunicorn
 supervisor
 email-validator
+mail-parser==3.15.0
