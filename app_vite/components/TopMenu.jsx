@@ -1,4 +1,4 @@
-import {Show, useContext} from "solid-js";
+import {useContext} from "solid-js";
 import {mainContext} from "../context/mainContext";
 import {useNavigate} from "@solidjs/router";
 
@@ -27,8 +27,6 @@ export default function TopMenu(props) {
                     <span className="material-icons-round">person</span>
                 </span>
             </button>
-
-
 
             <button onClick={
                 () => {

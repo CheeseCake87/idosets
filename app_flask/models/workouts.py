@@ -18,11 +18,9 @@ class Workouts(db.Model, UtilityMixin):
     @classmethod
     def select_all(cls, account_it: str):
         return cls.as_jsonable_dict(
-            select(cls).where(
-                cls.account_id == account_it
-            ).order_by(
-                desc(cls.created)
-            ),
+            select(cls)
+            .where(cls.account_id == account_it)
+            .order_by(desc(cls.created)),
             include_joins=["rel_exercises"],
         )
 
@@ -60,6 +58,4 @@ class WorkoutLogs(db.Model, UtilityMixin):
     started = db.Column(
         db.DateTime, nullable=False, default=DatetimeDelta().datetime
     )
-    finished = db.Column(
-        db.DateTime, nullable=True, default=None
-    )
+    finished = db.Column(db.DateTime, nullable=True, default=None)

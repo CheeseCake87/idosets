@@ -14,10 +14,7 @@ from .. import bp
 )
 def workouts_():
     _workouts = Workouts.select_all(session.get("account_id", 0))
-    return {
-        "status": "success",
-        **_workouts
-    }
+    return {"status": "success", **_workouts}
 
 
 @bp.post("/workouts/add")
@@ -35,7 +32,7 @@ def workouts_add_():
             {
                 "account_id": session.get("account_id", 0),
                 "name": name,
-                "created": DatetimeDelta().datetime
+                "created": DatetimeDelta().datetime,
             }
         )
         return {
@@ -58,7 +55,4 @@ def workouts_add_():
 def workout_(workout_id):
     _workout = Workouts.select_by_id(workout_id)
     if _workout:
-        return {
-            "status": "success",
-            **_workout
-        }
+        return {"status": "success", **_workout}

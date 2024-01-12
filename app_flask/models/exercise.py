@@ -40,6 +40,4 @@ class ExerciseLogs(db.Model, UtilityMixin):
     started = db.Column(
         db.DateTime, nullable=False, default=DatetimeDelta().datetime
     )
-    finished = db.Column(
-        db.DateTime, nullable=True, default=None
-    )
+    finished = db.Column(db.DateTime, nullable=True, default=None)
