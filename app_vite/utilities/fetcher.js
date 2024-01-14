@@ -6,14 +6,22 @@ export default class Fetcher {
     refetch;
     mutate;
 
-    constructor(fetcher, args) {
-        console.log("Fetcher", fetcher, args)
-        let [
-            data, {refetch, mutate}
-        ] = createResource(fetcher);
-        this.data = data
-        this.refetch = refetch
-        this.mutate = mutate
+    constructor(source, fetcher) {
+        if (typeof source === "function") {
+            let [
+                data, {refetch, mutate}
+            ] = createResource(source);
+            this.data = data
+            this.refetch = refetch
+            this.mutate = mutate
+        } else {
+            let [
+                data, {refetch, mutate}
+            ] = createResource(source, fetcher);
+            this.data = data
+            this.refetch = refetch
+            this.mutate = mutate
+        }
     }
 
     get(key) {
