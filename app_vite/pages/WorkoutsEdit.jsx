@@ -20,12 +20,6 @@ export default function WorkoutsEdit() {
         }
     })
 
-    onMount(() => {
-        if (workouts.data.loading === false) {
-            console.log(workouts.data().status)
-        }
-    })
-
     return (
         <>
             {
