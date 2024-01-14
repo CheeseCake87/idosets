@@ -77,6 +77,7 @@ export default function Workouts() {
 
                     </div>
                 </Show>
+
                 <div className={"py-4 flex flex-col gap-2"}>
                     <For each={workouts.get("Workouts")} fallback={
                         <div className={"action-box"}>
@@ -94,6 +95,7 @@ export default function Workouts() {
                         }
                     </For>
                 </div>
+
             </div>
         )
     }
