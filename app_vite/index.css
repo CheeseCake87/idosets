@@ -293,6 +293,8 @@ body {
     .action-options .action {
         @apply flex border rounded-full p-4 cursor-pointer;
         border-color: var(--html-default-border-color);
+        width: 60px;
+        height: 60px;
     }
 
     .action-options .action:hover {
@@ -300,6 +302,7 @@ body {
     }
 
     .action-options .action span {
+        @apply flex flex-col justify-center;
         font-size: 20pt;
     }
 
