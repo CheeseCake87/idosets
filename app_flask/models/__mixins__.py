@@ -1,5 +1,5 @@
-from datetime import datetime, date
 import typing as t
+from datetime import datetime, date
 
 from sqlalchemy import (
     Result,
@@ -12,6 +12,7 @@ from sqlalchemy import (
     update,
     delete,
     func,
+    Column,
 )
 from sqlalchemy.engine import Row
 from sqlalchemy.inspection import inspect
@@ -21,54 +22,66 @@ from sqlalchemy.sql import sqltypes
 from app_flask.extensions import db
 
 
-def parse(value, type_):
+def parse(key, value, type_):
+    """
+    Returns value as type_ if possible, otherwise raises ValueError
+
+    :param key:
+    :param value:
+    :param type_:
+    :return:
+    """
     if isinstance(type_, sqltypes.DateTime):
         if isinstance(value, datetime):
-            return value, value.isoformat()
+            return value
 
         if isinstance(value, date):
-            return datetime.combine(
-                value, datetime.min.time()
-            ), value.isoformat()
+            return datetime.combine(value, datetime.min.time())
 
         if isinstance(value, str):
             try:
                 _ = datetime.strptime(value, "%Y-%m-%d")
-                return _, _.isoformat()
+                return _
             except Exception as e:
                 _ = e
 
             try:
                 _ = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
-                return _, _.isoformat()
+                return _
             except Exception as e:
                 _ = e
 
             try:
                 _ = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                return _, _.isoformat()
+                return _
             except Exception as e:
                 _ = e
 
+            raise ValueError(f"Unable to parse datetime from {value} for {key}")
+
     if isinstance(type_, sqltypes.Integer):
         try:
-            return int(value), int(value)
+            return int(value)
         except Exception as e:
             _ = e
 
+        raise ValueError(f"Unable to parse integer from {value} for {key}")
+
     if isinstance(type_, sqltypes.Boolean):
         if isinstance(value, bool):
-            return value, value
+            return value
         if isinstance(value, str):
             if value.lower() in ["yes", "true", "t", "1"]:
-                return True, True
-            return False, False
+                return True
+            return False
         if isinstance(value, int):
             if value == 1:
-                return True, True
-            return False, False
+                return True
+            return False
 
-    return value, value
+        raise ValueError(f"Unable to parse boolean from {value} for {key}")
+
+    return value
 
 
 class UtilityMixin:
@@ -79,7 +92,7 @@ class UtilityMixin:
             if key == pk.name:
                 continue
             if hasattr(query, key):
-                setattr(query, key, parse(value, getattr(cls, key).type)[0])
+                setattr(query, key, parse(key, value, getattr(cls, key).type))
 
         result = cls.parse_rows(query)
         db.session.commit()
@@ -120,7 +133,7 @@ class UtilityMixin:
     ) -> tuple[t.Any, t.Any] | tuple[None, None]:
         if single:
             _ = {
-                key: parse(value, getattr(cls, key).type)[0]
+                key: parse(key, value, getattr(cls, key).type)
                 for key, value in single.items()
                 if hasattr(cls, key)
             }
@@ -137,7 +150,7 @@ class UtilityMixin:
         if batch:
             _ = [
                 {
-                    key: parse(value, getattr(cls, key).type)[0]
+                    key: parse(key, value, getattr(cls, key).type)
                     for key, value in x.items()
                     if hasattr(cls, key)
                 }
@@ -173,6 +186,7 @@ class UtilityMixin:
         paginate: bool = False,
         page: int = 1,
         per_page: int = 10,
+        order_by: list[tuple] = None,
         count: bool = True,
     ):
         pk = cls._get_pk()
@@ -186,6 +200,14 @@ class UtilityMixin:
             for field, value in foreign_keys.items():
                 if hasattr(cls, field):
                     _ = _.where(getattr(cls, field) == value)  # noqa
+
+        if order_by:
+            for field, direction in order_by:
+                if hasattr(cls, field):
+                    if direction == "asc":
+                        _ = _.order_by(getattr(cls, field).asc())
+                    if direction == "desc":
+                        _ = _.order_by(getattr(cls, field).desc())
 
         if paginate and not as_json:
             return db.paginate(_, page=page, per_page=per_page, count=count)
@@ -206,27 +228,21 @@ class UtilityMixin:
         return exe[0] if len(exe) == 1 else exe
 
     @classmethod
-    def update_(cls, record: dict, updated_values: dict):
-        pk = cls._get_pk()
-        pk_in_values = record.get(pk.name, None)
+    def update_(cls, updated_values: dict):
+        pk: Column = cls._get_pk()
+        pk_in_values = updated_values.get(pk.name, None)
         _ = {}
 
-        if record:
-            for key, value in updated_values.items():
-                if key in record:
-                    if key == pk.name:
-                        continue
-                    if hasattr(cls, key):
-                        _[key], record[key] = parse(
-                            value, getattr(cls, key).type
-                        )
+        for key, value in updated_values.items():
+            if key == pk.name:
+                continue
+            if hasattr(cls, key):
+                _[key] = parse(key, value, getattr(cls, key).type)
 
-            db.session.execute(
-                update(cls).where(pk == pk_in_values).values(**_)
-            )  # type: ignore
-            db.session.commit()
+        db.session.execute(update(cls).where(pk == pk_in_values).values(**_))  # type: ignore
+        db.session.commit()
 
-        return record
+        return _
 
     @classmethod
     def _as_dict(cls, row: Row) -> dict:
