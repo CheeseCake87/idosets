@@ -30,15 +30,7 @@ export default function TopMenu(props) {
 
             <button onClick={
                 () => {
-                    ctx.tryLogout().then(json => {
-                        if (json.status === 'success') {
-                            setCtx("logged_in", false)
-                            setCtx("account_id", 0)
-                            setCtx("email_address", '')
-                            setCtx("theme", 'dark')
-                            navigate('/login')
-                        }
-                    })
+                    return null
                 }
             }>
                 <span className={"desktop-block"}>Logout</span>
