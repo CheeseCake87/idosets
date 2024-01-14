@@ -1,5 +1,3 @@
-from time import sleep
-
 from flask import session, request
 from flask_imp.security import api_login_check
 
@@ -17,6 +15,16 @@ def workouts_():
     return {"status": "success", **_workouts}
 
 
+@bp.get("/workouts/<workout_id>")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def workout_(workout_id):
+    _workout = Workouts.select_by_id(workout_id)
+    if _workout:
+        return {"status": "success", **_workout}
+
+
 @bp.post("/workouts/add")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
@@ -27,10 +35,10 @@ def workouts_add_():
     name = jsond.get("name")
     account_id = session.get("account_id", 0)
 
-    if name and len(name) > 0 and account_id:
+    if name and len(name) > 0:
         _workout, _workout_id = Workouts.insert(
             {
-                "account_id": session.get("account_id", 0),
+                "account_id": account_id,
                 "name": name,
                 "created": DatetimeDelta().datetime,
             }
@@ -48,11 +56,16 @@ def workouts_add_():
     }
 
 
-@bp.get("/workouts/<workout_id>")
+@bp.post("/workouts/<workout_id>/edit")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
-def workout_(workout_id):
-    _workout = Workouts.select_by_id(workout_id)
-    if _workout:
-        return {"status": "success", **_workout}
+def workouts_edit_(workout_id):
+    jsond = request.json
+    _workout = Workouts.update_({"workout_id": workout_id, **jsond})
+
+    return {
+        "status": "success",
+        "message": "Workout edited successfully.",
+        "workout_id": _workout.get("workout_id"),
+    }
