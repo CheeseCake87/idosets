@@ -9,7 +9,7 @@ indent-width = 4
 ignore = ["F403", "F405"]
 
 [tool.dev]
-npm-binary = "npm"
+npm-binary = "/home/david/.nvm/versions/node/v18.18.2/bin/npm"
 vite-dir = "app_vite"
 flask-dir = "app_flask"
 flask-static-folder = "app_flask/resources/static"
