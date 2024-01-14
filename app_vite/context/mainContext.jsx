@@ -111,7 +111,6 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/workouts`,
             )
         },
-
         async addWorkout(name) {
             return await postFetch(
                 `${API_URL}/api/workouts/add`,
@@ -120,10 +119,26 @@ export function MainContextProvider(props) {
                 }
             )
         },
-
         async getWorkout(workout_id) {
             return await getFetch(
                 `${API_URL}/api/workouts/${workout_id}`
+            )
+        },
+        async editWorkout(workout_id, data) {
+            return await postFetch(
+                `${API_URL}/api/workouts/${workout_id}/edit`, data
+            )
+        },
+
+        async getExercises(workout_id) {
+            return await getFetch(
+                `${API_URL}/api/workouts/${workout_id}/exercises`
+            )
+        },
+        async addExercise(workout_id, data) {
+            return await postFetch(
+                `${API_URL}/api/workouts/${workout_id}/exercises/add`,
+                data
             )
         },
 
