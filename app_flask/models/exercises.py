@@ -16,7 +16,12 @@ class Exercises(db.Model, UtilityMixin):
 
     rel_workouts = relationship(
         "Workouts",
-        backref="Exercises",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
+
+    rel_sets = relationship(
+        "Sets",
         viewonly=True,
         cascade="all, delete-orphan",
     )
@@ -26,6 +31,18 @@ class Exercises(db.Model, UtilityMixin):
         viewonly=True,
         cascade="all, delete-orphan",
     )
+
+    @classmethod
+    def select_all(cls, account_id, workout_id):
+        return cls.as_jsonable_dict(
+            select(cls).where(
+                and_(
+                    cls.account_id == account_id,
+                    cls.workout_id == workout_id,
+                )
+            ),
+            include_joins=["rel_sets"],
+        )
 
 
 class ExerciseLogs(db.Model, UtilityMixin):
