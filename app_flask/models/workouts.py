@@ -15,6 +15,18 @@ class Workouts(db.Model, UtilityMixin):
         db.DateTime, nullable=False, default=DatetimeDelta().datetime
     )
 
+    rel_workoutLogs = relationship(
+        "WorkoutLogs",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
+
+    rel_exercises = relationship(
+        "Exercises",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
+
     @classmethod
     def select_all(cls, account_it: str):
         return cls.as_jsonable_dict(
@@ -32,19 +44,6 @@ class Workouts(db.Model, UtilityMixin):
             ),
             include_joins=["rel_exercises"],
         )
-
-    rel_workoutLogs = relationship(
-        "WorkoutLogs",
-        viewonly=True,
-        cascade="all, delete-orphan",
-    )
-
-    rel_exercises = relationship(
-        "Exercises",
-        backref="Workouts",
-        viewonly=True,
-        cascade="all, delete-orphan",
-    )
 
 
 class WorkoutLogs(db.Model, UtilityMixin):
