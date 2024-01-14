@@ -1,7 +1,7 @@
 import click
 
-from __init__ import Config
-from runners import npm_run_dev, flask_run_debug, huey_run, npm_build, supervisor_run, supervisor_end
+from .__init__ import Config
+from .runners import npm_run_dev, flask_run_debug, huey_run, npm_build, supervisor_run, supervisor_end
 
 
 @click.group()
