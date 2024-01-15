@@ -37,12 +37,14 @@ class Workouts(db.Model, UtilityMixin):
         )
 
     @classmethod
-    def select_by_id(cls, workout_id: str):
+    def select_by_id(cls, account_id, workout_id: str):
         return cls.as_jsonable_dict(
             select(cls).where(
-                cls.workout_id == workout_id,
-            ),
-            include_joins=["rel_exercises"],
+                and_(
+                    cls.account_id == account_id,
+                    cls.workout_id == workout_id,
+                )
+            )
         )
 
 
