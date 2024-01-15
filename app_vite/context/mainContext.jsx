@@ -56,12 +56,58 @@ export function MainContextProvider(props) {
         navigate('/error')
     }
 
+    async function deleteFetch(url) {
+        const response = await fetch(
+            url, {
+                credentials: "include",
+                method: "DELETE",
+            }
+        )
+
+        if (response.headers.get('content-type')?.includes('application/json')) {
+            const json = await response.json()
+            if (DEBUG) {
+                console.log(url, json)
+            }
+            return json
+        }
+
+        navigate('/error')
+    }
+
     const [store, setStore] = createStore({
 
         logged_in: false,
         theme: 'dark',
         account_id: 0,
         email_address: '',
+
+        truncate: (str, n) => {
+            if (str === undefined) return ('')
+            return (str.length > n) ? str.substring(0, n - 1) + '...' : str;
+        },
+
+        fancyTimeFormat(duration) {
+            // Hours, minutes and seconds
+            const hrs = ~~(duration / 3600);
+            const mins = ~~((duration % 3600) / 60);
+            const secs = ~~duration % 60;
+
+            // Output like "1:01" or "4:03:59" or "123:03:59"
+            let ret = "";
+
+            if (hrs > 0) {
+                ret += "" + hrs + (hrs > 1 ? " hours " : " hour ") + (mins < 10 ? "" : "");
+            }
+
+            if (mins > 0) {
+                ret += "" + mins + (mins > 1 ? " mins " : " min ");
+            }
+
+            ret += "" + secs + " secs ";
+
+            return ret;
+        },
 
         async getSession() {
             return await getFetch(
@@ -111,36 +157,75 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/workouts`,
             )
         },
-        async addWorkout(name) {
+        async addWorkout(params) {
             return await postFetch(
                 `${API_URL}/api/workouts/add`,
                 {
-                    name: name,
+                    name: params.name,
                 }
             )
         },
-        async getWorkout(workout_id) {
+        async getWorkout(params) {
             return await getFetch(
-                `${API_URL}/api/workouts/${workout_id}`
+                `${API_URL}/api/workouts/${params.workout_id}`
             )
         },
-        async editWorkout(workout_id, data) {
+        async editWorkout(params) {
             return await postFetch(
-                `${API_URL}/api/workouts/${workout_id}/edit`, data
+                `${API_URL}/api/workouts/${params.workout_id}/edit`, params.data
+            )
+        },
+        async deleteWorkout(params) {
+            return await deleteFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/delete`
             )
         },
 
-        async getExercises(workout_id) {
+        async getExercises(params) {
             return await getFetch(
-                `${API_URL}/api/workouts/${workout_id}/exercises`
+                `${API_URL}/api/workouts/${params.workout_id}/exercises`
             )
         },
-        async addExercise(workout_id, data) {
+        async addExercise(params) {
             return await postFetch(
-                `${API_URL}/api/workouts/${workout_id}/exercises/add`,
-                data
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/add`,
+                params.data
             )
         },
+        async getExercise(params) {
+            return await getFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}`
+            )
+        },
+        async editExercise(params) {
+            return await postFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/edit`,
+                params.data
+            )
+        },
+        async deleteExercise(params) {
+            return await deleteFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/delete`
+            )
+        },
+
+        async getSets(params) {
+            return await getFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets`
+            )
+        },
+        async addSet(params) {
+            return await postFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/add`,
+                params.data
+            )
+        },
+        async deleteSet(params) {
+            return await deleteFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/${params.set_id}/delete`
+            )
+        },
+
 
     });
 
