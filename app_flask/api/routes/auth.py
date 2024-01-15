@@ -8,7 +8,6 @@ from .. import bp
 
 @bp.post("/auth")
 def auth_():
-    sleep(1)
     jsond = request.json
 
     account_id = jsond.get("account_id")
@@ -42,3 +41,16 @@ def check_login():
     if session.get("logged_in"):
         return {"status": "passed", "message": "Logged in."}
     return {"status": "failed", "message": "Not logged in."}
+
+
+@bp.get("/force/login")
+def force_login():
+    session["logged_in"] = True
+    session["account_id"] = 1
+    session["theme"] = "dark"
+    return {
+        "status": "passed",
+        "message": "Logged in.",
+        "account_id": 1,
+        "email_address": "test@test.com",
+    }
