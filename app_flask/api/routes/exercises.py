@@ -5,6 +5,7 @@ from app_flask.models.exercises import Exercises
 from app_flask.models.workouts import Workouts
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
+from ...models.sets import Sets
 
 
 @bp.get("/workouts/<workout_id>/exercises")
@@ -12,8 +13,7 @@ from .. import bp
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def exercises_(workout_id):
-    account_id = session.get("account_id", 0)
-    _exercises = Exercises.select_all(account_id, workout_id)
+    _exercises = Exercises.select_all(session.get("account_id", 0), workout_id)
     return {"status": "success", **_exercises}
 
 
@@ -22,11 +22,16 @@ def exercises_(workout_id):
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def exercise_(workout_id, exercise_id):
-    _exercise = Exercises.get_by_key(
-        exercise_id, {"workout_id": workout_id}, as_json=True
+    _workout = Workouts.select_by_id(session.get("account_id", 0), workout_id)
+    _exercise = Exercises.select_by_id(
+        session.get("account_id", 0),
+        workout_id,
+        exercise_id,
     )
-    if _exercise:
-        return {"status": "success", **_exercise}
+    _sets = Sets.select_all(
+        session.get("account_id", 0), workout_id, exercise_id
+    )
+    return {"status": "success", **_workout, **_exercise, **_sets}
 
 
 @bp.post("/workouts/<workout_id>/exercises/add")
@@ -61,7 +66,7 @@ def exercises_add_(workout_id):
 
     return {
         "status": "failed",
-        "message": "Unable to add workout.",
+        "message": "Unable to add exercise.",
         "workout_id": 0,
     }
 
@@ -72,12 +77,26 @@ def exercises_add_(workout_id):
 )
 def exercises_edit_(workout_id, exercise_id):
     jsond = request.json
-    _workout = Workouts.update_(
+    _exercise = Exercises.update_(
         {"workout_id": workout_id, "exercise_id": exercise_id, **jsond}
     )
 
     return {
         "status": "success",
-        "message": "Workout edited successfully.",
-        "workout_id": _workout.get("workout_id"),
+        "message": "Exercise edited successfully.",
+        "exercise_id": _exercise.get("exercise_id"),
+    }
+
+
+@bp.delete("/workouts/<workout_id>/exercises/<exercise_id>/delete")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def exercises_delete_(workout_id, exercise_id):
+    Exercises.delete(exercise_id)
+    Sets.delete_all_by_exercise_id(exercise_id)
+    return {
+        "status": "success",
+        "message": "Exercise edited successfully.",
+        "exercise_id": exercise_id,
     }
