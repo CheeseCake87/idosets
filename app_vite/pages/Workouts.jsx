@@ -16,6 +16,9 @@ export default function Workouts() {
     const [addingWorkout, setAddingWorkout] = createSignal(false)
     const [newWorkoutName, setNewWorkoutName] = createSignal('')
 
+    const [deleteWorkout, setDeleteWorkout] = createSignal(null)
+    const [startWorkout, setStartWorkout] = createSignal(null)
+
     createEffect(() => {
         if (workouts.data.loading === false) {
             if (workouts.data().status === 'unauthorized') {
@@ -27,8 +30,96 @@ export default function Workouts() {
     function Page() {
         return (
             <div className={"container"}>
+
+                <div className={"py-4 flex flex-col gap-2"}>
+                    <For each={workouts.get("Workouts")}>
+                        {(workout, i) =>
+                            <div className={"display-box flex-col"}>
+
+                                <div className={'flex-reactive justify-between'}>
+
+                                    <div className={'flex-col'}>
+                                        <h1 className={'m-0'}>{workout.name}</h1>
+                                        <p>{workout.rel_exercises.length} Exercises</p>
+                                    </div>
+
+                                    <div className={'action-options justify-between gap-2'}>
+
+                                        <div className={"action"} onClick={() => {
+                                            setDeleteWorkout(i())
+                                        }}>
+                                            <span className="material-icons">delete</span>
+                                        </div>
+                                        <div className={'flex gap-2'}>
+                                            <div className={"action"} onClick={() => {
+                                                navigate(`/workout/${workout.workout_id}`)
+                                            }}>
+                                                <span className="material-icons">edit</span>
+                                            </div>
+
+                                            <div className={"action"} onClick={() => {
+                                                setStartWorkout(i())
+                                            }}>
+                                                <span className="material-icons">start</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <Show when={deleteWorkout() === i()}>
+                                    <div className={"display-box flex-reactive items-center justify-between mt-4"}>
+                                        <p>Are you sure you want to delete this workout?</p>
+
+                                        <div className={'flex gap-2'}>
+                                            <button className={'button-bad'} onClick={() => {
+                                                ctx.deleteWorkout({
+                                                    workout_id: workout.workout_id,
+                                                }).then(json => {
+                                                    if (json.status === 'success') {
+                                                        setDeleteWorkout(null)
+                                                        workouts.refetch()
+                                                    }
+                                                })
+                                            }}>
+                                                Delete
+                                            </button>
+                                            <button onClick={() => {
+                                                setDeleteWorkout(null)
+                                            }}>
+                                                No
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </Show>
+
+                                <Show when={startWorkout() === i()}>
+                                    <div className={"display-box flex-reactive items-center justify-between mt-4"}>
+                                        <p>Are you sure you want to start this workout?</p>
+                                        <div className={'flex gap-2'}>
+
+                                            <button onClick={() => {
+                                                setStartWorkout(null)
+                                            }}>
+                                                Not ready
+                                            </button>
+                                            <button className={'button-good'} onClick={() => {
+                                                navigate(`/workout/${workout.workout_id}/start`)
+                                            }}>
+                                                Start
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Show>
+
+                            </div>
+                        }
+                    </For>
+                </div>
+
                 <Show when={addingWorkout() === true} fallback={
-                    <div className={"action-box-clickable"} onClick={() => {
+                    <div className={"action-box-clickable p-10"} onClick={() => {
                         setAddingWorkout(true)
                     }}>
                         <span className="material-icons px-2">add</span> Workout
@@ -36,7 +127,7 @@ export default function Workouts() {
                 }>
                     <div className={"action-box"}>
 
-                        <form className={"form-reactive"}
+                        <form className={"form-col"}
                               onSubmit={(e) => {
                                   e.preventDefault()
                               }}>
@@ -50,51 +141,40 @@ export default function Workouts() {
                                     setNewWorkoutName(e.target.value)
                                 }}
                             />
-                            <button
-                                className={"button-good"}
-                                type="button"
-                                onClick={() => {
-                                    ctx.addWorkout(newWorkoutName()).then(json => {
-                                        if (json.status === 'success') {
-                                            setAddingWorkout(false)
-                                            setNewWorkoutName('')
-                                            navigate(`/workouts/${json["workout_id"]}`)
-                                        }
-                                    })
-                                }}>
-                                Add
-                            </button>
-                            <button
-                                className={"button-bad"}
-                                type="button"
-                                onClick={() => {
-                                    setAddingWorkout(false)
-                                    setNewWorkoutName('')
-                                }}>
-                                Cancel
-                            </button>
+                            <div className={'flex justify-between gap-4 pt-2'}>
+
+                                <button
+                                    className={"button-bad flex-1"}
+                                    type="button"
+                                    onClick={() => {
+                                        setAddingWorkout(false)
+                                        setNewWorkoutName('')
+                                    }}>
+                                    Cancel
+                                </button>
+
+                                <button
+                                    className={"button-good flex-1"}
+                                    type="button"
+                                    onClick={() => {
+                                        ctx.addWorkout({
+                                            name: newWorkoutName(),
+                                        }).then(json => {
+                                            if (json.status === 'success') {
+                                                setAddingWorkout(false)
+                                                setNewWorkoutName('')
+                                                navigate(`/workout/${json["workout_id"]}`)
+                                            }
+                                        })
+                                    }}>
+                                    Add
+                                </button>
+
+                            </div>
                         </form>
 
                     </div>
                 </Show>
-
-                <div className={"py-4 flex flex-col gap-2"}>
-                    <For each={workouts.get("Workouts")} fallback={
-                        <div className={"action-box"}>
-                            <span className="material-icons px-2">sentiment_dissatisfied</span> No Workouts
-                        </div>
-                    }>
-                        {(workout, i) =>
-                            <div className={"display-box-clickable flex-col"}
-                                 onClick={() => {
-                                     navigate(`/workouts/${workout.workout_id}`)
-                                 }}>
-                                <h1>{workout.name}</h1>
-                                <p>{workout.rel_exercises.length} Exercises</p>
-                            </div>
-                        }
-                    </For>
-                </div>
 
             </div>
         )
