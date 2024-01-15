@@ -33,16 +33,41 @@ class Exercises(db.Model, UtilityMixin):
     )
 
     @classmethod
-    def select_all(cls, account_id, workout_id):
+    def select_all(cls, account_it, workout_id):
+        return cls.as_jsonable_dict(
+            select(cls)
+            .where(
+                and_(
+                    cls.account_id == account_it,
+                    cls.workout_id == workout_id,
+                )
+            )
+            .order_by(
+                asc(cls.order),
+            ),
+            include_joins=["rel_sets"],
+        )
+
+    @classmethod
+    def select_by_id(cls, account_id, workout_id, exercise_id):
         return cls.as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
                     cls.workout_id == workout_id,
+                    cls.exercise_id == exercise_id,
                 )
-            ),
-            include_joins=["rel_sets"],
+            )
         )
+
+    @classmethod
+    def delete_all_by_workout_id(cls, workout_id: int):
+        db.session.execute(
+            delete(cls).where(
+                cls.workout_id == workout_id,
+            )
+        )
+        db.session.commit()
 
 
 class ExerciseLogs(db.Model, UtilityMixin):
