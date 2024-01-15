@@ -9,35 +9,37 @@ export default function TopMenu(props) {
 
     return (
         <nav>
-            <button onClick={
-                () => {
-                    ctx.tryLogout().then(json => {
-                        if (json.status === 'success') {
-                            setCtx("logged_in", false)
-                            setCtx("account_id", 0)
-                            setCtx("email_address", '')
-                            setCtx("theme", 'dark')
-                            navigate('/login')
-                        }
-                    })
-                }
-            }>
-                <span className={"desktop-block"}>Your Account</span>
-                <span className={"mobile-flex"}>
+            <h3 className={"my-0"}>💪 I Do Sets</h3>
+            <div className={'flex gap-4'}>
+                <button onClick={
+                    () => {
+                    }
+                }>
+                    <span className={"desktop-block"}>Your Account</span>
+                    <span className={"mobile-flex"}>
                     <span className="material-icons-round">person</span>
                 </span>
-            </button>
+                </button>
 
-            <button onClick={
-                () => {
-                    return null
-                }
-            }>
-                <span className={"desktop-block"}>Logout</span>
-                <span className={"mobile-flex"}>
+                <button onClick={
+                    () => {
+                        ctx.tryLogout().then(json => {
+                            if (json.status === 'success') {
+                                setCtx("logged_in", false)
+                                setCtx("account_id", 0)
+                                setCtx("email_address", '')
+                                setCtx("theme", 'dark')
+                                navigate('/login')
+                            }
+                        })
+                    }
+                }>
+                    <span className={"desktop-block"}>Logout</span>
+                    <span className={"mobile-flex"}>
                     <span className="material-icons-round">logout</span>
                 </span>
-            </button>
+                </button>
+            </div>
         </nav>
     )
 
