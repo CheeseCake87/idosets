@@ -11,17 +11,22 @@ export default function Workout() {
     const navigate = useNavigate();
     const params = useParams();
 
-    const workout = new Fetcher(params.workout_id, ctx.getWorkout)
-    const exercises = new Fetcher(params.workout_id, ctx.getExercises)
+    const workout = new Fetcher(
+        {workout_id: params.workout_id},
+        ctx.getWorkout
+    )
 
     const [_workout, _setWorkout] = createSignal({})
 
     const [newWorkoutName, setNewWorkoutName] = createSignal('')
     const [editWorkout, setEditWorkout] = createSignal(false)
 
+    const [exercises, setExercises] = createSignal({})
     const [addingExercise, setAddingExercise] = createSignal(false)
     const [newExerciseName, setNewExerciseName] = createSignal('')
     const [newExerciseInfoUrl, setNewExerciseInfoUrl] = createSignal('')
+
+    const [deleteExercise, setDeleteExercise] = createSignal(null)
 
     createEffect(() => {
         if (workout.data.loading === false) {
@@ -29,10 +34,11 @@ export default function Workout() {
                 navigate('/login')
             }
             if (workout.get("Workouts").length === 0) {
-                navigate('/workouts')
+                navigate('/')
             } else {
                 _setWorkout(workout.get("Workouts")[0])
                 setNewWorkoutName(_workout().name)
+                setExercises(workout.get("Exercises"))
             }
         }
     })
@@ -42,27 +48,29 @@ export default function Workout() {
             <div className={"container"}>
 
                 {/* Workout Name*/}
-                <div className={"action-options gap-4 pb-4"}>
+                <div className={"action-options gap-5 pb-4"}>
                     <div className={"action"} onClick={() => {
-                        navigate('/workouts')
+                        navigate('/')
                     }}>
                         <span className="material-icons">arrow_back</span>
                     </div>
+
+                    <div className={"action-options-text"}>
+                        <h1 className={editWorkout() ? 'm-0 opacity-50' : 'm-0'}>
+                            {editWorkout() ? ctx.truncate(newWorkoutName(), 45) : ctx.truncate(_workout().name, 45)}
+                        </h1>
+                    </div>
+
                     <div className={"action"} onClick={() => {
                         setEditWorkout(true)
                     }}><span className="material-icons">edit</span>
-                    </div>
-                    <div className={"action-options-text"}>
-                        <h1 className={editWorkout() ? 'm-0 opacity-50' : 'm-0'}>
-                            {editWorkout() ? newWorkoutName() : _workout().name}
-                        </h1>
                     </div>
                 </div>
 
                 {/* Edit Workout */}
                 <Show when={editWorkout() === true}>
                     <div className={"action-box mb-4"}>
-                        <form className={"form-reactive"}
+                        <form className={"form-col"}
                               onSubmit={(e) => {
                                   e.preventDefault()
                               }}>
@@ -77,40 +85,103 @@ export default function Workout() {
                                     setNewWorkoutName(e.target.value)
                                 }}
                             />
-                            <button
-                                className={"button-good"}
-                                type="button"
-                                onClick={() => {
-                                    ctx.editWorkout(
-                                        params.workout_id,
-                                        {
-                                            name: newWorkoutName(),
-                                        }
-                                    ).then(json => {
-                                        if (json.status === 'success') {
-                                            setEditWorkout(false)
-                                            workout.refetch()
-                                        }
-                                    })
-                                }}>
-                                Save
-                            </button>
-                            <button
-                                className={"button-bad"}
-                                type="button"
-                                onClick={() => {
-                                    setEditWorkout(false)
-                                    setNewWorkoutName(_workout().name)
-                                }}>
-                                Cancel
-                            </button>
+                            <div className={'flex justify-between gap-4 pt-2'}>
+                                <button
+                                    className={"button-bad flex-1"}
+                                    type="button"
+                                    onClick={() => {
+                                        setEditWorkout(false)
+                                        setNewWorkoutName(_workout().name)
+                                    }}>
+                                    Cancel
+                                </button>
+                                <button
+                                    className={"button-good flex-1"}
+                                    type="button"
+                                    onClick={() => {
+                                        ctx.editWorkout(
+                                            {
+                                                workout_id: params.workout_id,
+                                                data: {
+                                                    name: newWorkoutName(),
+                                                }
+                                            }
+                                        ).then(json => {
+                                            if (json.status === 'success') {
+                                                setEditWorkout(false)
+                                                workout.refetch()
+                                            }
+                                        })
+                                    }}>
+                                    Save
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </Show>
 
+                {/* Exercises */}
+                <div className={"py-4 flex flex-col gap-2"}>
+                    <For each={exercises()}>
+                        {(exercise, i) =>
+                            <div className={"display-box flex-col"}>
+
+                                <div className={'flex-reactive justify-between'}>
+                                    <div className={'flex-col'}>
+                                        <h1 className={'m-0'}>{exercise.name}</h1>
+                                        <p>{exercise.rel_sets.length} Sets</p>
+                                    </div>
+                                    <div className={'action-options justify-between gap-2'}>
+                                        <div className={"action"} onClick={() => {
+                                            setDeleteExercise(i())
+                                        }}>
+                                            <span className="material-icons">delete</span>
+                                        </div>
+
+                                        <div className={"action"} onClick={() => {
+                                            navigate(`/workout/${params.workout_id}/exercise/${exercise.exercise_id}`)
+                                        }}>
+                                            <span className="material-icons">edit</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Show when={deleteExercise() === i()}>
+
+                                    <div className={"display-box flex-reactive items-center justify-between mt-4"}>
+                                        <p>Are you sure you want to delete this exercise?</p>
+                                        <div className={'flex gap-2'}>
+                                            <button className={'button-bad'} onClick={() => {
+                                                ctx.deleteExercise({
+                                                    workout_id: params.workout_id,
+                                                    exercise_id: exercise.exercise_id,
+                                                }).then(json => {
+                                                    if (json.status === 'success') {
+                                                        setDeleteExercise(null)
+                                                        workout.refetch()
+                                                    }
+                                                })
+                                            }}>
+                                                Yes
+                                            </button>
+                                            <button onClick={() => {
+                                                setDeleteExercise(null)
+                                            }}>
+                                                No
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </Show>
+
+                            </div>
+                        }
+                    </For>
+                </div>
+
                 {/* Add Exercise */}
                 <Show when={addingExercise() === true} fallback={
-                    <div className={"action-box-clickable"} onClick={() => {
+                    <div className={"action-box-clickable p-10"} onClick={() => {
                         setAddingExercise(true)
                     }}>
                         <span className="material-icons px-2">add</span> Exercise
@@ -118,7 +189,7 @@ export default function Workout() {
                 }>
                     <div className={"action-box"}>
 
-                        <form className={"form-reactive"}
+                        <form className={"form-col"}
                               onSubmit={(e) => {
                                   e.preventDefault()
                               }}>
@@ -142,63 +213,50 @@ export default function Workout() {
                                     setNewExerciseInfoUrl(e.target.value)
                                 }}
                             />
-                            <button
-                                className={"button-good"}
-                                type="button"
-                                onClick={() => {
-                                    ctx.addExercise(
-                                        params.workout_id,
-                                        {
-                                            name: newExerciseName(),
-                                            info_url: newExerciseInfoUrl(),
-                                            order: exercises.get("Exercises").length + 1,
-                                        }
-                                    ).then(json => {
-                                        if (json.status === 'success') {
-                                            setAddingExercise(false)
-                                            setNewWorkoutName('')
-                                            setNewExerciseInfoUrl('')
-                                        }
-                                    })
-                                }}>
-                                Add
-                            </button>
-                            <button
-                                className={"button-bad"}
-                                type="button"
-                                onClick={() => {
-                                    setAddingExercise(false)
-                                    setNewWorkoutName('')
-                                    setNewExerciseInfoUrl('')
-                                }}>
-                                Cancel
-                            </button>
+
+                            <div className={'flex justify-between gap-4 pt-2'}>
+
+                                <button
+                                    className={"button-bad flex-1"}
+                                    type="button"
+                                    onClick={() => {
+                                        setAddingExercise(false)
+                                        setNewWorkoutName('')
+                                        setNewExerciseInfoUrl('')
+                                    }}>
+                                    Cancel
+                                </button>
+
+                                <button
+                                    className={"button-good flex-1"}
+                                    type="button"
+                                    onClick={() => {
+                                        ctx.addExercise(
+                                            {
+                                                workout_id: params.workout_id,
+                                                data: {
+                                                    name: newExerciseName(),
+                                                    info_url: newExerciseInfoUrl(),
+                                                    order: exercises().length + 1,
+                                                }
+                                            },
+                                        ).then(json => {
+                                            if (json.status === 'success') {
+                                                setAddingExercise(false)
+                                                setNewWorkoutName('')
+                                                setNewExerciseInfoUrl('')
+                                                navigate(`/workout/${params.workout_id}/exercise/${json["exercise_id"]}`)
+                                            }
+                                        })
+                                    }}>
+                                    Add
+                                </button>
+
+                            </div>
                         </form>
 
                     </div>
                 </Show>
-
-                {/* Exercises */}
-                <div className={"py-4 flex flex-col gap-2"}>
-                    {exercises.data.loading ? <div className={"pt-10"}><Loading/></div> :
-                        <For each={exercises.get("Exercises")} fallback={
-                            <div className={"action-box"}>
-                                <span className="material-icons px-2">sentiment_dissatisfied</span> No Exercises
-                            </div>
-                        }>
-                            {(exercise, i) =>
-                                <div className={"display-box-clickable flex-col"}
-                                     onClick={() => {
-                                         // navigate(`/workouts/${workout.workout_id}`)
-                                     }}>
-                                    <h1>{exercise.name}</h1>
-                                    <p>{exercise.rel_sets.length} Sets</p>
-                                </div>
-                            }
-                        </For>
-                    }
-                </div>
-
 
             </div>
         )
