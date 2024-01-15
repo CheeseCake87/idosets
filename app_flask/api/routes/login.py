@@ -14,7 +14,6 @@ from .. import bp
 
 @bp.post("/login")
 def login():
-    sleep(1)
     jsond = request.json
 
     name, email_address = parseaddr(jsond.get("email_address"))
