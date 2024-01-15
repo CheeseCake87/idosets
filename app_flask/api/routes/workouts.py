@@ -1,9 +1,11 @@
 from flask import session, request
 from flask_imp.security import api_login_check
 
+from app_flask.models.exercises import Exercises
 from app_flask.models.workouts import Workouts
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
+from ...models.sets import Sets
 
 
 @bp.get("/workouts")
@@ -20,9 +22,10 @@ def workouts_():
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def workout_(workout_id):
-    _workout = Workouts.select_by_id(workout_id)
+    _workout = Workouts.select_by_id(session.get("account_id", 0), workout_id)
+    _exercises = Exercises.select_all(session.get("account_id", 0), workout_id)
     if _workout:
-        return {"status": "success", **_workout}
+        return {"status": "success", **_workout, **_exercises}
 
 
 @bp.post("/workouts/add")
@@ -68,4 +71,20 @@ def workouts_edit_(workout_id):
         "status": "success",
         "message": "Workout edited successfully.",
         "workout_id": _workout.get("workout_id"),
+    }
+
+
+@bp.delete("/workouts/<workout_id>/delete")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def workouts_delete_(workout_id):
+    Workouts.delete(workout_id)
+    Exercises.delete_all_by_workout_id(workout_id)
+    Sets.delete_all_by_workout_id(workout_id)
+
+    return {
+        "status": "success",
+        "message": "Workout edited successfully.",
+        "workout_id": workout_id,
     }
