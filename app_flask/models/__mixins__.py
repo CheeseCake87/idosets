@@ -123,17 +123,36 @@ class UtilityMixin:
         return db.session.execute(select(func.count(cls._get_pk()))).scalar()
 
     @classmethod
+    def delete(cls, pk_value: int = None, fk: list[tuple] = None) -> None:
+        q = delete(cls)
+        if pk_value:
+            q.where(cls._get_pk() == pk_value)
+        if fk:
+            for key, value in fk:
+                if hasattr(cls, key):
+                    q = q.where(getattr(cls, key) == value)
+
+        db.session.execute(q)
+        db.session.commit()
+
+    @classmethod
     def delete_all(cls) -> None:
         db.session.execute(delete(cls))
         db.session.commit()
 
     @classmethod
     def insert(
-        cls, single: dict = None, batch: list = None, debug: bool = False
+        cls,
+        single: dict = None,
+        batch: list = None,
+        debug: bool = False,
+        allow_none: bool = False,
     ) -> tuple[t.Any, t.Any] | tuple[None, None]:
         if single:
             _ = {
                 key: parse(key, value, getattr(cls, key).type)
+                if not allow_none
+                else value
                 for key, value in single.items()
                 if hasattr(cls, key)
             }
@@ -151,6 +170,8 @@ class UtilityMixin:
             _ = [
                 {
                     key: parse(key, value, getattr(cls, key).type)
+                    if not allow_none
+                    else value
                     for key, value in x.items()
                     if hasattr(cls, key)
                 }
