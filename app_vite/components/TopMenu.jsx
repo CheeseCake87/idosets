@@ -10,7 +10,7 @@ export default function TopMenu(props) {
 
     return (
         <nav>
-            <h3 className={"my-0 opacity-0"}>💪 I Do Sets</h3>
+            <h3 className={"my-0"}>💪 I Do Sets</h3>
             <div className={'flex gap-4'}>
 
                 <Show when={location.pathname.includes("/account")}
