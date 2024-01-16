@@ -19,6 +19,13 @@ class Sets(db.Model, UtilityMixin):
     order = db.Column(db.Integer, nullable=False, default=0)
 
     @classmethod
+    def count_by_account_id(cls, account_id: int) -> int:
+        return db.session.execute(
+            select(func.count(cls.set_id))
+            .where(cls.account_id == account_id)
+        ).scalar()
+
+    @classmethod
     def select_all(cls, account_it, workout_id, exercise_id):
         return cls.as_jsonable_dict(
             select(cls)

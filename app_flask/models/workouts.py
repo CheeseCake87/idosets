@@ -28,6 +28,13 @@ class Workouts(db.Model, UtilityMixin):
     )
 
     @classmethod
+    def count_by_account_id(cls, account_id: int) -> int:
+        return db.session.execute(
+            select(func.count(cls.workout_id))
+            .where(cls.account_id == account_id)
+        ).scalar()
+
+    @classmethod
     def select_all(cls, account_it: str):
         return cls.as_jsonable_dict(
             select(cls)
