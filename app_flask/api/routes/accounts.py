@@ -15,6 +15,8 @@ def account_(account_id):
         "status": "success",
         "message": "Account found.",
         **Accounts.get_account_info(account_id),
-
+        "total_workouts": Workouts.count_by_account_id(account_id),
+        "total_exercises": Exercises.count_by_account_id(account_id),
+        "total_sets": Sets.count_by_account_id(account_id),
     }
-    return
+    return jsonr
