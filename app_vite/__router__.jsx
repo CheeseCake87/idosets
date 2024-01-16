@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import PageNotFound from "./pages/PageNotFound";
 import Workout from "./pages/Workout";
 import Exercise from "./pages/Exercise";
+import Account from "./pages/Account";
 
 
 const root = document.getElementById('root');
@@ -28,6 +29,7 @@ render(() => (
                 <Route path="/auth/:account_id/:auth_code" component={Auth}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/" component={Workouts}/>
+                <Route path="/account" component={Account}/>
                 <Route path="/workout/:workout_id" component={Workout}/>
                 <Route path="/workout/:workout_id/exercise/:exercise_id" component={Exercise}/>
                 <Route path="*" component={PageNotFound}/>
