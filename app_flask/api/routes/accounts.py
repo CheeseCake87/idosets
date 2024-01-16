@@ -8,12 +8,13 @@ from app_flask.models.exercises import Exercises
 from app_flask.models.sets import Sets
 
 
-@bp.get("/accounts/<account_id>")
+@bp.get("/accounts")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
-def account_(account_id):
-    if account_id == session.get("account_id", 0):
+def account_():
+    account_id = session.get("account_id")
+    if account_id:
         return {
             "status": "success",
             "message": "Account found.",
@@ -22,6 +23,7 @@ def account_(account_id):
             "total_exercises": Exercises.count_by_account_id(account_id),
             "total_sets": Sets.count_by_account_id(account_id),
         }
+
     return {
         "status": "failed",
         "message": "Account not found.",
