@@ -1,12 +1,22 @@
 import click
 
-from .__init__ import Config
-from .runners import npm_run_dev, flask_run_debug, huey_run, npm_build, supervisor_run, supervisor_end
+try:
+    from .__init__ import Config
+    from .runners import npm_run_dev, flask_run_debug, huey_run, npm_build, supervisor_run, supervisor_end
+except ImportError:
+    from __init__ import Config
+    from runners import npm_run_dev, flask_run_debug, huey_run, npm_build, supervisor_run, supervisor_end
 
 
 @click.group()
 def main():
     pass
+
+
+@main.command("config")
+def show_config():
+    config = Config()
+    print(config.npm_binary)
 
 
 @main.command()

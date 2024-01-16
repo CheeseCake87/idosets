@@ -1,7 +1,11 @@
+from os import getenv
+from dotenv import load_dotenv
 from pathlib import Path
 from typing import Optional
 
 import toml
+
+load_dotenv()
 
 
 class Config:
@@ -29,7 +33,7 @@ class Config:
         if not self.config:
             raise ValueError("No config found in pyproject.toml")
         
-        self.npm_binary = self.config.get("npm-binary", "npm")
+        self.npm_binary = getenv("NPM_DIR", "") + self.config.get("npm-binary", "npm")
         self.vite_dir = Path(self.cwd / self.config.get("vite-dir", "vite"))
         self.flask_dir = Path(self.cwd / self.config.get("flask-dir", "app"))
         self.flask_static_folder = Path(
