@@ -147,9 +147,9 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/logout`,
             )
         },
-        async getAccount(params) {
+        async getAccount() {
             return await getFetch(
-                `${API_URL}/api/accounts/${params.account_id}`,
+                `${API_URL}/api/account`,
             )
         },
 
