@@ -13,6 +13,7 @@ export default function TopMenu(props) {
             <div className={'flex gap-4'}>
                 <button onClick={
                     () => {
+                        navigate('/account')
                     }
                 }>
                     <span className={"desktop-block"}>Your Account</span>
