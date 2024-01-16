@@ -8,7 +8,7 @@ from app_flask.models.exercises import Exercises
 from app_flask.models.sets import Sets
 
 
-@bp.get("/accounts")
+@bp.get("/account")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
