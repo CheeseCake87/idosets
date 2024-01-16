@@ -127,11 +127,11 @@ export default function Workout() {
                             <div className={"display-box flex-col"}>
 
                                 <div className={'flex-reactive justify-between'}>
-                                    <div className={'flex-col'}>
+                                    <div className={'flex flex-col pb-2'}>
                                         <h1 className={'m-0'}>{exercise.name}</h1>
                                         <p>{exercise.rel_sets.length} Sets</p>
                                     </div>
-                                    <div className={'action-options justify-between gap-2'}>
+                                    <div className={'action-options items-center justify-between gap-2'}>
                                         <div className={"action"} onClick={() => {
                                             setDeleteExercise(i())
                                         }}>
