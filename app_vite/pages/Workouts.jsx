@@ -31,7 +31,7 @@ export default function Workouts() {
         return (
             <div className={"container"}>
 
-                <div className={"py-4 flex flex-col gap-2"}>
+                <div className={"pb-4 flex flex-col gap-2"}>
                     <For each={workouts.get("Workouts")}>
                         {(workout, i) =>
                             <div className={"display-box flex-col"}>
