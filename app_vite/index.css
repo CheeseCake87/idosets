@@ -200,25 +200,6 @@ body {
         background-color: var(--html-default-button-hover-bg-color);
     }
 
-    .button-good {
-        background-color: var(--button-good-bg-color) !important;
-        border-color: var(--button-good-border-color) !important;;
-    }
-
-    .button-good:hover, .button-good:focus {
-        background-color: var(--button-good-hf-bg-color) !important;;
-        border-color: var(--button-good-hf-border-color) !important;;
-    }
-
-    .button-bad {
-        background-color: var(--button-bad-bg-color) !important;
-        border-color: var(--button-bad-border-color) !important;;
-    }
-
-    .button-bad:hover, .button-bad:focus {
-        background-color: var(--button-bad-hf-bg-color) !important;;
-        border-color: var(--button-bad-hf-border-color) !important;;
-    }
 
     .login {
         @apply p-5 mx-auto my-4 text-center rounded-md border;
@@ -363,12 +344,40 @@ body {
         .form-reactive {
             @apply flex-col;
         }
+
         .flex-reactive {
             @apply flex-col;
         }
+
         .flex-reactive-reverse {
             @apply flex-row;
         }
+    }
+
+    /* Colors */
+    .button-good {
+        background-color: var(--button-good-bg-color) !important;
+        border-color: var(--button-good-border-color) !important;;
+    }
+
+    .button-good:hover, .button-good:focus {
+        background-color: var(--button-good-hf-bg-color) !important;;
+        border-color: var(--button-good-hf-border-color) !important;;
+    }
+
+    .button-bad {
+        background-color: var(--button-bad-bg-color) !important;
+        border-color: var(--button-bad-border-color) !important;;
+    }
+
+    .button-bad:hover, .button-bad:focus {
+        background-color: var(--button-bad-hf-bg-color) !important;;
+        border-color: var(--button-bad-hf-border-color) !important;;
+    }
+
+    .warning {
+        background-color: var(--button-bad-bg-color);
+        border-color: var(--button-bad-border-color);
     }
 
 }
