@@ -114,7 +114,6 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/session`,
             )
         },
-
         async setTheme(theme) {
             return await getFetch(
                 `${API_URL}/api/set/theme/${theme}`,
@@ -130,13 +129,11 @@ export function MainContextProvider(props) {
                 }
             )
         },
-
         async checkLogin() {
             return await getFetch(
                 `${API_URL}/api/check/login`,
             )
         },
-
         async tryLogin(email_address) {
             return await postFetch(
                 `${API_URL}/api/login`,
@@ -145,10 +142,14 @@ export function MainContextProvider(props) {
                 }
             )
         },
-
         async tryLogout() {
             return await getFetch(
                 `${API_URL}/api/logout`,
+            )
+        },
+        async getAccount(params) {
+            return await getFetch(
+                `${API_URL}/api/accounts/${params.account_id}`,
             )
         },
 
@@ -181,11 +182,6 @@ export function MainContextProvider(props) {
             )
         },
 
-        async getExercises(params) {
-            return await getFetch(
-                `${API_URL}/api/workouts/${params.workout_id}/exercises`
-            )
-        },
         async addExercise(params) {
             return await postFetch(
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/add`,
@@ -209,11 +205,6 @@ export function MainContextProvider(props) {
             )
         },
 
-        async getSets(params) {
-            return await getFetch(
-                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets`
-            )
-        },
         async addSet(params) {
             return await postFetch(
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/add`,
@@ -225,7 +216,6 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/${params.set_id}/delete`
             )
         },
-
 
     });
 
