@@ -1,26 +1,44 @@
-import {useContext} from "solid-js";
+import {Show, useContext} from "solid-js";
 import {mainContext} from "../context/mainContext";
-import {useNavigate} from "@solidjs/router";
+import {useNavigate, useLocation} from "@solidjs/router";
 
 export default function TopMenu(props) {
 
     const [ctx, setCtx] = useContext(mainContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     return (
         <nav>
             <h3 className={"my-0 opacity-0"}>💪 I Do Sets</h3>
             <div className={'flex gap-4'}>
-                <button onClick={
-                    () => {
-                        navigate('/account')
-                    }
-                }>
-                    <span className={"desktop-block"}>Your Account</span>
-                    <span className={"mobile-flex"}>
-                    <span className="material-icons-round">person</span>
-                </span>
-                </button>
+
+                <Show when={location.pathname.includes("/account")}
+                      children={
+                          <button onClick={
+                              () => {
+                                  navigate('/')
+                              }
+                          }>
+                              <span className={"desktop-block"}>Workouts</span>
+                              <span className={"mobile-flex"}>
+                            <span className="material-icons-round">fitness_center</span>
+                            </span>
+                          </button>
+                      }
+                      fallback={
+                          <button onClick={
+                              () => {
+                                  navigate('/account')
+                              }
+                          }>
+                              <span className={"desktop-block"}>Account</span>
+                              <span className={"mobile-flex"}>
+                            <span className="material-icons-round">person</span>
+                            </span>
+                          </button>
+                      }
+                />
 
                 <button onClick={
                     () => {
