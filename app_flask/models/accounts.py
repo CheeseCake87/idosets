@@ -14,6 +14,9 @@ class Accounts(db.Model, UtilityMixin):
     settings = db.Column(db.JSON, default={"theme": "dark"})
     auth_code = db.Column(db.String(512), nullable=True)
     auth_code_expiry = db.Column(db.DateTime, nullable=True)
+    created = db.Column(
+        db.DateTime, nullable=False, default=DatetimeDelta().datetime
+    )
 
     def update_auth_code(self, auth_code: str, auth_code_expiry: datetime):
         self.auth_code = auth_code
@@ -34,6 +37,17 @@ class Accounts(db.Model, UtilityMixin):
     def get_email_address(cls, account_id: int):
         q = select(cls.email_address).where(cls.account_id == account_id)
         return db.session.execute(q).scalar_one_or_none()
+
+    @classmethod
+    def get_account_info(cls, account_id: int):
+        q = select(cls).where(cls.account_id == account_id)
+        r = db.session.execute(q).scalar_one_or_none()
+        offset_aware = pytz.UTC.localize(r.created)
+        return {
+            "email_address": r.email_address,
+            "theme": r.settings.get("theme", "dark"),
+            "days_old": (DatetimeDelta().datetime - offset_aware).days,
+        }
 
     @classmethod
     def process_auth_code(cls, account_id: int, auth_code: str):
