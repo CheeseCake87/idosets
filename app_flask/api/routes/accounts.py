@@ -99,6 +99,11 @@ def account_delete_():
 
     if _account:
         Accounts.delete(account_id)
+        Workouts.delete(fk=[("account_id", account_id)])
+        Exercises.delete(fk=[("account_id", account_id)])
+        Sets.delete(fk=[("account_id", account_id)])
+
+        session.clear()
 
         return {
             "status": "success",
