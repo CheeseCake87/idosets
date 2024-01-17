@@ -25,6 +25,12 @@ class Sets(db.Model, UtilityMixin):
         ).scalar()
 
     @classmethod
+    def count_by_exercise_id(cls, exercise_id: int) -> int:
+        return db.session.execute(
+            select(func.count(cls.set_id)).where(cls.exercise_id == exercise_id)
+        ).scalar()
+
+    @classmethod
     def select_all(cls, account_it, workout_id, exercise_id):
         return cls.as_jsonable_dict(
             select(cls)
@@ -93,6 +99,15 @@ class Sets(db.Model, UtilityMixin):
         db.session.execute(
             delete(cls).where(
                 cls.account_id == account_id,
+            )
+        )
+        db.session.commit()
+
+    @classmethod
+    def delete_by_id(cls, set_id: int):
+        db.session.execute(
+            delete(cls).where(
+                cls.set_id == set_id,
             )
         )
         db.session.commit()
