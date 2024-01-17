@@ -70,6 +70,34 @@ def set_add_(workout_id, exercise_id):
         }
 
 
+@bp.get("/workouts/<workout_id>/exercises/<exercise_id>/sets/<set_id>/copy")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def set_copy_(workout_id, exercise_id, set_id):
+    _ = workout_id
+    to_copy = Sets.get_by_key(set_id)
+    count = Sets.count_by_exercise_id(exercise_id)
+    _set, _set_id = Sets.insert(
+        {
+            "account_id": to_copy.account_id,
+            "workout_id": to_copy.workout_id,
+            "exercise_id": to_copy.exercise_id,
+            "is_duration": to_copy.is_duration,
+            "is_reps": to_copy.is_reps,
+            "order": count + 1,
+            "duration": to_copy.duration,
+            "reps": to_copy.reps,
+        },
+        allow_none=True,
+    )
+    return {
+        "status": "success",
+        "message": "Set added successfully.",
+        "set_id": _set_id,
+    }
+
+
 @bp.post("/workouts/<workout_id>/exercises/<exercise_id>/sets/<set_id>/edit")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
@@ -98,7 +126,7 @@ def sets_edit_(workout_id, exercise_id, set_id):
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def sets_delete_(workout_id, exercise_id, set_id):
-    Sets.delete(set_id)
+    Sets.delete_by_id(set_id)
     Sets.fix_order(session.get("account_id", 0), workout_id, exercise_id)
 
     return {
