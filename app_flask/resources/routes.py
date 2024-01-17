@@ -17,13 +17,6 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/set")
-def set_():
-    session["logged_in"] = True
-    # session["last_request"] = datetime.now().timestamp()
-    return redirect(url_for("test"))
-
-
 @app.route("/failed")
 def failed_():
     return "Failed"
@@ -56,8 +49,8 @@ def auth_(wildcard):
     return render_template("index.html")
 
 
-@app.route("/workouts", defaults={"wildcard": ""})
-@app.route("/workouts/<path:wildcard>")
+@app.route("/workout", defaults={"wildcard": ""})
+@app.route("/workout/<path:wildcard>")
 def workouts(wildcard):
     _ = wildcard
     return render_template("index.html")
