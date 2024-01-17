@@ -23,14 +23,18 @@ from ...models.accounts import Accounts
 def session_():
     account_id = session.get("account_id", 0)
     theme = session.get("theme", "dark")
-    email_address = (
-        Accounts.get_email_address(account_id) if account_id != 0 else None
-    )
+    account = Accounts.get_account_by_id(account_id)
+    if account:
+        return {
+            "status": "success",
+            "message": "Session retrieved.",
+            "logged_in": True,
+            "account_id": account_id,
+            "email_address": account.email_address,
+            "theme": theme,
+        }
+
     return {
-        "status": "success",
-        "message": "Session retrieved.",
-        "logged_in": True,
-        "account_id": account_id,
-        "email_address": email_address,
-        "theme": theme,
+        "status": "failed",
+        "message": "Account not found.",
     }
