@@ -218,11 +218,15 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/delete`
             )
         },
-
         async addSet(params) {
             return await postFetch(
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/add`,
                 params.data
+            )
+        },
+        async copySet(params) {
+            return await getFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/${params.set_id}/copy`
             )
         },
         async deleteSet(params) {
@@ -257,10 +261,18 @@ export function MainContextProvider(props) {
 
         createEffect(() => {
             if (!session.data.loading) {
-                setStore("logged_in", session.data().logged_in)
-                setStore("theme", session.data().theme)
-                setStore("account_id", session.data().account_id)
-                setStore("email_address", session.data().email_address)
+                if (session.get("status") === 'failed') {
+                    setStore("logged_in", false)
+                    setStore("theme", "dark")
+                    setStore("account_id", 0)
+                    setStore("email_address", null)
+                    navigate('/login')
+                } else {
+                    setStore("logged_in", session.data().logged_in)
+                    setStore("theme", session.data().theme)
+                    setStore("account_id", session.data().account_id)
+                    setStore("email_address", session.data().email_address)
+                }
             }
         })
 
