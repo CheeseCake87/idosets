@@ -35,8 +35,9 @@ class Exercises(db.Model, UtilityMixin):
     @classmethod
     def count_by_account_id(cls, account_id: int) -> int:
         return db.session.execute(
-            select(func.count(cls.exercise_id))
-            .where(cls.account_id == account_id)
+            select(func.count(cls.exercise_id)).where(
+                cls.account_id == account_id
+            )
         ).scalar()
 
     @classmethod
