@@ -355,6 +355,15 @@ body {
     }
 
     /* Colors */
+    .no-bg {
+        background-color: transparent;
+    }
+
+    .warning {
+        background-color: var(--button-bad-bg-color);
+        border-color: var(--button-bad-border-color);
+    }
+
     .button-good {
         background-color: var(--button-good-bg-color) !important;
         border-color: var(--button-good-border-color) !important;;
@@ -375,9 +384,5 @@ body {
         border-color: var(--button-bad-hf-border-color) !important;;
     }
 
-    .warning {
-        background-color: var(--button-bad-bg-color);
-        border-color: var(--button-bad-border-color);
-    }
 
 }
