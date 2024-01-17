@@ -77,6 +77,15 @@ class Exercises(db.Model, UtilityMixin):
         )
         db.session.commit()
 
+    @classmethod
+    def delete_by_account_id(cls, account_id: int):
+        db.session.execute(
+            delete(cls).where(
+                cls.account_id == account_id,
+            )
+        )
+        db.session.commit()
+
 
 class ExerciseLogs(db.Model, UtilityMixin):
     # PriKey
