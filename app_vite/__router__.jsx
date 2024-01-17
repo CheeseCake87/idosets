@@ -27,6 +27,7 @@ render(() => (
         <Routes>
             <Route path="" component={MainContextProvider}>
                 <Route path="/auth/:account_id/:auth_code" component={Auth}/>
+                <Route path="/delete/:account_id/:auth_code" component={Auth}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/" component={Workouts}/>
                 <Route path="/account" component={Account}/>
