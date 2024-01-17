@@ -34,6 +34,11 @@ class Accounts(db.Model, UtilityMixin):
         return db.session.execute(q).scalar_one_or_none()
 
     @classmethod
+    def get_account_by_id(cls, account_id: int):
+        q = select(cls).where(cls.account_id == account_id)
+        return db.session.execute(q).scalar_one_or_none()
+
+    @classmethod
     def get_email_address(cls, account_id: int):
         q = select(cls.email_address).where(cls.account_id == account_id)
         return db.session.execute(q).scalar_one_or_none()
