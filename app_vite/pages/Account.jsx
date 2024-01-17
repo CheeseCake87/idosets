@@ -117,11 +117,6 @@ export default function Account() {
                                   <p className={"opacity-90"}>
                                       An email has been sent to your email address with a link to delete your account.
                                   </p>
-                                  <button className={""} onClick={() => {
-                                      setDeleteAccount(false)
-                                      setDeleteEmailSent(false)
-                                  }}>OK
-                                  </button>
                               </div>
                           }/>
                     <Show when={deleteEmailError()}
@@ -130,11 +125,6 @@ export default function Account() {
                                   <p className={"opacity-90"}>
                                       There was an error sending your delete account email.
                                   </p>
-                                  <button className={""} onClick={() => {
-                                      setDeleteAccount(false)
-                                      setDeleteErrorSent(false)
-                                  }}>OK
-                                  </button>
                               </div>
                           }/>
                 </div>
