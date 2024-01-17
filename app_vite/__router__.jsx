@@ -9,6 +9,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Workout from "./pages/Workout";
 import Exercise from "./pages/Exercise";
 import Account from "./pages/Account";
+import DeleteAccount from "./pages/DeleteAccount";
 
 
 const root = document.getElementById('root');
@@ -27,10 +28,10 @@ render(() => (
         <Routes>
             <Route path="" component={MainContextProvider}>
                 <Route path="/auth/:account_id/:auth_code" component={Auth}/>
-                <Route path="/delete/:account_id/:auth_code" component={Auth}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/" component={Workouts}/>
                 <Route path="/account" component={Account}/>
+                <Route path="/account/delete/:account_id/:auth_code" component={DeleteAccount}/>
                 <Route path="/workout/:workout_id" component={Workout}/>
                 <Route path="/workout/:workout_id/exercise/:exercise_id" component={Exercise}/>
                 <Route path="*" component={PageNotFound}/>
