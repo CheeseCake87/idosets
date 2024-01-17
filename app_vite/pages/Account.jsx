@@ -75,17 +75,13 @@ export default function Account() {
                 <div className={"display-box warning flex-col gap-2 mb-2"}>
                     <Show when={deleteAccount()}
                           children={
-                                <div className={"display-box flex-col text-center gap-6"}>
+                                <div className={"display-box no-bg flex-col text-center gap-6"}>
 
                                     <p className={"opacity-90"}>
                                         Are you sure you want to delete your account?
                                     </p>
 
                                     <div className={"flex gap-2"}>
-                                        <button className={"button-bad flex-1"}
-                                                onClick={() => setDeleteAccount(false)}>
-                                            Cancel
-                                        </button>
                                         <button className={"button-bad flex-1"}
                                                 onClick={() => {
                                                     ctx.deleteAccount().then(json => {
@@ -99,6 +95,10 @@ export default function Account() {
                                                     })
                                                 }}>
                                             Delete Account
+                                        </button>
+                                        <button className={"flex-1"}
+                                                onClick={() => setDeleteAccount(false)}>
+                                            Cancel
                                         </button>
                                     </div>
 
