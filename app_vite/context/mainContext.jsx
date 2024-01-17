@@ -129,6 +129,20 @@ export function MainContextProvider(props) {
                 }
             )
         },
+        async sendDeleteAccountAuth() {
+            return await getFetch(
+                `${API_URL}/api/account/send/delete`,
+            )
+        },
+        async tryDeleteAccount(params) {
+            return await postFetch(
+                `${API_URL}/api/account/delete`,
+                {
+                    account_id: params.account_id,
+                    auth_code: params.auth_code,
+                }
+            )
+        },
         async checkLogin() {
             return await getFetch(
                 `${API_URL}/api/check/login`,
