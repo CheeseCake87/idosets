@@ -66,3 +66,15 @@ class Accounts(db.Model, UtilityMixin):
                 return r
 
         return None
+
+    @classmethod
+    def delete_account(cls, account_id: int):
+        from app_flask.models.exercises import Exercises
+        from app_flask.models.sets import Sets
+
+        Exercises.delete_by_account_id(account_id)
+        Sets.delete_by_account_id(account_id)
+
+        q = delete(cls).where(cls.account_id == account_id)
+        db.session.execute(q)
+        db.session.commit()
