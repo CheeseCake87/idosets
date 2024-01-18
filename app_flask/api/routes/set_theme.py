@@ -8,5 +8,5 @@ def set_theme_(theme):
     allowed_themes = ["dark", "light"]
     session["theme"] = theme if theme in allowed_themes else "dark"
     return {
-        "theme": theme,
+        "theme": session["theme"],
     }
