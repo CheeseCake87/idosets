@@ -45,29 +45,32 @@ def set_add_(workout_id, exercise_id):
     account_id = session.get("account_id", 0)
 
     type_ = jsond.get("type")
-    duration = jsond.get("duration")
-    reps = jsond.get("reps")
+    duration_min = jsond.get("duration_min", 0)
+    duration_max = jsond.get("duration_max", 0)
+    reps_min = jsond.get("reps_min", 0)
+    reps_max = jsond.get("reps_max", 0)
     order = jsond.get("order")
 
-    if duration or reps:
-        _set, _set_id = Sets.insert(
-            {
-                "account_id": account_id,
-                "workout_id": workout_id,
-                "exercise_id": exercise_id,
-                "is_duration": True if type_ == "duration" else False,
-                "is_reps": True if type_ == "reps" else False,
-                "order": order,
-                "duration": duration,
-                "reps": reps,
-            },
-            allow_none=True,
-        )
-        return {
-            "status": "success",
-            "message": "Set added successfully.",
-            "set_id": _set_id,
-        }
+    _set, _set_id = Sets.insert(
+        {
+            "account_id": account_id,
+            "workout_id": workout_id,
+            "exercise_id": exercise_id,
+            "is_duration": True if type_ == "duration" else False,
+            "is_reps": True if type_ == "reps" else False,
+            "order": order,
+            "duration_min": duration_min,
+            "duration_max": duration_max,
+            "reps_min": reps_min,
+            "reps_max": reps_max,
+        },
+        allow_none=True,
+    )
+    return {
+        "status": "success",
+        "message": "Set added successfully.",
+        "set_id": _set_id,
+    }
 
 
 @bp.get("/workouts/<workout_id>/exercises/<exercise_id>/sets/<set_id>/copy")
@@ -86,8 +89,10 @@ def set_copy_(workout_id, exercise_id, set_id):
             "is_duration": to_copy.is_duration,
             "is_reps": to_copy.is_reps,
             "order": count + 1,
-            "duration": to_copy.duration,
-            "reps": to_copy.reps,
+            "duration_min": to_copy.duration_min,
+            "duration_max": to_copy.duration_max,
+            "reps_min": to_copy.reps_min,
+            "reps_max": to_copy.reps_max,
         },
         allow_none=True,
     )

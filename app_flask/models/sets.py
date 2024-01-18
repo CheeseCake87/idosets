@@ -14,8 +14,10 @@ class Sets(db.Model, UtilityMixin):
     is_duration = db.Column(db.Boolean, nullable=False, default=False)
     is_reps = db.Column(db.Boolean, nullable=False, default=False)
 
-    duration = db.Column(db.Integer, nullable=False, default=0)  # secs
-    reps = db.Column(db.Integer, nullable=False, default=0)
+    duration_min = db.Column(db.Integer, nullable=False, default=0)  # secs
+    duration_max = db.Column(db.Integer, nullable=False, default=0)  # secs
+    reps_min = db.Column(db.Integer, nullable=False, default=0)
+    reps_max = db.Column(db.Integer, nullable=False, default=0)
     order = db.Column(db.Integer, nullable=False, default=0)
 
     @classmethod

@@ -19,18 +19,28 @@ export default function Exercise() {
     const [_exercise, _setExercise] = createSignal({})
 
     const [workoutName, setWorkoutName] = createSignal('')
+    const [editExercise, setEditExercise] = createSignal(false)
 
     const [newExerciseName, setNewExerciseName] = createSignal('')
     const [newExerciseInfoUrl, setNewExerciseInfoUrl] = createSignal('')
 
-    const [newSetDuration, setNewSetDuration] = createSignal(0)
-    const [newSetDurationDisplay, setNewSetDurationDisplay] = createSignal('')
-    const [newSetReps, setNewSetReps] = createSignal(0)
-    const [editExercise, setEditExercise] = createSignal(false)
-
     const [sets, setSets] = createSignal({})
+
+    // Adding Set
     const [addingSet, setAddingSet] = createSignal(false)
     const [setType, setSetType] = createSignal('reps')
+
+    // Duration
+    const [durationMinMax, setDurationMinMax] = createSignal('min')
+    const [newSetDurationMin, setNewSetDurationMin] = createSignal(0)
+    const [newSetDurationMinDisplay, setNewSetDurationMinDisplay] = createSignal('')
+    const [newSetDurationMax, setNewSetDurationMax] = createSignal(0)
+    const [newSetDurationMaxDisplay, setNewSetDurationMaxDisplay] = createSignal('')
+
+    // Reps
+    const [repsMinMax, setRepsMinMax] = createSignal('min')
+    const [newSetRepsMin, setNewSetRepsMin] = createSignal(0)
+    const [newSetRepsMax, setNewSetRepsMax] = createSignal(0)
 
     const [deleteSet, setDeleteSet] = createSignal(null)
 
@@ -47,14 +57,21 @@ export default function Exercise() {
                 setNewExerciseName(_exercise().name)
                 setNewExerciseInfoUrl(_exercise().info_url)
                 setSets(exercise.get("Sets"))
-                setNewSetDurationDisplay(ctx.fancyTimeFormat(newSetDuration()))
+                setNewSetDurationMinDisplay(ctx.fancyTimeFormat(newSetDurationMin()))
+                setNewSetDurationMaxDisplay(ctx.fancyTimeFormat(newSetDurationMax()))
             }
         }
     })
 
     createEffect(() => {
-        if (newSetDuration() > 0) {
-            setNewSetDurationDisplay(ctx.fancyTimeFormat(newSetDuration()))
+        if (newSetDurationMin() > 0) {
+            setNewSetDurationMinDisplay(ctx.fancyTimeFormat(newSetDurationMin()))
+        }
+    })
+
+    createEffect(() => {
+        if (newSetDurationMax() > 0) {
+            setNewSetDurationMaxDisplay(ctx.fancyTimeFormat(newSetDurationMax()))
         }
     })
 
@@ -172,13 +189,21 @@ export default function Exercise() {
                                         <Show when={set.is_duration}>
                                             <div className={'flex items-center gap-1'}>
                                                 <span className="material-icons px-2">timer</span>
-                                                <h2 className={'m-0'}>{ctx.fancyTimeFormat(set.duration)}</h2>
+                                                <h2 className={'m-0'}>
+                                                    {set.duration_min > 0 ? ctx.fancyTimeFormat(set.duration_min) : ''}
+                                                    {(set.duration_max > 0 && set.duration_min > 0) ? ' - ' : ''}
+                                                    {set.duration_max > 0 ? ctx.fancyTimeFormat(set.duration_max) : ''}
+                                                </h2>
                                             </div>
                                         </Show>
                                         <Show when={set.is_reps}>
                                             <div className={'flex items-center gap-1'}>
                                                 <span className="material-icons px-2">fitness_center</span>
-                                                <h2 className={'m-0'}>{set.reps} reps</h2>
+                                                <h2 className={'m-0'}>
+                                                    {set.reps_min > 0 ? set.reps_min + ' reps' : ''}
+                                                    {(set.reps_max > 0 && set.reps_min > 0) ? ' - ' : ''}
+                                                    {set.reps_max > 0 ? set.reps_max + ' reps' : ''}
+                                                </h2>
                                             </div>
                                         </Show>
                                     </div>
@@ -258,7 +283,7 @@ export default function Exercise() {
                                     setType() === 'reps' ? "action-box flex-1" : "action-box-clickable flex-1"}
                                      onClick={() => {
                                          setSetType('reps')
-                                         setNewSetDuration(0)
+                                         setNewSetDurationMin(0)
                                      }}>
                                     <span className="material-icons px-2">fitness_center</span> Rep Set
                                 </div>
@@ -267,7 +292,7 @@ export default function Exercise() {
                                     setType() === 'duration' ? "action-box flex-1" : "action-box-clickable flex-1"}
                                      onClick={() => {
                                          setSetType('duration')
-                                         setNewSetReps(0)
+                                         setNewSetRepsMin(0)
                                      }}>
                                     <span className="material-icons px-2">timer</span> Duration Set
                                 </div>
@@ -276,171 +301,364 @@ export default function Exercise() {
 
                             {/* Set duration setting */}
                             <Show when={setType() === 'duration'}>
+                                <div className={'flex flex-row gap-4'}>
 
-                                <div className={'text-center p-4'}>
-                                    <h1>{newSetDurationDisplay()}</h1>
-                                </div>
-
-                                <div className={'flex-reactive'}>
-
-                                    <div className={"action-box-clickable flex-1 items-center"}
+                                    <div className={
+                                        durationMinMax() === 'min' ? "action-box flex-1" : "action-box-clickable flex-1"}
                                          onClick={() => {
-                                             setNewSetDuration(0)
+                                             setDurationMinMax('min')
                                          }}>
-                                        Reset
+                                        Min
                                     </div>
 
-                                    <div className={'flex-reactive-reverse flex-1 gap-1'}>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 if (newSetDuration() < 0) {
-                                                     setNewSetDuration(0)
-                                                 } else {
-                                                     setNewSetDuration(newSetDuration() - 5)
-                                                 }
-                                             }}>
-                                            -5 secs
-                                        </div>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetDuration(newSetDuration() + 5)
-                                             }}>
-                                            +5 secs
-                                        </div>
-
+                                    <div className={
+                                        durationMinMax() === 'max' ? "action-box flex-1" : "action-box-clickable flex-1"}
+                                         onClick={() => {
+                                             setDurationMinMax('max')
+                                         }}>
+                                        Max
                                     </div>
 
-                                    <div className={'flex-reactive-reverse flex-1 gap-1'}>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 if (newSetDuration() < 0) {
-                                                     setNewSetDuration(0)
-                                                 } else {
-                                                     setNewSetDuration(newSetDuration() - 30)
-                                                 }
-                                             }}>
-                                            -30 secs
-                                        </div>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetDuration(newSetDuration() + 30)
-                                             }}>
-                                            +30 secs
-                                        </div>
-                                    </div>
-
-                                    <div className={'flex-reactive-reverse flex-1 gap-1'}>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 if (newSetDuration() < 0) {
-                                                     setNewSetDuration(0)
-                                                 } else {
-                                                     setNewSetDuration(newSetDuration() - 60)
-                                                 }
-                                             }}>
-                                            -1 mins
-                                        </div>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetDuration(newSetDuration() + 60)
-                                             }}>
-                                            +1 mins
-                                        </div>
-
-                                    </div>
-                                    <div className={'flex-reactive-reverse flex-1 gap-1'}>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 if (newSetDuration() < 0) {
-                                                     setNewSetDuration(0)
-                                                 } else {
-                                                     setNewSetDuration(newSetDuration() - 600)
-                                                 }
-                                             }}>
-                                            -10 mins
-                                        </div>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetDuration(newSetDuration() + 600)
-                                             }}>
-                                            +10 mins
-                                        </div>
-
-                                    </div>
                                 </div>
+                                <Show when={durationMinMax() === 'min'}>
+                                    <div className={'text-center p-4'}>
+                                        <h1>{newSetDurationMinDisplay()}</h1>
+                                    </div>
+                                    <div className={'flex-reactive'}>
+                                        <div className={"action-box-clickable flex-1 items-center"}
+                                             onClick={() => {
+                                                 setNewSetDurationMin(0)
+                                             }}>
+                                            Reset
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMin() < 0) {
+                                                         setNewSetDurationMin(0)
+                                                     } else {
+                                                         setNewSetDurationMin(newSetDurationMin() - 5)
+                                                     }
+                                                 }}>
+                                                -5 secs
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMin(newSetDurationMin() + 5)
+                                                 }}>
+                                                +5 secs
+                                            </div>
+
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMin() < 0) {
+                                                         setNewSetDurationMin(0)
+                                                     } else {
+                                                         setNewSetDurationMin(newSetDurationMin() - 30)
+                                                     }
+                                                 }}>
+                                                -30 secs
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMin(newSetDurationMin() + 30)
+                                                 }}>
+                                                +30 secs
+                                            </div>
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMin() < 0) {
+                                                         setNewSetDurationMin(0)
+                                                     } else {
+                                                         setNewSetDurationMin(newSetDurationMin() - 60)
+                                                     }
+                                                 }}>
+                                                -1 mins
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMin(newSetDurationMin() + 60)
+                                                 }}>
+                                                +1 mins
+                                            </div>
+
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMin() < 0) {
+                                                         setNewSetDurationMin(0)
+                                                     } else {
+                                                         setNewSetDurationMin(newSetDurationMin() - 600)
+                                                     }
+                                                 }}>
+                                                -10 mins
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMin(newSetDurationMin() + 600)
+                                                 }}>
+                                                +10 mins
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </Show>
+                                <Show when={durationMinMax() === 'max'}>
+                                    <div className={'text-center p-4'}>
+                                        <h1>{newSetDurationMaxDisplay()}</h1>
+                                    </div>
+                                    <div className={'flex-reactive'}>
+                                        <div className={"action-box-clickable flex-1 items-center"}
+                                             onClick={() => {
+                                                 setNewSetDurationMax(0)
+                                             }}>
+                                            Reset
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMax() < 0) {
+                                                         setNewSetDurationMin(0)
+                                                     } else {
+                                                         setNewSetDurationMax(newSetDurationMax() - 5)
+                                                     }
+                                                 }}>
+                                                -5 secs
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMax(newSetDurationMax() + 5)
+                                                 }}>
+                                                +5 secs
+                                            </div>
+
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMax() < 0) {
+                                                         setNewSetDurationMax(0)
+                                                     } else {
+                                                         setNewSetDurationMax(newSetDurationMax() - 30)
+                                                     }
+                                                 }}>
+                                                -30 secs
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMax(newSetDurationMax() + 30)
+                                                 }}>
+                                                +30 secs
+                                            </div>
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMax() < 0) {
+                                                         setNewSetDurationMax(0)
+                                                     } else {
+                                                         setNewSetDurationMax(newSetDurationMax() - 60)
+                                                     }
+                                                 }}>
+                                                -1 mins
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMax(newSetDurationMax() + 60)
+                                                 }}>
+                                                +1 mins
+                                            </div>
+
+                                        </div>
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     if (newSetDurationMax() < 0) {
+                                                         setNewSetDurationMax(0)
+                                                     } else {
+                                                         setNewSetDurationMax(newSetDurationMax() - 600)
+                                                     }
+                                                 }}>
+                                                -10 mins
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetDurationMax(newSetDurationMax() + 600)
+                                                 }}>
+                                                +10 mins
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </Show>
                             </Show>
 
                             {/* Set reps setting */}
                             <Show when={setType() === 'reps'}>
+                                <div className={'flex flex-row gap-4'}>
 
-                                <div className={'text-center p-4'}>
-                                    <h1>{newSetReps() === 1 ? newSetReps() + ' rep' : newSetReps() + ' reps'}</h1>
-                                </div>
-
-                                <div className={'flex-reactive'}>
-
-                                    <div className={"action-box-clickable flex-1 items-center"}
+                                    <div className={
+                                        repsMinMax() === 'min' ? "action-box flex-1" : "action-box-clickable flex-1"}
                                          onClick={() => {
-                                             setNewSetReps(0)
+                                             setRepsMinMax('min')
                                          }}>
-                                        Reset
+                                        Min
                                     </div>
 
-                                    <div className={'flex-reactive-reverse flex-1 gap-1'}>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetReps(newSetReps() - 1)
-                                                 if (newSetReps() < 0) {
-                                                     setNewSetReps(0)
-                                                 }
-                                             }}>
-                                            -1 rep
-                                        </div>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetReps(newSetReps() + 1)
-                                             }}>
-                                            +1 rep
-                                        </div>
-                                    </div>
-
-                                    <div className={'flex-reactive-reverse flex-1 gap-1'}>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetReps(newSetReps() - 5)
-                                                 if (newSetReps() < 0) {
-                                                     setNewSetReps(0)
-                                                 }
-                                             }}>
-                                            -5 reps
-                                        </div>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetReps(newSetReps() + 5)
-                                             }}>
-                                            +5 reps
-                                        </div>
-                                    </div>
-
-                                    <div className={'flex-reactive-reverse flex-1 gap-1'}>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetReps(newSetReps() - 10)
-                                                 if (newSetReps() < 0) {
-                                                     setNewSetReps(0)
-                                                 }
-                                             }}>
-                                            -10 reps
-                                        </div>
-                                        <div className={"action-box-clickable flex-1"}
-                                             onClick={() => {
-                                                 setNewSetReps(newSetReps() + 10)
-                                             }}>
-                                            +10 reps
-                                        </div>
+                                    <div className={
+                                        repsMinMax() === 'max' ? "action-box flex-1" : "action-box-clickable flex-1"}
+                                         onClick={() => {
+                                             setRepsMinMax('max')
+                                         }}>
+                                        Max
                                     </div>
 
                                 </div>
+                                <Show when={repsMinMax() === 'min'}>
+                                    <div className={'text-center p-4'}>
+                                        <h1>{newSetRepsMin() === 1 ? newSetRepsMin() + ' rep' : newSetRepsMin() + ' reps'}</h1>
+                                    </div>
+
+                                    <div className={'flex-reactive'}>
+
+                                        <div className={"action-box-clickable flex-1 items-center"}
+                                             onClick={() => {
+                                                 setNewSetRepsMin(0)
+                                             }}>
+                                            Reset
+                                        </div>
+
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMin(newSetRepsMin() - 1)
+                                                     if (newSetRepsMin() < 0) {
+                                                         setNewSetRepsMin(0)
+                                                     }
+                                                 }}>
+                                                -1 rep
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMin(newSetRepsMin() + 1)
+                                                 }}>
+                                                +1 rep
+                                            </div>
+                                        </div>
+
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMin(newSetRepsMin() - 5)
+                                                     if (newSetRepsMin() < 0) {
+                                                         setNewSetRepsMin(0)
+                                                     }
+                                                 }}>
+                                                -5 reps
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMin(newSetRepsMin() + 5)
+                                                 }}>
+                                                +5 reps
+                                            </div>
+                                        </div>
+
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMin(newSetRepsMin() - 10)
+                                                     if (newSetRepsMin() < 0) {
+                                                         setNewSetRepsMin(0)
+                                                     }
+                                                 }}>
+                                                -10 reps
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMin(newSetRepsMin() + 10)
+                                                 }}>
+                                                +10 reps
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </Show>
+                                <Show when={repsMinMax() === 'max'}>
+                                    <div className={'text-center p-4'}>
+                                        <h1>{newSetRepsMax() === 1 ? newSetRepsMax() + ' rep' : newSetRepsMax() + ' reps'}</h1>
+                                    </div>
+
+                                    <div className={'flex-reactive'}>
+
+                                        <div className={"action-box-clickable flex-1 items-center"}
+                                             onClick={() => {
+                                                 setNewSetRepsMax(0)
+                                             }}>
+                                            Reset
+                                        </div>
+
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMax(newSetRepsMax() - 1)
+                                                     if (newSetRepsMax() < 0) {
+                                                         setNewSetRepsMax(0)
+                                                     }
+                                                 }}>
+                                                -1 rep
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMax(newSetRepsMax() + 1)
+                                                 }}>
+                                                +1 rep
+                                            </div>
+                                        </div>
+
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMax(newSetRepsMax() - 5)
+                                                     if (newSetRepsMax() < 0) {
+                                                         setNewSetRepsMax(0)
+                                                     }
+                                                 }}>
+                                                -5 reps
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMax(newSetRepsMax() + 5)
+                                                 }}>
+                                                +5 reps
+                                            </div>
+                                        </div>
+
+                                        <div className={'flex-reactive-reverse flex-1 gap-1'}>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMax(newSetRepsMax() - 10)
+                                                     if (newSetRepsMax() < 0) {
+                                                         setNewSetRepsMax(0)
+                                                     }
+                                                 }}>
+                                                -10 reps
+                                            </div>
+                                            <div className={"action-box-clickable flex-1"}
+                                                 onClick={() => {
+                                                     setNewSetRepsMax(newSetRepsMax() + 10)
+                                                 }}>
+                                                +10 reps
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </Show>
                             </Show>
 
                             <div className={'flex justify-between gap-4 pt-2'}>
@@ -450,8 +668,12 @@ export default function Exercise() {
                                     type="button"
                                     onClick={() => {
                                         setAddingSet(false)
-                                        setNewSetDuration(0)
-                                        setNewSetReps(0)
+                                        setDurationMinMax('min')
+                                        setNewSetDurationMin(0)
+                                        setNewSetDurationMax(0)
+                                        setRepsMinMax('min')
+                                        setNewSetRepsMin(0)
+                                        setNewSetRepsMax(0)
                                     }}>
                                     Cancel
                                 </button>
@@ -466,16 +688,22 @@ export default function Exercise() {
                                                 exercise_id: params.exercise_id,
                                                 data: {
                                                     type: setType(),
-                                                    duration: newSetDuration(),
-                                                    reps: newSetReps(),
+                                                    duration_min: newSetDurationMin(),
+                                                    duration_max: newSetDurationMax(),
+                                                    reps_min: newSetRepsMin(),
+                                                    reps_max: newSetRepsMax(),
                                                     order: sets().length + 1,
                                                 }
                                             }
                                         ).then(json => {
                                             if (json.status === 'success') {
                                                 setAddingSet(false)
-                                                setNewSetDuration(0)
-                                                setNewSetReps(0)
+                                                setDurationMinMax('min')
+                                                setNewSetDurationMin(0)
+                                                setNewSetDurationMax(0)
+                                                setRepsMinMax('min')
+                                                setNewSetRepsMin(0)
+                                                setNewSetRepsMax(0)
                                                 exercise.refetch()
                                             }
                                         })
