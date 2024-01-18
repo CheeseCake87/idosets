@@ -4,22 +4,14 @@ from .__mixins__ import UtilityMixin
 
 class Workouts(db.Model, UtilityMixin):
     # PriKey
-    workout_id = db.Column(db.Integer, primary_key=True)
+    workout_id = Column(Integer, primary_key=True)
 
     # ForKey
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.account_id"))
+    account_id = Column(Integer, db.ForeignKey("accounts.account_id"))
 
-    name = db.Column(db.String(255), nullable=False)
+    name = Column(String(255), nullable=False)
 
-    created = db.Column(
-        db.DateTime, nullable=False, default=DatetimeDelta().datetime
-    )
-
-    rel_workoutLogs = relationship(
-        "WorkoutLogs",
-        viewonly=True,
-        cascade="all, delete-orphan",
-    )
+    created = Column(DateTime, nullable=False, default=DatetimeDelta().datetime)
 
     rel_exercises = relationship(
         "Exercises",
@@ -56,15 +48,108 @@ class Workouts(db.Model, UtilityMixin):
         )
 
 
-class WorkoutLogs(db.Model, UtilityMixin):
+class WorkoutSessions(db.Model, UtilityMixin):
     # PriKey
-    workout_log_id = db.Column(db.Integer, primary_key=True)
+    workout_session_id = Column(Integer, primary_key=True)
 
     # ForKey
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.account_id"))
-    workout_id = db.Column(db.Integer, db.ForeignKey("workouts.workout_id"))
+    account_id = Column(Integer, db.ForeignKey("accounts.account_id"))
+    workout_id = Column(Integer, db.ForeignKey("workouts.workout_id"))
 
-    started = db.Column(
-        db.DateTime, nullable=False, default=DatetimeDelta().datetime
-    )
-    finished = db.Column(db.DateTime, nullable=True, default=None)
+    started = Column(DateTime, nullable=False, default=DatetimeDelta().datetime)
+    finished = Column(DateTime, nullable=True, default=None)
+    is_finished = Column(Boolean, nullable=False, default=False)
+
+    @classmethod
+    def sessions(cls, account_id: int) -> dict:
+        return cls.as_jsonable_dict(
+            select(cls).where(
+                and_(
+                    cls.account_id == account_id,
+                )
+            )
+        )
+
+    @classmethod
+    def active_sessions(cls, account_id: int) -> dict:
+        return cls.as_jsonable_dict(
+            select(cls).where(
+                and_(
+                    cls.account_id == account_id,
+                    cls.is_finished == False,
+                )
+            )
+        )
+
+    @classmethod
+    def get_session(cls, account_id: int, workout_session_id: int) -> dict:
+        return cls.as_jsonable_dict(
+            select(cls).where(
+                and_(
+                    cls.account_id == account_id,
+                    cls.workout_session_id == workout_session_id,
+                )
+            ),
+            one_or_none=True,
+            remove_return_key=True,
+        )
+
+    @classmethod
+    def start_session(cls, account_id: int, workout_id: int) -> dict:
+        q = insert(cls).values(
+            account_id=account_id,
+            workout_id=workout_id,
+            started=DatetimeDelta().datetime,
+            finished=None,
+            is_finished=False,
+        ).returning(cls)
+        r = db.session.execute(q).scalar()
+        return {
+            "workout_session_id": r.workout_session_id,
+            "finished": None,
+            "started": r.started,
+            "is_finished": r.is_finished,
+        }
+
+    @classmethod
+    def stop_session(cls, account_id: int, workout_session_id: int) -> dict:
+        q = update(cls).where(
+            and_(
+                cls.account_id == account_id,
+                cls.workout_session_id == workout_session_id,
+            )
+        ).values(
+            finished=DatetimeDelta().datetime,
+            is_finished=True,
+        ).returning(cls)
+        r = db.session.execute(q).scalar()
+        duration = (r.finished - r.started)
+        return {
+            "workout_session_id": r.workout_session_id,
+            "started": r.started,
+            "finished": r.finished,
+            "duration": duration.second,
+            "is_finished": r.is_finished,
+        }
+
+    @classmethod
+    def delete_session(cls, account_id: int, workout_session_id: int) -> dict:
+        from app_flask.models.sets import SetLogs
+
+        db.session.execute(
+            delete(cls).where(
+                and_(
+                    cls.account_id == account_id,
+                    cls.workout_session_id == workout_session_id,
+                )
+            )
+        )
+        db.session.execute(
+            delete(SetLogs).where(
+                SetLogs.workout_session_id == workout_session_id,
+            )
+        )
+
+        return {
+            "session_id": workout_session_id,
+        }

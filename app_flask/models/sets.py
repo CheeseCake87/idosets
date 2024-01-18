@@ -1,24 +1,28 @@
+from app_flask.resources.utilities.weight_converter import (
+    pounds_to_grams,
+    kilograms_to_grams,
+)
 from . import *
 from .__mixins__ import UtilityMixin
 
 
 class Sets(db.Model, UtilityMixin):
     # PriKey
-    set_id = db.Column(db.Integer, primary_key=True)
+    set_id = Column(Integer, primary_key=True)
 
     # ForKeys
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.account_id"))
-    workout_id = db.Column(db.Integer, db.ForeignKey("workouts.workout_id"))
-    exercise_id = db.Column(db.Integer, db.ForeignKey("exercises.exercise_id"))
+    account_id = Column(Integer, db.ForeignKey("accounts.account_id"))
+    workout_id = Column(Integer, db.ForeignKey("workouts.workout_id"))
+    exercise_id = Column(Integer, db.ForeignKey("exercises.exercise_id"))
 
-    is_duration = db.Column(db.Boolean, nullable=False, default=False)
-    is_reps = db.Column(db.Boolean, nullable=False, default=False)
+    is_duration = Column(db.Boolean, nullable=False, default=False)
+    is_reps = Column(db.Boolean, nullable=False, default=False)
 
-    duration_min = db.Column(db.Integer, nullable=False, default=0)  # secs
-    duration_max = db.Column(db.Integer, nullable=False, default=0)  # secs
-    reps_min = db.Column(db.Integer, nullable=False, default=0)
-    reps_max = db.Column(db.Integer, nullable=False, default=0)
-    order = db.Column(db.Integer, nullable=False, default=0)
+    duration_min = Column(Integer, nullable=False, default=0)  # secs
+    duration_max = Column(Integer, nullable=False, default=0)  # secs
+    reps_min = Column(Integer, nullable=False, default=0)
+    reps_max = Column(Integer, nullable=False, default=0)
+    order = Column(Integer, nullable=False, default=0)
 
     @classmethod
     def count_by_account_id(cls, account_id: int) -> int:
@@ -117,14 +121,46 @@ class Sets(db.Model, UtilityMixin):
 
 class SetLogs(db.Model, UtilityMixin):
     # PriKey
-    set_log_id = db.Column(db.Integer, primary_key=True)
+    set_log_id = Column(Integer, primary_key=True)
 
-    # ForKeys
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.account_id"))
-    workout_id = db.Column(db.Integer, db.ForeignKey("workouts.workout_id"))
-    exercise_id = db.Column(db.Integer, db.ForeignKey("exercises.exercise_id"))
-    set_id = db.Column(db.Integer, db.ForeignKey("sets.set_id"))
+    # Indexes
+    account_id = Column(Integer, default=0, index=True)
+    workout_id = Column(Integer, default=0, index=True)
+    exercise_id = Column(Integer, default=0, index=True)
+    set_id = Column(Integer, default=0, index=True)
 
-    weight = db.Column(db.Float, nullable=False)
-    duration = db.Column(db.Float, nullable=False)
-    reps = db.Column(db.Integer, nullable=False)
+    weight = Column(Float, nullable=True)  # In grams
+    duration = Column(Integer, nullable=True)
+    reps = Column(Integer, nullable=True)
+
+    @classmethod
+    def get_by_workout_id(cls, workout_id):
+        return cls.as_jsonable_dict(
+            select(cls).where(
+                cls.workout_id == workout_id,
+            )
+        )
+
+    @classmethod
+    def add_log(
+        cls,
+        account_id=0,
+        workout_id=0,
+        exercise_id=0,
+        set_id=0,
+        weight=0.0,
+        duration=0,
+        reps=0,
+        weight_unit="kgs",
+    ):
+        converters = {"kgs": kilograms_to_grams, "lbs": pounds_to_grams}
+        q = insert(cls).values({
+            "account_id": account_id,
+            "workout_id": workout_id,
+            "exercise_id": exercise_id,
+            "set_id": set_id,
+            "weight": converters.get(weight_unit)(weight),
+            "duration": duration,
+            "reps": reps,
+        }).returning(cls.set_log_id)
+        return db.session.execute(q).scalar()

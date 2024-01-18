@@ -12,12 +12,14 @@ export default function Workouts() {
     const navigate = useNavigate();
 
     const workouts = new Fetcher(ctx.getWorkouts)
+    const getActiveSessions = new Fetcher(ctx.getActiveSessions)
 
     const [addingWorkout, setAddingWorkout] = createSignal(false)
     const [newWorkoutName, setNewWorkoutName] = createSignal('')
 
     const [deleteWorkout, setDeleteWorkout] = createSignal(null)
-    const [startWorkout, setStartWorkout] = createSignal(null)
+
+    const [activeSessions, setActiveSessions] = createSignal(null)
 
     createEffect(() => {
         if (workouts.data.loading === false) {
@@ -27,9 +29,19 @@ export default function Workouts() {
         }
     })
 
+    createEffect(() => {
+        if (!getActiveSessions.data.loading) {
+            if (getActiveSessions.get("status") === 'success') {
+                setActiveSessions(getActiveSessions.get("WorkoutSessions"))
+            }
+        }
+    })
+
     function Page() {
         return (
             <div className={"container"}>
+
+                {activeSessions()}
 
                 <div className={"pb-4 flex flex-col gap-2"}>
                     <For each={workouts.get("Workouts")}>
@@ -58,7 +70,13 @@ export default function Workouts() {
                                             </div>
 
                                             <div className={"action"} onClick={() => {
-                                                setStartWorkout(i())
+                                                ctx.startSession(
+                                                    {workout_id: workout.workout_id}
+                                                ).then(json => {
+                                                    if (json.status === 'success') {
+                                                        navigate(`/session/${json.workout_session_id}`)
+                                                    }
+                                                })
                                             }}>
                                                 <span className="material-icons">start</span>
                                             </div>

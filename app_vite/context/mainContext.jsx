@@ -79,14 +79,15 @@ export function MainContextProvider(props) {
 
         logged_in: false,
         theme: 'dark',
+        units: 'kgs',
         account_id: 0,
         email_address: '',
 
+        // Utilities
         truncate: (str, n) => {
             if (str === undefined) return ('')
             return (str.length > n) ? str.substring(0, n - 1) + '...' : str;
         },
-
         fancyTimeFormat(duration) {
             // Hours, minutes and seconds
             const hrs = ~~(duration / 3600);
@@ -109,17 +110,24 @@ export function MainContextProvider(props) {
             return ret;
         },
 
-        async getSession() {
-            return await getFetch(
-                `${API_URL}/api/session`,
-            )
-        },
+        // Settings
         async setTheme(theme) {
             return await getFetch(
                 `${API_URL}/api/set/theme/${theme}`,
             )
         },
+        async setUnits(unit) {
+            return await getFetch(
+                `${API_URL}/api/set/unit/${unit}`,
+            )
+        },
 
+        // Auth
+        async getAuthSession() {
+            return await getFetch(
+                `${API_URL}/api/auth/session`,
+            )
+        },
         async tryAuth(params) {
             return await postFetch(
                 `${API_URL}/api/auth`,
@@ -127,6 +135,28 @@ export function MainContextProvider(props) {
                     account_id: params.account_id,
                     auth_code: params.auth_code,
                 }
+            )
+        },
+
+        // Login / Logout
+        async tryLogin(email_address) {
+            return await postFetch(
+                `${API_URL}/api/login`,
+                {
+                    email_address: email_address,
+                }
+            )
+        },
+        async tryLogout() {
+            return await getFetch(
+                `${API_URL}/api/logout`,
+            )
+        },
+
+        // Account
+        async getAccount() {
+            return await getFetch(
+                `${API_URL}/api/account`,
             )
         },
         async sendDeleteAccountAuth() {
@@ -143,30 +173,8 @@ export function MainContextProvider(props) {
                 }
             )
         },
-        async checkLogin() {
-            return await getFetch(
-                `${API_URL}/api/check/login`,
-            )
-        },
-        async tryLogin(email_address) {
-            return await postFetch(
-                `${API_URL}/api/login`,
-                {
-                    email_address: email_address,
-                }
-            )
-        },
-        async tryLogout() {
-            return await getFetch(
-                `${API_URL}/api/logout`,
-            )
-        },
-        async getAccount() {
-            return await getFetch(
-                `${API_URL}/api/account`,
-            )
-        },
 
+        // Workouts
         async getWorkouts() {
             return await getFetch(
                 `${API_URL}/api/workouts`,
@@ -196,6 +204,41 @@ export function MainContextProvider(props) {
             )
         },
 
+        // Sessions
+        async getSessions(params) {
+            return await getFetch(
+                `${API_URL}/api/sessions`
+            )
+        },
+        async getActiveSessions(params) {
+            return await getFetch(
+                `${API_URL}/api/sessions/active`
+            )
+        },
+        async startSession(params) {
+            return await postFetch(
+                `${API_URL}/api/sessions/start`,
+                params.data
+            )
+        },
+        async stopSession(params) {
+            return await postFetch(
+                `${API_URL}/api/sessions/start`,
+                params.data
+            )
+        },
+        async getSession(params) {
+            return await getFetch(
+                `${API_URL}/api/sessions/get/${params.workout_session_id}`
+            )
+        },
+        async deleteSession(params) {
+            return await deleteFetch(
+                `${API_URL}/api/sessions/delete/${params.workout_session_id}`
+            )
+        },
+
+        // Exercises
         async addExercise(params) {
             return await postFetch(
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/add`,
@@ -218,6 +261,8 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/delete`
             )
         },
+
+        // Sets
         async addSet(params) {
             return await postFetch(
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/add`,
@@ -234,6 +279,12 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/${params.set_id}/delete`
             )
         },
+        async logSet(params) {
+            return await postFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/log-set`,
+                params.data
+            )
+        }
 
     });
 
@@ -242,7 +293,6 @@ export function MainContextProvider(props) {
     onMount(() => {
         html = document.querySelector('html')
     })
-
     createEffect(() => {
         html.setAttribute('data-theme', store.theme)
     })
@@ -257,19 +307,21 @@ export function MainContextProvider(props) {
 
     } else {
 
-        const session = new Fetcher(store.getSession)
+        const session = new Fetcher(store.getAuthSession)
 
         createEffect(() => {
             if (!session.data.loading) {
                 if (session.get("status") === 'failed') {
                     setStore("logged_in", false)
                     setStore("theme", "dark")
+                    setStore("units", "kgs")
                     setStore("account_id", 0)
                     setStore("email_address", null)
                     navigate('/login')
                 } else {
                     setStore("logged_in", session.data().logged_in)
                     setStore("theme", session.data().theme)
+                    setStore("units", session.data().units)
                     setStore("account_id", session.data().account_id)
                     setStore("email_address", session.data().email_address)
                 }

@@ -139,3 +139,43 @@ def sets_delete_(workout_id, exercise_id, set_id):
         "message": "Set deleted successfully.",
         "set_id": set_id,
     }
+
+
+# Set Logs
+
+@bp.post("/workouts/<workout_id>/exercises/<exercise_id>/log-set")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def sets_log_set_(workout_id, exercise_id):
+    jsond = request.json
+
+    account_id = session.get("account_id", 0)
+
+    type_ = jsond.get("type")
+    duration_min = jsond.get("duration_min", 0)
+    duration_max = jsond.get("duration_max", 0)
+    reps_min = jsond.get("reps_min", 0)
+    reps_max = jsond.get("reps_max", 0)
+    order = jsond.get("order")
+
+    _set, _set_id = Sets.insert(
+        {
+            "account_id": account_id,
+            "workout_id": workout_id,
+            "exercise_id": exercise_id,
+            "is_duration": True if type_ == "duration" else False,
+            "is_reps": True if type_ == "reps" else False,
+            "order": order,
+            "duration_min": duration_min,
+            "duration_max": duration_max,
+            "reps_min": reps_min,
+            "reps_max": reps_max,
+        },
+        allow_none=True,
+    )
+    return {
+        "status": "success",
+        "message": "Set added successfully.",
+        "set_id": _set_id,
+    }

@@ -10,6 +10,8 @@ import Workout from "./pages/Workout";
 import Exercise from "./pages/Exercise";
 import Account from "./pages/Account";
 import DeleteAccount from "./pages/DeleteAccount";
+import Session from "./pages/Session";
+import Sessions from "./pages/Sessions";
 
 
 const root = document.getElementById('root');
@@ -19,21 +21,25 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
         'to add it to your index.html? Or maybe the id attribute got misspelled?',);
 }
 
-function Broken() {
-    return null;
-}
-
 render(() => (
     <Router>
         <Routes>
             <Route path="" component={MainContextProvider}>
+                <Route path="/" element={<Navigate href={"/workouts"}/>}/>
+
                 <Route path="/auth/:account_id/:auth_code" component={Auth}/>
                 <Route path="/login" component={Login}/>
-                <Route path="/" component={Workouts}/>
+
                 <Route path="/account" component={Account}/>
                 <Route path="/account/delete/:account_id/:auth_code" component={DeleteAccount}/>
+
+                <Route path="/workouts" component={Workouts}/>
                 <Route path="/workout/:workout_id" component={Workout}/>
                 <Route path="/workout/:workout_id/exercise/:exercise_id" component={Exercise}/>
+
+                <Route path="/sessions" component={Sessions}/>
+                <Route path="/session/:session_id" component={Session}/>
+
                 <Route path="*" component={PageNotFound}/>
             </Route>
         </Routes>

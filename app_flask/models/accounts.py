@@ -8,15 +8,13 @@ from .__mixins__ import UtilityMixin
 
 class Accounts(db.Model, UtilityMixin):
     # PriKey
-    account_id = db.Column(db.Integer, primary_key=True)
+    account_id = Column(Integer, primary_key=True)
 
-    email_address = db.Column(db.String(255), nullable=False)
-    settings = db.Column(db.JSON, default={"theme": "dark"})
-    auth_code = db.Column(db.String(512), nullable=True)
-    auth_code_expiry = db.Column(db.DateTime, nullable=True)
-    created = db.Column(
-        db.DateTime, nullable=False, default=DatetimeDelta().datetime
-    )
+    email_address = Column(String(255), nullable=False)
+    settings = Column(JSON, default={"theme": "dark", "units": "kgs"})
+    auth_code = Column(String(512), nullable=True)
+    auth_code_expiry = Column(DateTime, nullable=True)
+    created = Column(DateTime, nullable=False, default=DatetimeDelta().datetime)
 
     def update_auth_code(self, auth_code: str, auth_code_expiry: datetime):
         self.auth_code = auth_code

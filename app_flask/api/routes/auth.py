@@ -1,6 +1,5 @@
-from time import sleep
-
 from flask import request, session
+from flask_imp.security import api_login_check
 
 from app_flask.models.accounts import Accounts
 from .. import bp
@@ -36,14 +35,49 @@ def auth_():
     }
 
 
-@bp.get("/check/login")
+@bp.get("/auth/session")
+@api_login_check(
+    "logged_in",
+    True,
+    {
+        "status": "unauthorized",
+        "message": "unauthorized",
+        "logged_in": False,
+        "account_id": 0,
+        "email_address": None,
+        "theme": "dark",
+    },
+)
+def session_():
+    account_id = session.get("account_id", 0)
+    theme = session.get("theme", "dark")
+    units = session.get("units", "kgs")
+    account = Accounts.get_account_by_id(account_id)
+    if account:
+        return {
+            "status": "success",
+            "message": "Session retrieved.",
+            "logged_in": True,
+            "account_id": account_id,
+            "email_address": account.email_address,
+            "theme": theme,
+            "units": units,
+        }
+
+    return {
+        "status": "failed",
+        "message": "Account not found.",
+    }
+
+
+@bp.get("/auth/check/login")
 def check_login():
     if session.get("logged_in"):
         return {"status": "passed", "message": "Logged in."}
     return {"status": "failed", "message": "Not logged in."}
 
 
-@bp.get("/force/login")
+@bp.get("/auth/force/login")
 def force_login():
     session["logged_in"] = True
     session["account_id"] = 1

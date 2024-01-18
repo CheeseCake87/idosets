@@ -34,7 +34,7 @@ export default function Workout() {
                 navigate('/login')
             }
             if (workout.get("Workouts").length === 0) {
-                navigate('/')
+                navigate('/workouts')
             } else {
                 _setWorkout(workout.get("Workouts")[0])
                 setNewWorkoutName(_workout().name)
@@ -50,7 +50,7 @@ export default function Workout() {
                 {/* Workout Name*/}
                 <div className={"action-options gap-5 pb-4"}>
                     <div className={"action"} onClick={() => {
-                        navigate('/')
+                        navigate('/workouts')
                     }}>
                         <span className="material-icons">arrow_back</span>
                     </div>
@@ -265,7 +265,7 @@ export default function Workout() {
     return (
         <>
             <TopMenu/>
-            {workout.loading ? <div className={"pt-10"}><Loading/></div> : <Page/>}
+            {workout.data.loading ? <div className={"pt-10"}><Loading/></div> : <Page/>}
         </>
     );
 };

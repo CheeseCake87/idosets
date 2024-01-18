@@ -50,7 +50,7 @@ export default function Exercise() {
                 navigate('/login')
             }
             if (exercise.get("Exercises").length === 0) {
-                navigate('/')
+                navigate('/workouts')
             } else {
                 _setExercise(exercise.get("Exercises")[0])
                 setWorkoutName(exercise.get("Workouts")[0].name)

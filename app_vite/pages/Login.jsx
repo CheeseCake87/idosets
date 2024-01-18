@@ -13,7 +13,7 @@ export default function Login() {
     const [login_status, set_login_status] = createSignal('waiting');
 
     return (
-        ctx.logged_in ? <Navigate href={"/"}/> :
+        ctx.logged_in ? <Navigate href={"/workouts"}/> :
             <div className={"login py-6"}>
                 <div className={"text-center pt-2 pb-8"}>
                     <h2 className={"my-0"}>💪 I Do Sets</h2>

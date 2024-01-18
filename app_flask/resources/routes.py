@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask import (
     current_app as app,
     render_template,
@@ -7,7 +5,6 @@ from flask import (
     redirect,
     url_for,
 )
-from flask_imp.security import login_check
 
 from app_flask.extensions import imp
 
@@ -20,14 +17,6 @@ def index():
 @app.route("/failed")
 def failed_():
     return "Failed"
-
-
-@app.route("/test")
-@login_check("logged_in", True, "failed_")
-def test():
-    if "last_request" in session:
-        session["last_request"] = datetime.now().timestamp()
-    return f"Test {[f'{key, val}' for key, val in session.items()]}"
 
 
 @app.route("/login")
@@ -49,9 +38,23 @@ def auth_(wildcard):
     return render_template("index.html")
 
 
-@app.route("/workout", defaults={"wildcard": ""})
-@app.route("/workout/<path:wildcard>")
+@app.route("/workouts", defaults={"wildcard": ""})
+@app.route("/workouts/<path:wildcard>")
 def workouts(wildcard):
+    _ = wildcard
+    return render_template("index.html")
+
+
+@app.route("/sessions", defaults={"wildcard": ""})
+@app.route("/sessions/<path:wildcard>")
+def sessions(wildcard):
+    _ = wildcard
+    return render_template("index.html")
+
+
+@app.route("/session", defaults={"wildcard": ""})
+@app.route("/session/<path:wildcard>")
+def session(wildcard):
     _ = wildcard
     return render_template("index.html")
 
