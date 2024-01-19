@@ -37,8 +37,8 @@ render(() => (
                 <Route path="/workout/:workout_id" component={Workout}/>
                 <Route path="/workout/:workout_id/exercise/:exercise_id" component={Exercise}/>
 
-                <Route path="/sessions" component={Sessions}/>
-                <Route path="/session/:session_id" component={Session}/>
+                <Route path="/workout/sessions" component={Sessions}/>
+                <Route path="/workout/:workout_id/session/:session_id" component={Session}/>
 
                 <Route path="*" component={PageNotFound}/>
             </Route>

@@ -3,7 +3,45 @@ from flask_imp.security import api_login_check
 
 from app_flask.models.sets import SetLogs
 from app_flask.models.workouts import WorkoutSessions
+from app_flask.models.workouts import Workouts, WorkoutSessions
 from .. import bp
+
+
+@bp.get("/sessions/get/<workout_session_id>")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def get_session_(workout_session_id):
+
+    session_ = WorkoutSessions.get_session(
+        account_id=session.get("account_id", 0),
+        workout_session_id=workout_session_id
+    )
+
+    set_logs = SetLogs.get_by_workout_id(session_.get("workout_id", 0))
+
+    workout = Workouts
+
+    return {
+        "status": "success",
+        "message": "-",
+        **session_,
+        **set_logs,
+    }
+
+
+@bp.delete("/sessions/delete/<workout_session_id>")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def delete_session_(workout_session_id):
+    _ = WorkoutSessions
+
+    return {
+        "status": "success",
+        "message": "Workout deleted successfully.",
+        "workout_session_id": workout_session_id,
+    }
 
 
 @bp.get("/sessions")
@@ -72,36 +110,3 @@ def sessions_stop_(workout_id, workout_session_id):
         **session_,
     }
 
-
-@bp.get("/sessions/get/<workout_session_id>")
-@api_login_check(
-    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
-)
-def get_session_(workout_session_id):
-    session_ = WorkoutSessions.get_session(
-        account_id=session.get("account_id", 0),
-        workout_session_id=workout_session_id
-    )
-
-    set_logs = SetLogs.get_by_workout_id(session_.get("workout_id", 0))
-
-    return {
-        "status": "success",
-        "message": "-",
-        **session_,
-        **set_logs,
-    }
-
-
-@bp.delete("/sessions/delete/<workout_session_id>")
-@api_login_check(
-    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
-)
-def delete_session_(workout_session_id):
-    _ = WorkoutSessions
-
-    return {
-        "status": "success",
-        "message": "Workout deleted successfully.",
-        "workout_session_id": workout_session_id,
-    }
