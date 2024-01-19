@@ -74,7 +74,7 @@ export default function Workouts() {
                                                     {workout_id: workout.workout_id}
                                                 ).then(json => {
                                                     if (json.status === 'success') {
-                                                        navigate(`/session/${json.workout_session_id}`)
+                                                        navigate(`/workout/${workout.workout_id}/session/${json.workout_session_id}`)
                                                     }
                                                 })
                                             }}>

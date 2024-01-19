@@ -207,7 +207,7 @@ export function MainContextProvider(props) {
         // Sessions
         async getSessions(params) {
             return await getFetch(
-                `${API_URL}/api/sessions`
+                `${API_URL}/api/workout/${params.workout_id}/sessions`
             )
         },
         async getActiveSessions(params) {
@@ -229,12 +229,12 @@ export function MainContextProvider(props) {
         },
         async getSession(params) {
             return await getFetch(
-                `${API_URL}/api/sessions/get/${params.workout_session_id}`
+                `${API_URL}/api/workout/${params.workout_id}/sessions/${params.workout_session_id}`
             )
         },
         async deleteSession(params) {
             return await deleteFetch(
-                `${API_URL}/api/sessions/delete/${params.workout_session_id}`
+                `${API_URL}/api/workout/${params.workout_id}/sessions/${params.workout_session_id}/delete`
             )
         },
 

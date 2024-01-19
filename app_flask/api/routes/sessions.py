@@ -7,30 +7,26 @@ from app_flask.models.workouts import Workouts, WorkoutSessions
 from .. import bp
 
 
-@bp.get("/sessions/get/<workout_session_id>")
+@bp.get("/workout/<workout_id>/sessions/<workout_session_id>")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
-def get_session_(workout_session_id):
+def get_session_(workout_id, workout_session_id):
+    account_id = session.get("account_id", 0)
 
-    session_ = WorkoutSessions.get_session(
-        account_id=session.get("account_id", 0),
-        workout_session_id=workout_session_id
+    workout = Workouts.get_session(
+        account_id=account_id,
+        workout_id=workout_id,
+        workout_session_id=workout_session_id,
     )
-
-    set_logs = SetLogs.get_by_workout_id(session_.get("workout_id", 0))
-
-    workout = Workouts
 
     return {
         "status": "success",
         "message": "-",
-        **session_,
-        **set_logs,
     }
 
 
-@bp.delete("/sessions/delete/<workout_session_id>")
+@bp.delete("/workout/<workout_id>/sessions/<workout_session_id>/delete")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
@@ -44,7 +40,7 @@ def delete_session_(workout_session_id):
     }
 
 
-@bp.get("/sessions")
+@bp.get("/workout/<workout_id>/sessions")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
@@ -52,9 +48,7 @@ def sessions_():
     return {
         "status": "success",
         "message": "-",
-        **WorkoutSessions.sessions(
-            session.get("account_id", 0)
-        ),
+        **WorkoutSessions.sessions(session.get("account_id", 0)),
     }
 
 
@@ -66,9 +60,7 @@ def sessions_active_():
     return {
         "status": "success",
         "message": "-",
-        **WorkoutSessions.active_sessions(
-            session.get("account_id", 0)
-        ),
+        **WorkoutSessions.active_sessions(session.get("account_id", 0)),
     }
 
 
@@ -82,8 +74,7 @@ def sessions_start_():
     workout_id = jsond.get("workout_id")
 
     session_ = WorkoutSessions.start_session(
-        account_id=session.get("account_id", 0),
-        workout_id=workout_id
+        account_id=session.get("account_id", 0), workout_id=workout_id
     )
     return {
         "status": "success",
@@ -101,7 +92,7 @@ def sessions_stop_(workout_id, workout_session_id):
 
     session_ = WorkoutSessions.stop_session(
         account_id=session.get("account_id", 0),
-        workout_session_id=workout_session_id
+        workout_session_id=workout_session_id,
     )
 
     return {
@@ -109,4 +100,3 @@ def sessions_stop_(workout_id, workout_session_id):
         "message": "Workout edited successfully.",
         **session_,
     }
-

@@ -143,6 +143,7 @@ def sets_delete_(workout_id, exercise_id, set_id):
 
 # Set Logs
 
+
 @bp.post("/workouts/<workout_id>/exercises/<exercise_id>/log-set")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}

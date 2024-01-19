@@ -154,13 +154,19 @@ class SetLogs(db.Model, UtilityMixin):
         weight_unit="kgs",
     ):
         converters = {"kgs": kilograms_to_grams, "lbs": pounds_to_grams}
-        q = insert(cls).values({
-            "account_id": account_id,
-            "workout_id": workout_id,
-            "exercise_id": exercise_id,
-            "set_id": set_id,
-            "weight": converters.get(weight_unit)(weight),
-            "duration": duration,
-            "reps": reps,
-        }).returning(cls.set_log_id)
+        q = (
+            insert(cls)
+            .values(
+                {
+                    "account_id": account_id,
+                    "workout_id": workout_id,
+                    "exercise_id": exercise_id,
+                    "set_id": set_id,
+                    "weight": converters.get(weight_unit)(weight),
+                    "duration": duration,
+                    "reps": reps,
+                }
+            )
+            .returning(cls.set_log_id)
+        )
         return db.session.execute(q).scalar()
