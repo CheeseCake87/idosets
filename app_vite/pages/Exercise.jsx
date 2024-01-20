@@ -183,7 +183,7 @@ export default function Exercise() {
                     <For each={sets()}>
                         {(set, i) =>
                             <div className={"display-box flex-col"}>
-                                <div className={'flex justify-between'}>
+                                <div className={'flex-reactive justify-between'}>
                                     <div className={'flex gap-4 items-center'}>
                                         <h1 className={'m-0 opacity-50'}>{i() + 1}</h1>
                                         <Show when={set.is_duration}>
@@ -207,26 +207,24 @@ export default function Exercise() {
                                             </div>
                                         </Show>
                                     </div>
-                                    <div className={'flex items-center gap-4'}>
-                                        <div className={'action-options gap-2'}>
-                                            <div className={"action"} onClick={() => {
-                                                ctx.copySet({
-                                                    workout_id: params.workout_id,
-                                                    exercise_id: params.exercise_id,
-                                                    set_id: set.set_id
-                                                }).then(json => {
-                                                    if (json.status === 'success') {
-                                                        exercise.refetch()
-                                                    }
-                                                })
-                                            }}>
-                                                <span className="material-icons">content_copy</span>
-                                            </div>
-                                            <div className={"action"} onClick={() => {
-                                                setDeleteSet(i())
-                                            }}>
-                                                <span className="material-icons">delete</span>
-                                            </div>
+                                    <div className={'action-options items-center justify-between gap-2'}>
+                                        <div className={"action"} onClick={() => {
+                                            setDeleteSet(i())
+                                        }}>
+                                            <span className="material-icons">delete</span>
+                                        </div>
+                                        <div className={"action"} onClick={() => {
+                                            ctx.copySet({
+                                                workout_id: params.workout_id,
+                                                exercise_id: params.exercise_id,
+                                                set_id: set.set_id
+                                            }).then(json => {
+                                                if (json.status === 'success') {
+                                                    exercise.refetch()
+                                                }
+                                            })
+                                        }}>
+                                            <span className="material-icons">content_copy</span>
                                         </div>
                                     </div>
                                 </div>

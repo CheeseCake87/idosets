@@ -124,6 +124,7 @@ class SetLogs(db.Model, UtilityMixin):
     set_log_id = Column(Integer, primary_key=True)
 
     # Indexes
+    workout_session_id = Column(Integer, default=0, index=True)
     account_id = Column(Integer, default=0, index=True)
     workout_id = Column(Integer, default=0, index=True)
     exercise_id = Column(Integer, default=0, index=True)
@@ -143,15 +144,16 @@ class SetLogs(db.Model, UtilityMixin):
 
     @classmethod
     def add_log(
-        cls,
-        account_id=0,
-        workout_id=0,
-        exercise_id=0,
-        set_id=0,
-        weight=0.0,
-        duration=0,
-        reps=0,
-        weight_unit="kgs",
+            cls,
+            account_id=0,
+            workout_session_id=0,
+            workout_id=0,
+            exercise_id=0,
+            set_id=0,
+            weight=0.0,
+            duration=0,
+            reps=0,
+            weight_unit="kgs",
     ):
         converters = {"kgs": kilograms_to_grams, "lbs": pounds_to_grams}
         q = (
@@ -159,6 +161,7 @@ class SetLogs(db.Model, UtilityMixin):
             .values(
                 {
                     "account_id": account_id,
+                    "workout_session_id": workout_session_id,
                     "workout_id": workout_id,
                     "exercise_id": exercise_id,
                     "set_id": set_id,

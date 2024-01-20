@@ -216,15 +216,13 @@ export function MainContextProvider(props) {
             )
         },
         async startSession(params) {
-            return await postFetch(
-                `${API_URL}/api/sessions/start`,
-                params.data
+            return await getFetch(
+                `${API_URL}/api/workout/${params.workout_id}/sessions/start`
             )
         },
         async stopSession(params) {
             return await postFetch(
-                `${API_URL}/api/sessions/start`,
-                params.data
+                `${API_URL}/api/workout/${params.workout_id}/sessions/${params.workout_session_id}/stop`
             )
         },
         async getSession(params) {
@@ -235,6 +233,22 @@ export function MainContextProvider(props) {
         async deleteSession(params) {
             return await deleteFetch(
                 `${API_URL}/api/workout/${params.workout_id}/sessions/${params.workout_session_id}/delete`
+            )
+        },
+        async logSet(params) {
+            /*
+                params.data = {
+                    exercise_id: 0,
+                    set_id: 0,
+                    reps: 0,
+                    weight: 0.0,
+                    duration: 0,
+                    unit: 'kgs'
+                }
+             */
+            return await postFetch(
+                `${API_URL}/api/workouts/${params.workout_id}/sessions/${params.workout_session_id}/log-set`,
+                params.data
             )
         },
 
@@ -279,12 +293,7 @@ export function MainContextProvider(props) {
                 `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/sets/${params.set_id}/delete`
             )
         },
-        async logSet(params) {
-            return await postFetch(
-                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/log-set`,
-                params.data
-            )
-        }
+
 
     });
 

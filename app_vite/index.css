@@ -336,6 +336,10 @@ body {
         @apply flex-1 flex flex-row gap-4;
     }
 
+    .flex-reverse-reactive {
+        @apply flex-1 flex flex-row gap-4;
+    }
+
     .flex-reactive-reverse {
         @apply flex-1 flex flex-col-reverse gap-4;
     }
@@ -347,6 +351,10 @@ body {
 
         .flex-reactive {
             @apply flex-col;
+        }
+
+        .flex-reverse-reactive {
+            @apply flex-col-reverse;
         }
 
         .flex-reactive-reverse {

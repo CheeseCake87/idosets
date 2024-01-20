@@ -20,6 +20,7 @@ def auth_():
         session["logged_in"] = True
         session["account_id"] = account_.account_id
         session["theme"] = settings.get("theme", "dark")
+        session["units"] = settings.get("units", "kgs")
 
         return {
             "status": "passed",
@@ -27,6 +28,7 @@ def auth_():
             "account_id": account_.account_id,
             "email_address": account_.email_address,
             "theme": account_.settings["theme"],
+            "units": account_.settings["units"],
         }
 
     return {
@@ -46,6 +48,7 @@ def auth_():
         "account_id": 0,
         "email_address": None,
         "theme": "dark",
+        "units": "kgs",
     },
 )
 def session_():
@@ -82,9 +85,12 @@ def force_login():
     session["logged_in"] = True
     session["account_id"] = 1
     session["theme"] = "dark"
+    session["units"] = "kgs"
     return {
         "status": "passed",
         "message": "Logged in.",
         "account_id": 1,
         "email_address": "test@test.com",
+        "theme": "dark",
+        "units": "kgs",
     }

@@ -14,15 +14,22 @@ from .. import bp
 def get_session_(workout_id, workout_session_id):
     account_id = session.get("account_id", 0)
 
-    workout = Workouts.get_session(
+    workout_session = Workouts.get_session(
         account_id=account_id,
         workout_id=workout_id,
         workout_session_id=workout_session_id,
     )
 
+    if workout_session.get("error"):
+        return {
+            "status": "error",
+            "message": workout_session.get("error"),
+        }
+
     return {
         "status": "success",
         "message": "-",
+        **workout_session,
     }
 
 
@@ -64,15 +71,11 @@ def sessions_active_():
     }
 
 
-@bp.post("/sessions/start")
+@bp.get("/workout/<workout_id>/sessions/start")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
-def sessions_start_():
-    jsond = request.json
-
-    workout_id = jsond.get("workout_id")
-
+def sessions_start_(workout_id):
     session_ = WorkoutSessions.start_session(
         account_id=session.get("account_id", 0), workout_id=workout_id
     )
@@ -83,7 +86,7 @@ def sessions_start_():
     }
 
 
-@bp.post("/sessions/stop")
+@bp.get("/workout/<workout_id>/sessions/<workout_session_id>/stop")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
@@ -99,4 +102,42 @@ def sessions_stop_(workout_id, workout_session_id):
         "status": "success",
         "message": "Workout edited successfully.",
         **session_,
+    }
+
+
+@bp.post("/workouts/<workout_id>/sessions/<workout_session_id>/log-set")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def sets_log_set_(workout_id, workout_session_id):
+    jsond = request.json
+
+    account_id = session.get("account_id", 0)
+    weight_units = session.get("units", "kgs")
+
+    workout_id = workout_id
+    workout_session_id = workout_session_id
+
+    exercise_id = jsond.get("exercise_id")
+    set_id = jsond.get("set_id")
+
+    weight = jsond.get("weight")
+    duration = jsond.get("duration")
+    reps = jsond.get("reps")
+
+    _set_log, _set_log_id = SetLogs.add_log(
+        account_id=account_id,
+        workout_id=workout_id,
+        workout_session_id=workout_session_id,
+        exercise_id=exercise_id,
+        set_id=set_id,
+        weight=weight,
+        duration=duration,
+        reps=reps,
+        weight_unit=weight_units,
+    )
+    return {
+        "status": "success",
+        "message": "Set added successfully.",
+        "set_log_id": _set_log_id,
     }

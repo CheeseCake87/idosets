@@ -18,6 +18,7 @@ export default function Workouts() {
     const [newWorkoutName, setNewWorkoutName] = createSignal('')
 
     const [deleteWorkout, setDeleteWorkout] = createSignal(null)
+    const [startWorkout, setStartWorkout] = createSignal(null)
 
     const [activeSessions, setActiveSessions] = createSignal(null)
 
@@ -70,13 +71,7 @@ export default function Workouts() {
                                             </div>
 
                                             <div className={"action"} onClick={() => {
-                                                ctx.startSession(
-                                                    {workout_id: workout.workout_id}
-                                                ).then(json => {
-                                                    if (json.status === 'success') {
-                                                        navigate(`/workout/${workout.workout_id}/session/${json.workout_session_id}`)
-                                                    }
-                                                })
+                                                setStartWorkout(i())
                                             }}>
                                                 <span className="material-icons">start</span>
                                             </div>
@@ -123,7 +118,13 @@ export default function Workouts() {
                                                 Not ready
                                             </button>
                                             <button className={'button-good'} onClick={() => {
-                                                navigate(`/workout/${workout.workout_id}/start`)
+                                                ctx.startSession(
+                                                    {workout_id: workout.workout_id}
+                                                ).then(json => {
+                                                    if (json.status === 'success') {
+                                                        navigate(`/workout/${workout.workout_id}/session/${json.workout_session_id}`)
+                                                    }
+                                                })
                                             }}>
                                                 Start
                                             </button>
