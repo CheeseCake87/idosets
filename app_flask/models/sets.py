@@ -152,6 +152,24 @@ class SetLogs(db.Model, UtilityMixin):
         db.session.commit()
 
     @classmethod
+    def delete_all_by_workout_id(cls, workout_id: int):
+        db.session.execute(
+            delete(cls).where(
+                cls.workout_id == workout_id,
+            )
+        )
+        db.session.commit()
+
+    @classmethod
+    def delete_all_by_exercise_id(cls, exercise_id: int):
+        db.session.execute(
+            delete(cls).where(
+                cls.exercise_id == exercise_id,
+            )
+        )
+        db.session.commit()
+
+    @classmethod
     def add_log(
         cls,
         account_id=0,

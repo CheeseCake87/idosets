@@ -1,11 +1,11 @@
 from flask import session, request
 from flask_imp.security import api_login_check
 
+from app_flask.models.workouts import Workouts, WorkoutSessions
 from app_flask.models.exercises import Exercises
-from app_flask.models.workouts import Workouts
+from app_flask.models.sets import Sets, SetLogs
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
-from ...models.sets import Sets
 
 
 @bp.get("/workouts")
@@ -80,8 +80,10 @@ def workouts_edit_(workout_id):
 )
 def workouts_delete_(workout_id):
     Workouts.delete(workout_id)
+    WorkoutSessions.delete_all_by_workout_id(workout_id)
     Exercises.delete_all_by_workout_id(workout_id)
     Sets.delete_all_by_workout_id(workout_id)
+    SetLogs.delete_all_by_workout_id(workout_id)
 
     return {
         "status": "success",

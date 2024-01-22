@@ -17,6 +17,8 @@ export default function Session() {
     const [finishSet, setFinishSet] = createSignal(null)
     const [undoSet, setUndoSet] = createSignal(null)
 
+    const [finishSession, setFinishSession] = createSignal(false)
+
     const [showDurationInput, setShowDurationInput] = createSignal(true)
     const [showRepsInput, setShowRepsInput] = createSignal(true)
     const [showWeightInput, setShowWeightInput] = createSignal(false)
@@ -85,7 +87,7 @@ export default function Session() {
                                 <div className={"action"} onClick={() => {
                                     setFinishSet(set_i())
                                 }}>
-                                    <span className="material-icons">sports_score</span>
+                                    <span className="material-icons">done</span>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +103,7 @@ export default function Session() {
                         </div>
                         <div className={'action-options items-center justify-end gap-2 opacity-50'}>
                             <div className={"action"}>
-                                <span className="material-icons">sports_score</span>
+                                <span className="material-icons">done</span>
                             </div>
                         </div>
                     </div>
@@ -582,17 +584,17 @@ export default function Session() {
 
                 <Show when={set_log().reps > 0}>
                     <div className={'display-box p-4 flex-1 justify-center'}>
-                        <h1 className={'m-0 opacity-90'}>{set_log().reps} reps</h1>
+                        <h4 className={'m-0 opacity-90'}>{set_log().reps} reps</h4>
                     </div>
                 </Show>
                 <Show when={set_log().duration > 0}>
                     <div className={'display-box p-4 flex-1 justify-center'}>
-                        <h1 className={'m-0 opacity-90'}>{ctx.fancyTimeFormat(set_log().duration)}</h1>
+                        <h4 className={'m-0 opacity-90'}>{ctx.fancyTimeFormat(set_log().duration)}</h4>
                     </div>
                 </Show>
                 <Show when={set_log().weight > 0}>
                     <div className={'display-box p-4 flex-1 justify-center'}>
-                        <h1 className={'m-0 opacity-90'}>{set_log().weight} kgs</h1>
+                        <h4 className={'m-0 opacity-90'}>{set_log().weight} kgs</h4>
                     </div>
                 </Show>
 
@@ -717,33 +719,134 @@ export default function Session() {
 
     function Page() {
         return (<div className={"container"}>
-            <div className={"pb-4 flex flex-col gap-2"}>
 
-                {/* Loop through each exercise in the workout session */}
-                <For each={exercises()}>
-                    {
-                        (exercise, exercise_i) =>
-                            <div className={"display-box flex-col gap-2"}>
-
-                                <h1 className={'m-0 pb-3'}>{exercise.name}</h1>
-
-                                {/* Loop through sets */}
-                                <For each={exercise.sets}>
-                                    {
-                                        (set, set_i) =>
-                                            <SetRow
-                                                exercise_id={exercise.exercise_id}
-                                                set={set}
-                                                set_i={set_i}
-                                            />
-                                    }
-                                </For>
-
+            <Show
+                when={!workout_session.get("workout_session").is_finished}
+                fallback={
+                    <>
+                        <div className={"action-options gap-5 pb-4"}>
+                            <div className={"action"} onClick={() => {
+                                navigate('/workouts')
+                            }}>
+                                <span className="material-icons">arrow_back</span>
                             </div>
-                    }
-                </For>
 
-            </div>
+                            <div className={"action-options-text"}>
+                                <h1 className={'m-0'}>
+                                    {workout_session.get("workout").name}
+                                </h1>
+                            </div>
+                        </div>
+
+                        <div className={"display-box no-bg flex-col gap-4"}>
+
+                            <h4 className={"m-0"}>
+                                Time:&nbsp;
+                                <span className={"opacity-80"}>
+                                {ctx.fancyTimeFormat(workout_session.get("workout_session").duration)}
+                            </span>
+                            </h4>
+
+                            <Show when={workout_session.get("workout_session").total_weight > 0}>
+                                <h4 className={"m-0"}>
+                                    Total Weight:&nbsp;
+                                    <span className={"opacity-80"}>
+                                {workout_session.get("workout_session").total_weight} {ctx.units}
+                                </span>
+                                </h4>
+                            </Show>
+
+                        </div>
+                    </>
+                }
+            >
+                {/* Back to workouts */
+                }
+                <div className={"action-options gap-5 pb-4"}>
+                    <div className={"action"} onClick={() => {
+                        navigate('/workouts')
+                    }}>
+                        <span className="material-icons">arrow_back</span>
+                    </div>
+
+                    <div className={"action-options-text"}>
+                        <h1 className={'m-0'}>
+                            {workout_session.get("workout").name}
+                        </h1>
+                    </div>
+                </div>
+
+                <div className={"pb-4 flex flex-col gap-4"}>
+
+                    {/* Loop through each exercise in the workout session */}
+                    <For each={exercises()}>
+                        {
+                            (exercise, exercise_i) =>
+                                <div className={"display-box flex-col gap-2"}>
+
+                                    <h1 className={'m-0 pb-3'}>{exercise.name}</h1>
+
+                                    {/* Loop through sets */}
+                                    <For each={exercise.sets}>
+                                        {
+                                            (set, set_i) =>
+                                                <SetRow
+                                                    exercise_id={exercise.exercise_id}
+                                                    set={set}
+                                                    set_i={set_i}
+                                                />
+                                        }
+                                    </For>
+
+                                </div>
+                        }
+                    </For>
+
+                </div>
+
+                <div className={"display-box success flex-col gap-2 mb-2"}>
+                    <Show when={finishSession()}
+                          children={
+                              <div className={"display-box no-bg flex-col text-center gap-6"}>
+
+                                  <p className={"opacity-90"}>
+                                      Are you sure you want to finish this workout?
+                                  </p>
+
+                                  <div className={"flex gap-2"}>
+                                      <button className={"button-good flex-1"}
+                                              onClick={() => {
+                                                  ctx.stopSession({
+                                                      workout_id: workout_id,
+                                                      workout_session_id: workout_session_id
+                                                  }).then((_) => {
+                                                      workout_session.refetch()
+                                                  })
+                                              }}>
+                                          Finish Workout
+                                      </button>
+                                      <button className={"flex-1"}
+                                              onClick={() => {
+                                                  setFinishSession(false)
+                                              }}>
+                                          Cancel
+                                      </button>
+                                  </div>
+                              </div>
+                          }
+                          fallback={
+                              <button
+                                  className={"button-good flex-1"}
+                                  type="button"
+                                  onClick={() => {
+                                      setFinishSession(true)
+                                  }}>
+                                  Finish Workout
+                              </button>
+                          }/>
+
+                </div>
+            </Show>
         </div>)
     }
 

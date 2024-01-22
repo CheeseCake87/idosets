@@ -382,6 +382,11 @@ body {
         border-color: var(--button-bad-border-color);
     }
 
+    .success {
+        background-color: var(--button-good-bg-color);
+        border-color: var(--button-good-border-color);
+    }
+
     .button-good {
         background-color: var(--button-good-bg-color) !important;
         border-color: var(--button-good-border-color) !important;;
@@ -402,5 +407,20 @@ body {
         border-color: var(--button-bad-hf-border-color) !important;;
     }
 
+    .flashing-good {
+        animation: flashing-good-kf 2s infinite;
+    }
+
+    @keyframes flashing-good-kf {
+        0% {
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+        50% {
+            background-color: rgba(0, 255, 0, 0.3);
+        }
+        100% {
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+    }
 
 }

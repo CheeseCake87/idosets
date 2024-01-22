@@ -1,11 +1,11 @@
 from flask import session, request
 from flask_imp.security import api_login_check
 
-from app_flask.models.exercises import Exercises
 from app_flask.models.workouts import Workouts
+from app_flask.models.exercises import Exercises
+from app_flask.models.sets import Sets, SetLogs
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
-from ...models.sets import Sets
 
 
 @bp.get("/workouts/<workout_id>/exercises")
@@ -93,8 +93,10 @@ def exercises_edit_(workout_id, exercise_id):
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def exercises_delete_(workout_id, exercise_id):
+    _ = workout_id
     Exercises.delete(exercise_id)
     Sets.delete_all_by_exercise_id(exercise_id)
+    SetLogs.delete_all_by_exercise_id(exercise_id)
     return {
         "status": "success",
         "message": "Exercise edited successfully.",

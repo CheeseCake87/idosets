@@ -1,9 +1,11 @@
+import pytz
+
 from . import *
 from .__mixins__ import UtilityMixin
 
 from app_flask.resources.utilities.weight_converter import (
     grams_to_pounds,
-    grams_to_kilograms
+    grams_to_kilograms,
 )
 
 
@@ -18,6 +20,7 @@ class WorkoutSessions(db.Model, UtilityMixin):
     started = Column(DateTime, nullable=False, default=DatetimeDelta().datetime)
     finished = Column(DateTime, nullable=True, default=None)
     is_finished = Column(Boolean, nullable=False, default=False)
+    duration = Column(Integer, nullable=True, default=0)
 
     @classmethod
     def sessions(cls, account_id: int) -> dict:
@@ -37,7 +40,9 @@ class WorkoutSessions(db.Model, UtilityMixin):
                     cls.account_id == account_id,
                     cls.is_finished == False,
                 )
-            )
+            ),
+            remove_return_key=True,
+            one_or_none=True,
         )
 
     @classmethod
@@ -77,27 +82,28 @@ class WorkoutSessions(db.Model, UtilityMixin):
 
     @classmethod
     def stop_session(cls, account_id: int, workout_session_id: int) -> dict:
-        q = (
-            update(cls)
-            .where(
-                and_(
-                    cls.account_id == account_id,
-                    cls.workout_session_id == workout_session_id,
-                )
+        q = select(cls).where(
+            and_(
+                cls.account_id == account_id,
+                cls.workout_session_id == workout_session_id,
             )
-            .values(
-                finished=DatetimeDelta().datetime,
-                is_finished=True,
-            )
-            .returning(cls)
         )
         r = db.session.execute(q).scalar()
-        duration = r.finished - r.started
+
+        started = pytz.UTC.localize(r.started)
+        finished = DatetimeDelta().datetime
+        duration = (finished - started).seconds
+
+        r.finished = finished
+        r.duration = duration
+        r.is_finished = True
+
+        db.session.commit()
         return {
             "workout_session_id": r.workout_session_id,
             "started": r.started,
             "finished": r.finished,
-            "duration": duration.second,
+            "duration": duration,
             "is_finished": r.is_finished,
         }
 
@@ -123,6 +129,15 @@ class WorkoutSessions(db.Model, UtilityMixin):
             "session_id": workout_session_id,
         }
 
+    @classmethod
+    def delete_all_by_workout_id(cls, workout_id: int):
+        db.session.execute(
+            delete(cls).where(
+                cls.workout_id == workout_id,
+            )
+        )
+        db.session.commit()
+
 
 class Workouts(db.Model, UtilityMixin):
     # PriKey
@@ -143,19 +158,18 @@ class Workouts(db.Model, UtilityMixin):
 
     @classmethod
     def get_session(
-            cls,
-            account_id: int,
-            workout_id: int,
-            workout_session_id: int,
-            weight_unit: str = "kgs"
+        cls,
+        account_id: int,
+        workout_id: int,
+        workout_session_id: int,
+        weight_unit: str = "kgs",
     ) -> dict:
         from app_flask.models.exercises import Exercises
         from app_flask.models.sets import Sets, SetLogs
 
-        converters = {
-            "kgs": grams_to_kilograms,
-            "lbs": grams_to_pounds
-        }
+        converters = {"kgs": grams_to_kilograms, "lbs": grams_to_pounds}
+
+        total_weight = 0
 
         workout_session = WorkoutSessions.as_jsonable_dict(
             select(WorkoutSessions).where(
@@ -197,7 +211,7 @@ class Workouts(db.Model, UtilityMixin):
                     Exercises.workout_id == workout_id,
                 )
             )
-            .order_by(desc(Exercises.order)),
+            .order_by(asc(Exercises.order)),
             remove_return_key=True,
         )
 
@@ -232,7 +246,21 @@ class Workouts(db.Model, UtilityMixin):
                 )
                 if set_["set_log"]:
                     weight = set_["set_log"]["weight"]
-                    set_["set_log"]["weight"] = converters.get(weight_unit)(weight)
+                    set_["set_log"]["weight"] = converters.get(weight_unit)(
+                        weight
+                    )
+                    total_weight += weight
+
+        if workout_session["is_finished"]:
+            workout_session["duration"] = (
+                workout_session["finished"] - workout_session["started"]
+            ).seconds
+            workout_session["total_weight"] = converters.get(weight_unit)(
+                total_weight
+            )
+        else:
+            workout_session["duration"] = 0
+            workout_session["total_weight"] = 0
 
         return {
             "workout_session": workout_session,

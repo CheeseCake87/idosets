@@ -20,7 +20,7 @@ export default function Workouts() {
     const [deleteWorkout, setDeleteWorkout] = createSignal(null)
     const [startWorkout, setStartWorkout] = createSignal(null)
 
-    const [activeSessions, setActiveSessions] = createSignal(null)
+    const [activeSessions, setActiveSessions] = createSignal({})
 
     createEffect(() => {
         if (workouts.data.loading === false) {
@@ -33,7 +33,7 @@ export default function Workouts() {
     createEffect(() => {
         if (!getActiveSessions.data.loading) {
             if (getActiveSessions.get("status") === 'success') {
-                setActiveSessions(getActiveSessions.get("WorkoutSessions"))
+                setActiveSessions(getActiveSessions.get("active_sessions"))
             }
         }
     })
@@ -41,9 +41,6 @@ export default function Workouts() {
     function Page() {
         return (
             <div className={"container"}>
-
-                {activeSessions()}
-
                 <div className={"pb-4 flex flex-col gap-2"}>
                     <For each={workouts.get("Workouts")}>
                         {(workout, i) =>
@@ -69,19 +66,34 @@ export default function Workouts() {
                                             }}>
                                                 <span className="material-icons">edit</span>
                                             </div>
-
-                                            <div className={"action"} onClick={() => {
-                                                setStartWorkout(i())
-                                            }}>
-                                                <span className="material-icons">start</span>
-                                            </div>
+                                            <Show
+                                                when={activeSessions()[workout.workout_id] !== undefined}
+                                                fallback={
+                                                    <div className={"action"} onClick={() => {
+                                                        setStartWorkout(i())
+                                                    }}>
+                                                        <span className="material-icons">start</span>
+                                                    </div>
+                                                }
+                                            >
+                                                <div className={"action flashing-good"} onClick={() => {
+                                                    navigate(
+                                                        `/workout/${workout.workout_id}/` +
+                                                        `session/` +
+                                                        `${activeSessions()[workout.workout_id].workout_session_id}`
+                                                    )
+                                                }}>
+                                                    <span className="material-icons">start</span>
+                                                </div>
+                                            < /Show>
                                         </div>
                                     </div>
 
                                 </div>
 
                                 <Show when={deleteWorkout() === i()}>
-                                    <div className={"display-box flex-reactive items-center justify-between mt-4"}>
+                                    <div
+                                        className={"display-box flex-reactive items-center justify-between mt-4"}>
                                         <p>Are you sure you want to delete this workout?</p>
 
                                         <div className={'flex gap-2'}>
@@ -107,7 +119,8 @@ export default function Workouts() {
                                     </div>
                                 </Show>
 
-                                <Show when={startWorkout() === i()}>
+                                <Show
+                                    when={startWorkout() === i() && activeSessions()[workout.workout_id] === undefined}>
                                     <div className={"display-box flex-reactive items-center justify-between mt-4"}>
                                         <p>Are you sure you want to start this workout?</p>
                                         <div className={'flex gap-2'}>

@@ -17,7 +17,7 @@ def get_session_(workout_id, workout_session_id):
         account_id=account_id,
         workout_id=workout_id,
         workout_session_id=workout_session_id,
-        weight_unit=session.get("units", "kgs")
+        weight_unit=session.get("units", "kgs"),
     )
 
     if workout_session.get("error"):
@@ -64,10 +64,19 @@ def sessions_():
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def sessions_active_():
+    active_sessions = (
+        WorkoutSessions.active_sessions(session.get("account_id", 0)),
+    )
+    apply_workout_id_as_key = {}
+    for active_session in active_sessions:
+        apply_workout_id_as_key[
+            active_session.get("workout_id")
+        ] = active_session
+
     return {
         "status": "success",
         "message": "-",
-        **WorkoutSessions.active_sessions(session.get("account_id", 0)),
+        "active_sessions": apply_workout_id_as_key,
     }
 
 
@@ -97,10 +106,9 @@ def sessions_stop_(workout_id, workout_session_id):
         account_id=session.get("account_id", 0),
         workout_session_id=workout_session_id,
     )
-
     return {
         "status": "success",
-        "message": "Workout edited successfully.",
+        "message": "Workout session stopped.",
         **session_,
     }
 
@@ -149,7 +157,7 @@ def sets_log_set_(workout_id, workout_session_id):
             "weight": weight,
             "duration": duration,
             "reps": reps,
-        }
+        },
     }
 
 
