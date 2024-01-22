@@ -109,6 +109,45 @@ export function MainContextProvider(props) {
 
             return ret;
         },
+        async fold(container_id, content_id) {
+            const container = document.getElementById(container_id)
+            const content = document.getElementById(content_id)
+
+            const container_height = container.scrollHeight
+            const content_height = content.scrollHeight
+
+            let id;
+            let height = container.style.maxHeight.replace('px', '')
+
+            if (container_height === content_height) {
+                close()
+            } else {
+                open()
+            }
+
+            function open() {
+                if (height >= content_height) {
+                    return true
+                } else {
+                    height++
+                    container.style.maxHeight = height + 'px'
+                }
+                setTimeout(open, 0.005)
+            }
+
+            function close() {
+                if (height <= 0) {
+                    return true
+                } else {
+                    height--
+                    container.style.maxHeight = height + 'px'
+                }
+                setTimeout(close, 0.005)
+            }
+
+
+            return true
+        },
 
         // Settings
         async setTheme(theme) {
@@ -251,24 +290,34 @@ export function MainContextProvider(props) {
                 params.data
             )
         },
+        async deleteLogSet(params) {
+            return await deleteFetch(
+                `${API_URL}/api/` +
+                `workouts/${params.workout_id}/` +
+                `sessions/${params.workout_session_id}/` +
+                `log-set/${params.set_log_id}/delete`
+            )
+        },
 
         // Exercises
         async addExercise(params) {
             return await postFetch(
-                `${API_URL}/api/workouts/${params.workout_id}/exercises/add`,
+                `${API_URL} / api / workouts /${params.workout_id}/exercises/
+            add`,
                 params.data
             )
         },
         async getExercise(params) {
             return await getFetch(
-                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}`
+                `${API_URL} / api / workouts /${params.workout_id}/exercises/${params.exercise_id}`
             )
         },
         async editExercise(params) {
             return await postFetch(
-                `${API_URL}/api/workouts/${params.workout_id}/exercises/${params.exercise_id}/edit`,
-                params.data
-            )
+                `${API_URL} / api / workouts /${params.workout_id}/exercises/${params.exercise_id}
+            /edit`,
+            params.data
+        )
         },
         async deleteExercise(params) {
             return await deleteFetch(

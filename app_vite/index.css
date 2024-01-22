@@ -324,6 +324,11 @@ body {
         margin: 0;
     }
 
+    .set_log_display {
+        @apply flex-reactive justify-start p-4 mt-4 rounded;
+        background-color: rgba(0, 255, 0, 0.1);
+    }
+
     .form-col {
         @apply flex-1 flex flex-col gap-4;
     }
@@ -342,6 +347,11 @@ body {
 
     .flex-reactive-reverse {
         @apply flex-1 flex flex-col-reverse gap-4;
+    }
+
+    .foldable {
+        @apply overflow-hidden;
+        max-height: 0;
     }
 
     @media (max-width: 768px) {

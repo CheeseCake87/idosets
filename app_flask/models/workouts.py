@@ -1,6 +1,11 @@
 from . import *
 from .__mixins__ import UtilityMixin
 
+from app_flask.resources.utilities.weight_converter import (
+    grams_to_pounds,
+    grams_to_kilograms
+)
+
 
 class WorkoutSessions(db.Model, UtilityMixin):
     # PriKey
@@ -138,10 +143,19 @@ class Workouts(db.Model, UtilityMixin):
 
     @classmethod
     def get_session(
-            cls, account_id: int, workout_id: int, workout_session_id: int
+            cls,
+            account_id: int,
+            workout_id: int,
+            workout_session_id: int,
+            weight_unit: str = "kgs"
     ) -> dict:
         from app_flask.models.exercises import Exercises
         from app_flask.models.sets import Sets, SetLogs
+
+        converters = {
+            "kgs": grams_to_kilograms,
+            "lbs": grams_to_pounds
+        }
 
         workout_session = WorkoutSessions.as_jsonable_dict(
             select(WorkoutSessions).where(
@@ -176,12 +190,14 @@ class Workouts(db.Model, UtilityMixin):
             }
 
         exercises = Exercises.as_jsonable_dict(
-            select(Exercises).where(
+            select(Exercises)
+            .where(
                 and_(
                     Exercises.account_id == account_id,
                     Exercises.workout_id == workout_id,
                 )
-            ).order_by(desc(Exercises.order)),
+            )
+            .order_by(desc(Exercises.order)),
             remove_return_key=True,
         )
 
@@ -192,16 +208,18 @@ class Workouts(db.Model, UtilityMixin):
 
         for exercise in exercises:
             exercise["sets"] = Sets.as_jsonable_dict(
-                select(Sets).where(
+                select(Sets)
+                .where(
                     and_(
                         Sets.account_id == account_id,
                         Sets.exercise_id == exercise["exercise_id"],
                     )
-                ).order_by(desc(Sets.order)),
+                )
+                .order_by(asc(Sets.order)),
                 remove_return_key=True,
             )
             for set_ in exercise["sets"]:
-                set_["logs"] = SetLogs.as_jsonable_dict(
+                set_["set_log"] = SetLogs.as_jsonable_dict(
                     select(SetLogs).where(
                         and_(
                             SetLogs.account_id == account_id,
@@ -210,7 +228,11 @@ class Workouts(db.Model, UtilityMixin):
                         )
                     ),
                     remove_return_key=True,
+                    one_or_none=True,
                 )
+                if set_["set_log"]:
+                    weight = set_["set_log"]["weight"]
+                    set_["set_log"]["weight"] = converters.get(weight_unit)(weight)
 
         return {
             "workout_session": workout_session,

@@ -2,7 +2,6 @@ from flask import session, request
 from flask_imp.security import api_login_check
 
 from app_flask.models.sets import SetLogs
-from app_flask.models.workouts import WorkoutSessions
 from app_flask.models.workouts import Workouts, WorkoutSessions
 from .. import bp
 
@@ -18,6 +17,7 @@ def get_session_(workout_id, workout_session_id):
         account_id=account_id,
         workout_id=workout_id,
         workout_session_id=workout_session_id,
+        weight_unit=session.get("units", "kgs")
     )
 
     if workout_session.get("error"):
@@ -125,7 +125,7 @@ def sets_log_set_(workout_id, workout_session_id):
     duration = jsond.get("duration")
     reps = jsond.get("reps")
 
-    _set_log, _set_log_id = SetLogs.add_log(
+    _set_log_id = SetLogs.add_log(
         account_id=account_id,
         workout_id=workout_id,
         workout_session_id=workout_session_id,
@@ -138,6 +138,34 @@ def sets_log_set_(workout_id, workout_session_id):
     )
     return {
         "status": "success",
-        "message": "Set added successfully.",
-        "set_log_id": _set_log_id,
+        "message": "Set log added successfully.",
+        "set_log": {
+            "set_log_id": _set_log_id,
+            "account_id": account_id,
+            "workout_id": workout_id,
+            "workout_session_id": workout_session_id,
+            "exercise_id": exercise_id,
+            "set_id": set_id,
+            "weight": weight,
+            "duration": duration,
+            "reps": reps,
+        }
+    }
+
+
+@bp.delete(
+    "/workouts/<workout_id>/sessions/<workout_session_id>/log-set/<set_log_id>/delete"
+)
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def delete_set_log_(workout_id, workout_session_id, set_log_id):
+    _ = workout_id
+    _ = workout_session_id
+
+    SetLogs.delete_by_set_log_id(set_log_id)
+
+    return {
+        "status": "success",
+        "message": "Set log deleted.",
     }

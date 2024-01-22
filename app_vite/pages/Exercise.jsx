@@ -64,8 +64,12 @@ export default function Exercise() {
     })
 
     createEffect(() => {
-        if (newSetDurationMin() > 0) {
-            setNewSetDurationMinDisplay(ctx.fancyTimeFormat(newSetDurationMin()))
+        if (newSetDurationMin() < 0) {
+            setNewSetDurationMin(0)
+        } else {
+            setNewSetDurationMinDisplay(
+                ctx.fancyTimeFormat(newSetDurationMin())
+            )
         }
     })
 
