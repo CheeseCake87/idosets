@@ -254,6 +254,10 @@ body {
         background-color: var(--card-bg-color);
     }
 
+    .action-box-reactive {
+        @apply flex-row
+    }
+
     .action-box-clickable {
         @apply flex justify-center p-6 cursor-pointer rounded-md border select-none;
         border-color: var(--html-default-border-color);
@@ -305,6 +309,12 @@ body {
         background-color: var(--card-bg-color);
     }
 
+    .display-box-thin {
+        @apply flex p-2 rounded-md border;
+        border-color: var(--html-default-border-color);
+        background-color: var(--card-bg-color);
+    }
+
     .display-box-clickable {
         @apply flex p-6 cursor-pointer rounded-md border;
         border-color: var(--html-default-border-color);
@@ -341,6 +351,10 @@ body {
         @apply flex-1 flex flex-row gap-4;
     }
 
+    .flex-reactive-content-center {
+        @apply flex-1 flex flex-row gap-4 justify-center align-middle;
+    }
+
     .flex-reverse-reactive {
         @apply flex-1 flex flex-row gap-4;
     }
@@ -355,6 +369,10 @@ body {
     }
 
     @media (max-width: 768px) {
+        .action-box-reactive {
+            @apply flex-col gap-2 items-center;
+        }
+
         .form-reactive {
             @apply flex-col;
         }
