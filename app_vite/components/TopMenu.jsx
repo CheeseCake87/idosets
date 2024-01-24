@@ -4,7 +4,7 @@ import {A, useLocation, useNavigate} from "@solidjs/router";
 
 export default function TopMenu(props) {
 
-    const [ctx, setCtx] = useContext(mainContext);
+    const [ctx, setCtx, session] = useContext(mainContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -19,7 +19,7 @@ export default function TopMenu(props) {
                       children={
                           <button onClick={
                               () => {
-                                  navigate('/')
+                                  navigate('/workouts')
                               }
                           }>
                               <span className={"desktop-block"}>Workouts</span>
@@ -46,12 +46,7 @@ export default function TopMenu(props) {
                     () => {
                         ctx.tryLogout().then(json => {
                             if (json.status === 'success') {
-                                setCtx("logged_in", false)
-                                setCtx("account_id", 0)
-                                setCtx("email_address", '')
-                                setCtx("theme", 'dark')
-                                setCtx("units", 'kgs')
-                                navigate('/login')
+                                ctx.session.refetch()
                             }
                         })
                     }

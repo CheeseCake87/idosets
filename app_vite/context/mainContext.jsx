@@ -75,13 +75,14 @@ export function MainContextProvider(props) {
         navigate('/error')
     }
 
+    async function getAuthSession() {
+        return await getFetch(
+            `${API_URL}/api/auth/session`,
+        )
+    }
+
     const [store, setStore] = createStore({
 
-        logged_in: false,
-        theme: 'dark',
-        units: 'kgs',
-        account_id: 0,
-        email_address: '',
 
         // Utilities
         truncate: (str, n) => {
@@ -183,11 +184,6 @@ export function MainContextProvider(props) {
         },
 
         // Auth
-        async getAuthSession() {
-            return await getFetch(
-                `${API_URL}/api/auth/session`,
-            )
-        },
         async tryAuth(params) {
             return await postFetch(
                 `${API_URL}/api/auth`,
@@ -382,6 +378,13 @@ export function MainContextProvider(props) {
             )
         },
 
+        logged_in: false,
+        theme: 'dark',
+        units: 'kgs',
+        account_id: 0,
+        email_address: '',
+
+        session: new Fetcher(getAuthSession),
 
     });
 
@@ -404,11 +407,9 @@ export function MainContextProvider(props) {
 
     } else {
 
-        const session = new Fetcher(store.getAuthSession)
-
         createEffect(() => {
-            if (!session.data.loading) {
-                if (session.get("status") === 'failed') {
+            if (!store.session.data.loading) {
+                if (store.session.get("status") === 'failed') {
                     setStore("logged_in", false)
                     setStore("theme", "dark")
                     setStore("units", "kgs")
@@ -416,12 +417,12 @@ export function MainContextProvider(props) {
                     setStore("email_address", null)
                     navigate('/login')
                 } else {
-                    setStore("logged_in", session.data().logged_in)
-                    setStore("theme", session.data().theme)
-                    setStore("units", session.data().units)
-                    setStore("account_id", session.data().account_id)
-                    setStore("email_address", session.data().email_address)
-                    if (location.pathname === '/login' && session.data().logged_in) {
+                    setStore("logged_in", store.session.data().logged_in)
+                    setStore("theme", store.session.data().theme)
+                    setStore("units", store.session.data().units)
+                    setStore("account_id", store.session.data().account_id)
+                    setStore("email_address", store.session.data().email_address)
+                    if (location.pathname === '/login' && store.session.data().logged_in) {
                         navigate('/workouts')
                     }
                 }
@@ -431,9 +432,9 @@ export function MainContextProvider(props) {
         return (
             <mainContext.Provider value={[store, setStore]}>
                 {
-                    session.data.loading ?
+                    store.session.data.loading ?
                         <div className={"pt-20"}><Loading/></div> :
-                        !session.data().logged_in && location.pathname !== '/login' ?
+                        !store.session.data().logged_in && location.pathname !== '/login' ?
                             <Navigate href={"/login"}/> : <Outlet/>
                 }
             </mainContext.Provider>
