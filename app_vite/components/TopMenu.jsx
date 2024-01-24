@@ -47,6 +47,9 @@ export default function TopMenu(props) {
                         ctx.tryLogout().then(json => {
                             if (json.status === 'success') {
                                 ctx.session.refetch()
+                                if (!ctx.session.data.loading) {
+                                    location.reload()
+                                }
                             }
                         })
                     }
