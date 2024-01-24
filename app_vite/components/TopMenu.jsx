@@ -48,6 +48,7 @@ export default function TopMenu(props) {
                                 setCtx("account_id", 0)
                                 setCtx("email_address", '')
                                 setCtx("theme", 'dark')
+                                setCtx("units", 'kgs')
                                 navigate('/login')
                             }
                         })
