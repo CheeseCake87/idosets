@@ -26,6 +26,7 @@ export default function Auth(props) {
                 setCtx("account_id", try_auth().account_id)
                 setCtx("email_address", try_auth().email_address)
                 setCtx("theme", try_auth().theme)
+                setCtx("units", try_auth().units)
                 navigate('/workouts')
             } else {
                 set_auth("error")

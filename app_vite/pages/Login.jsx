@@ -83,7 +83,7 @@ export default function Login() {
                     Try Again
                 </button>
             </Show>
-            <div className={"flex flex-col gap-2 pt-6 text-sm"}
+            <div className={"flex flex-col gap-2 pt-12 text-sm"}
                  xmlns:cc="http://creativecommons.org/ns#"
                  xmlns:dct="http://purl.org/dc/terms/">
                 <p className={"opacity-70"}>

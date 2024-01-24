@@ -1,6 +1,6 @@
 import {Show, useContext} from "solid-js";
 import {mainContext} from "../context/mainContext";
-import {useNavigate, useLocation} from "@solidjs/router";
+import {A, useLocation, useNavigate} from "@solidjs/router";
 
 export default function TopMenu(props) {
 
@@ -10,7 +10,9 @@ export default function TopMenu(props) {
 
     return (
         <nav>
-            <h3 className={"my-0"}>💪 I Do Sets</h3>
+            <A href={'/workouts'}>
+                <h3 className={"my-0"}>💪 I Do Sets</h3>
+            </A>
             <div className={'flex gap-4'}>
 
                 <Show when={location.pathname.includes("/account")}

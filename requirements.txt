@@ -12,3 +12,4 @@ supervisor
 email-validator
 mail-parser==3.15.0
 requests
+pyhead

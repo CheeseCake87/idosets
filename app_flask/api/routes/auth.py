@@ -22,6 +22,8 @@ def auth_():
         session["theme"] = settings.get("theme", "dark")
         session["units"] = settings.get("units", "kgs")
 
+        print(session)
+
         return {
             "status": "passed",
             "message": "Logged in.",
@@ -56,6 +58,9 @@ def session_():
     theme = session.get("theme", "dark")
     units = session.get("units", "kgs")
     account = Accounts.get_account_by_id(account_id)
+
+    print(session)
+
     if account:
         return {
             "status": "success",

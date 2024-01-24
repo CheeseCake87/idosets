@@ -202,9 +202,9 @@ body {
 
 
     .login {
-        @apply p-5 mx-auto my-4 text-center rounded-md border;
-        background-color: var(--card-bg-color);
-        border-color: var(--html-default-border-color);
+        @apply p-5 mx-auto my-4 text-center;
+        /*background-color: var(--card-bg-color);*/
+        /*border-color: var(--html-default-border-color);*/
         max-width: 400px;
     }
 

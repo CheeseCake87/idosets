@@ -1,10 +1,10 @@
-from . import run
 from app_flask.resources.utilities.email_service import (
     SMTPEmailService,
     EmailServiceSettings,
     ZeptoEmailService,
     ZeptoEmailServiceSettings,
 )
+from . import run
 
 
 @run.task()

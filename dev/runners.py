@@ -50,7 +50,6 @@ def npm_build(
     if not vite_dir.exists():
         raise FileNotFoundError(f"{vite_dir} not found.")
 
-    vite_index_file = vite_dir / "dist" / "index.html"
     vite_assets_folder = vite_dir / "dist" / "assets"
 
     if not vite_assets_folder.exists():
@@ -64,5 +63,4 @@ def npm_build(
 
     print("Build complete, copying files...")
     subprocess.run(["cp", "-r", vite_assets_folder, flask_static_folder])
-    subprocess.run(["cp", vite_index_file, flask_templates_folder])
     print("Files copied.")

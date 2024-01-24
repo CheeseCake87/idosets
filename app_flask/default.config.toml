@@ -47,6 +47,7 @@ EMAIL_SMTP_PORT = "<EMAIL_SMTP_PORT>"
 logged_in = false
 account_id = 0
 theme = "dark"
+units = "kgs"
 
 [SQLALCHEMY]
 SQLALCHEMY_ECHO = false
