@@ -27,8 +27,8 @@ def auth_():
             "message": "Logged in.",
             "account_id": account_.account_id,
             "email_address": account_.email_address,
-            "theme": account_.settings["theme"],
-            "units": account_.settings["units"],
+            "theme": settings.get("theme", "dark"),
+            "units": settings.get("units", "kgs"),
         }
 
     return {
