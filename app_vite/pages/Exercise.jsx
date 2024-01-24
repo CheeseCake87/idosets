@@ -204,9 +204,7 @@ export default function Exercise() {
                                             <div className={'flex items-center gap-1'}>
                                                 <span className="material-icons px-2">fitness_center</span>
                                                 <h2 className={'m-0'}>
-                                                    {set.reps_min > 0 ? set.reps_min + ' reps' : ''}
-                                                    {(set.reps_max > 0 && set.reps_min > 0) ? ' - ' : ''}
-                                                    {set.reps_max > 0 ? set.reps_max + ' reps' : ''}
+                                                    {ctx.fancyRepFormat(set.reps_min, set.reps_max)}
                                                 </h2>
                                             </div>
                                         </Show>
@@ -282,21 +280,25 @@ export default function Exercise() {
                             <div className={'flex flex-row gap-4'}>
 
                                 <div className={
-                                    setType() === 'reps' ? "action-box flex-1" : "action-box-clickable flex-1"}
+                                    setType() === 'reps' ?
+                                        "action-box action-box-reactive flex-1" :
+                                        "action-box-clickable action-box-reactive flex-1"}
                                      onClick={() => {
                                          setSetType('reps')
                                          setNewSetDurationMin(0)
                                      }}>
-                                    <span className="material-icons px-2">fitness_center</span> Rep Set
+                                    <span className="material-icons px-2">fitness_center</span> Reps
                                 </div>
 
                                 <div className={
-                                    setType() === 'duration' ? "action-box flex-1" : "action-box-clickable flex-1"}
+                                    setType() === 'duration' ?
+                                        "action-box action-box-reactive flex-1" :
+                                        "action-box-clickable action-box-reactive flex-1"}
                                      onClick={() => {
                                          setSetType('duration')
                                          setNewSetRepsMin(0)
                                      }}>
-                                    <span className="material-icons px-2">timer</span> Duration Set
+                                    <span className="material-icons px-2">timer</span> Duration
                                 </div>
 
                             </div>
