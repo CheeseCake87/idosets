@@ -45,6 +45,13 @@ def workouts(wildcard):
     return render_template("index.html")
 
 
+@app.route("/workout", defaults={"wildcard": ""})
+@app.route("/workout/<path:wildcard>")
+def workout(wildcard):
+    _ = wildcard
+    return render_template("index.html")
+
+
 @app.route("/session", defaults={"wildcard": ""})
 @app.route("/session/<path:wildcard>")
 def session(wildcard):
@@ -55,5 +62,12 @@ def session(wildcard):
 @app.route("/account", defaults={"wildcard": ""})
 @app.route("/account/<path:wildcard>")
 def account(wildcard):
+    _ = wildcard
+    return render_template("index.html")
+
+
+@app.route("/error", defaults={"wildcard": ""})
+@app.route("/error/<path:wildcard>")
+def error_(wildcard):
     _ = wildcard
     return render_template("index.html")
