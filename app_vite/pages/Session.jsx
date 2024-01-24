@@ -37,9 +37,9 @@ export default function Session() {
     })
 
     function reset_view() {
-        setShowDurationInput(true)
         setShowRepsInput(true)
         setShowWeightInput(false)
+        setShowDurationInput(false)
         setFinishSet(null)
     }
 
@@ -66,9 +66,7 @@ export default function Session() {
                         <div className={'flex items-center gap-1'}>
                             <span className="material-icons px-2">fitness_center</span>
                             <h2 className={'m-0'}>
-                                {set.reps_min > 0 ? set.reps_min + ' reps' : ''}
-                                {(set.reps_max > 0 && set.reps_min > 0) ? ' - ' : ''}
-                                {set.reps_max > 0 ? set.reps_max + ' reps' : ''}
+                                {ctx.fancyRepFormat(set.reps_min, set.reps_max)}
                             </h2>
                         </div>
                     </Show>
@@ -313,6 +311,8 @@ export default function Session() {
 
         const {set_id, weight, setWeight, manualInput, setManualInput} = props
 
+        let inputRef = null
+
         return (
             <div className={"display-box flex-col gap-4 mt-2"}>
                 <div className={'flex-reactive justify-center'}>
@@ -322,6 +322,10 @@ export default function Session() {
                               <div className={'action-box-clickable flex-1'}
                                    onClick={() => {
                                        setManualInput(true)
+                                       inputRef.focus()
+                                       if (weight() === 0) {
+                                           inputRef.value = ''
+                                       }
                                    }}>
                                   <h1 className={"m-0"}>{
                                       weight() === 1 ?
@@ -335,6 +339,7 @@ export default function Session() {
                                   e.preventDefault()
                               }}>
                             <input
+                                ref={inputRef}
                                 className={"flex-1"}
                                 type="number"
                                 step=".01"
@@ -368,13 +373,13 @@ export default function Session() {
                                      setWeight(0)
                                  }
                              }}>
-                            -0.25 kg
+                            -&nbsp;<small className={"pt-0.5"}>0.25</small>&nbsp;kg
                         </div>
                         <div className={"action-box-clickable flex-1"}
                              onClick={() => {
                                  setWeight(weight() + 0.25)
                              }}>
-                            +0.25 kg
+                            +&nbsp;<small className={"pt-0.5"}>0.25</small>&nbsp;kg
                         </div>
                     </div>
 
@@ -457,6 +462,8 @@ export default function Session() {
 
         const {set_id, reps, setReps, manualInput, setManualInput} = props
 
+        let inputRef = null
+
         return (
             <div className={"display-box flex-col gap-4 mt-2"}>
 
@@ -467,6 +474,10 @@ export default function Session() {
                               <div className={'action-box-clickable flex-1'}
                                    onClick={() => {
                                        setManualInput(true)
+                                       inputRef.focus()
+                                       if (reps() === 0) {
+                                           inputRef.value = ''
+                                       }
                                    }}>
                                   <h1 className={"m-0"}>{
                                       reps() === 1 ?
@@ -480,6 +491,7 @@ export default function Session() {
                                   e.preventDefault()
                               }}>
                             <input
+                                ref={inputRef}
                                 className={"flex-1"}
                                 type="number"
                                 step=".01"
@@ -760,8 +772,7 @@ export default function Session() {
                     </>
                 }
             >
-                {/* Back to workouts */
-                }
+                {/* Back to workouts */}
                 <div className={"action-options gap-5 pb-4"}>
                     <div className={"action"} onClick={() => {
                         navigate('/workouts')
@@ -776,16 +787,16 @@ export default function Session() {
                     </div>
                 </div>
 
+                {/* Loop through each exercise in the workout session */}
                 <div className={"pb-4 flex flex-col gap-4"}>
 
-                    {/* Loop through each exercise in the workout session */}
                     <For each={exercises()}>
                         {
                             (exercise, exercise_i) =>
-                                <div className={"display-box flex-col gap-2"}>
-
-                                    <h1 className={'m-0 pb-3'}>{exercise.name}</h1>
-
+                                <div className={"display-box-thin flex-col gap-3"}>
+                                    <div className={'p-2'}>
+                                        <h1 className={'m-0'}>{exercise.name}</h1>
+                                    </div>
                                     {/* Loop through sets */}
                                     <For each={exercise.sets}>
                                         {
@@ -804,6 +815,7 @@ export default function Session() {
 
                 </div>
 
+                {/* Finish workout */}
                 <div className={"display-box success flex-col gap-2 mb-2"}>
                     <Show when={finishSession()}
                           children={
