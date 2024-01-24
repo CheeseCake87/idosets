@@ -21,9 +21,9 @@ def create_app():
 
     @app.after_request
     def after_request(response):
-        if app.config["RUN_ENV"] == "dev":
+        if app.config["RUN_ENV"] == "development":
             response.headers.add(
-                "Access-Control-Allow-Origin", "http://localhost:3000"
+                "Access-Control-Allow-Origin", app.config["VITE_URL"]
             )
             response.headers.add(
                 "Access-Control-Allow-Headers", "Content-Type,Authorization"
