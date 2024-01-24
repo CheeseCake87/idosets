@@ -81,17 +81,17 @@ def check_login():
     return {"status": "failed", "message": "Not logged in."}
 
 
-@bp.get("/auth/force/login")
-def force_login():
-    session["logged_in"] = True
-    session["account_id"] = 1
-    session["theme"] = "dark"
-    session["units"] = "kgs"
-    return {
-        "status": "passed",
-        "message": "Logged in.",
-        "account_id": 1,
-        "email_address": "test@test.com",
-        "theme": "dark",
-        "units": "kgs",
-    }
+# @bp.get("/auth/force/login")
+# def force_login():
+#     session["logged_in"] = True
+#     session["account_id"] = 1
+#     session["theme"] = "dark"
+#     session["units"] = "kgs"
+#     return {
+#         "status": "passed",
+#         "message": "Logged in.",
+#         "account_id": 1,
+#         "email_address": "test@test.com",
+#         "theme": "dark",
+#         "units": "kgs",
+#     }

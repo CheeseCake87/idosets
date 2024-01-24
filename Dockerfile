@@ -5,5 +5,6 @@ COPY gunicorn.conf.py gunicorn.conf.py
 COPY supervisord.conf supervisord.conf
 COPY supervisor.ini supervisor.ini
 RUN mkdir -p /app_flask/instance
+RUN flask init-db
 
 ENTRYPOINT ["supervisord", "-c", "supervisord.conf"]
