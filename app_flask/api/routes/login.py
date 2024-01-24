@@ -1,14 +1,15 @@
 from email.utils import parseaddr
-from time import sleep
 
 from email_validator import validate_email, EmailNotValidError
 from flask import request, current_app, render_template
 from flask_imp.auth import generate_private_key
 
-from app_flask.huey.email_service import EmailServiceSettings
-from app_flask.huey.tasks import send_email
+from app_flask.huey.tasks import send_zepto_email
 from app_flask.models.accounts import Accounts
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
+from app_flask.resources.utilities.email_service import (
+    ZeptoEmailServiceSettings,
+)
 from .. import bp
 
 
@@ -26,20 +27,23 @@ def login():
     except EmailNotValidError:
         return {"status": "error", "message": "Email address is not valid."}
 
-    email_service_settings = EmailServiceSettings(
-        dev_mode=True,
-        username=current_app.config["ES_USERNAME"],
-        password=current_app.config["ES_PASSWORD"],
-        server=current_app.config["ES_SERVER"],
-        port=current_app.config["ES_PORT"],
-    )
-
     account = Accounts.get_account(email_address)
 
     url = (
-        "http://localhost:3000/auth"
+        f"{current_app.config['VITE_URL']}/auth"
         if current_app.debug
-        else "https://idosets.app/auth"
+        else (
+            f"{current_app.config['PREFERRED_URL_SCHEME']}://"
+            f"{current_app.config['SERVER_NAME']}"
+            "/auth"
+        )
+    )
+
+    email_service_settings = ZeptoEmailServiceSettings(
+        dev_mode=current_app.debug,
+        sender=current_app.config["ZEPTO_MAIL_SENDER"],
+        api_url=current_app.config["ZEPTO_MAIL_API_URL"],
+        token=current_app.config["ZEPTO_MAIL_TOKEN"],
     )
 
     if not account:
@@ -47,13 +51,13 @@ def login():
         new_account, account_id = Accounts.insert(
             {
                 "email_address": email_address,
-                "settings": {"theme": "dark"},
+                "settings": {"theme": "dark", "units": "kgs"},
                 "auth_code": pk,
                 "auth_code_expiry": DatetimeDelta().days(1).datetime,
             }
         )
 
-        send_email(
+        send_zepto_email(
             email_service_settings,
             recipients=[email_address],
             subject="Welcome to idosets.app!",
@@ -73,7 +77,7 @@ def login():
     pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
     account.update_auth_code(pk, DatetimeDelta().days(1).datetime)
 
-    send_email(
+    send_zepto_email(
         email_service_settings,
         recipients=[email_address],
         subject="Here's your login link!",
