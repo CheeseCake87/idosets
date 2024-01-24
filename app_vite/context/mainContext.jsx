@@ -1,5 +1,5 @@
 import {createContext, createEffect, onMount} from "solid-js";
-import {Outlet, useLocation, useNavigate} from "@solidjs/router";
+import {Navigate, Outlet, useLocation, useNavigate} from "@solidjs/router";
 import {createStore} from "solid-js/store";
 import Loading from "../components/Loading";
 import Fetcher from "../utilities/fetcher";
@@ -8,7 +8,7 @@ export const mainContext = createContext();
 
 export function MainContextProvider(props) {
 
-    const API_URL = import.meta.env.DEV ? 'http://localhost:5000' : ''
+    const API_URL = import.meta.env.DEV ? 'http://127.0.0.1:5000' : ''
     const DEBUG = import.meta.env.DEV
 
     const navigate = useNavigate();
@@ -90,6 +90,9 @@ export function MainContextProvider(props) {
         },
         fancyTimeFormat(duration) {
             // Hours, minutes and seconds
+
+            if (duration === undefined || duration === 0) return ('0 secs')
+
             const hrs = ~~(duration / 3600);
             const mins = ~~((duration % 3600) / 60);
             const secs = ~~duration % 60;
@@ -105,8 +108,26 @@ export function MainContextProvider(props) {
                 ret += "" + mins + (mins > 1 ? " mins " : " min ");
             }
 
-            ret += "" + secs + " secs ";
+            if (secs > 0) {
+                ret += "" + secs + " secs ";
+            }
 
+            return ret;
+        },
+        fancyRepFormat(min_reps, max_reps) {
+            let ret = "";
+            if (min_reps === max_reps) {
+                ret += "" + min_reps + " reps";
+            }
+            if (min_reps > 0 && max_reps > 0) {
+                ret += "" + min_reps + " - " + max_reps + " reps";
+            }
+            if (min_reps === 0 && max_reps > 0) {
+                ret += "" + max_reps + " reps";
+            }
+            if (min_reps > 0 && max_reps === 0) {
+                ret += "" + min_reps + " reps";
+            }
             return ret;
         },
         async fold(container_id, content_id) {
@@ -287,16 +308,6 @@ export function MainContextProvider(props) {
             )
         },
         async logSet(params) {
-            /*
-                params.data = {
-                    exercise_id: 0,
-                    set_id: 0,
-                    reps: 0,
-                    weight: 0.0,
-                    duration: 0,
-                    unit: 'kgs'
-                }
-             */
             return await postFetch(
                 `${API_URL}/api/` +
                 `workouts/${params.workout_id}/` +
@@ -410,13 +421,21 @@ export function MainContextProvider(props) {
                     setStore("units", session.data().units)
                     setStore("account_id", session.data().account_id)
                     setStore("email_address", session.data().email_address)
+                    if (location.pathname === '/login' && session.data().logged_in) {
+                        navigate('/workouts')
+                    }
                 }
             }
         })
 
         return (
             <mainContext.Provider value={[store, setStore]}>
-                {session.data.loading ? <div className={"pt-20"}><Loading/></div> : <Outlet/>}
+                {
+                    session.data.loading ?
+                        <div className={"pt-20"}><Loading/></div> :
+                        !session.data().logged_in && location.pathname !== '/login' ?
+                            <Navigate href={"/login"}/> : <Outlet/>
+                }
             </mainContext.Provider>
         );
     }
