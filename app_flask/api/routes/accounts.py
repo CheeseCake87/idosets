@@ -2,13 +2,15 @@ from flask import session, request, current_app, render_template
 from flask_imp.auth import generate_private_key
 from flask_imp.security import api_login_check
 
-from .. import bp
 from app_flask.models.accounts import Accounts
-from app_flask.models.workouts import Workouts
 from app_flask.models.exercises import Exercises
 from app_flask.models.sets import Sets
-from ...huey.email_service import EmailServiceSettings
-from ...huey.tasks import send_email
+from app_flask.models.workouts import Workouts
+from app_flask.resources.utilities.email_service import (
+    ZeptoEmailServiceSettings,
+)
+from .. import bp
+from ...huey.tasks import send_zepto_email
 from ...resources.utilities.datetime_delta import DatetimeDelta
 
 
@@ -40,21 +42,24 @@ def account_():
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def account_send_delete_():
-    email_service_settings = EmailServiceSettings(
-        dev_mode=True,
-        username=current_app.config["ES_USERNAME"],
-        password=current_app.config["ES_PASSWORD"],
-        server=current_app.config["ES_SERVER"],
-        port=current_app.config["ES_PORT"],
+    email_service_settings = ZeptoEmailServiceSettings(
+        dev_mode=current_app.debug,
+        sender=current_app.config["ZEPTO_MAIL_SENDER"],
+        api_url=current_app.config["ZEPTO_MAIL_API_URL"],
+        token=current_app.config["ZEPTO_MAIL_TOKEN"],
     )
 
     account = Accounts.get_by_key(session.get("account_id", 0))
 
     if account:
         url = (
-            "http://localhost:3000/account/delete"
+            f"{current_app.config['VITE_URL']}/auth"
             if current_app.debug
-            else "https://idosets.app/account/delete"
+            else (
+                f"{current_app.config['PREFERRED_URL_SCHEME']}://"
+                f"{current_app.config['SERVER_NAME']}"
+                "/auth"
+            )
         )
 
         pk = generate_private_key(
@@ -62,7 +67,7 @@ def account_send_delete_():
         )
         account.update_auth_code(pk, DatetimeDelta().days(1).datetime)
 
-        send_email(
+        send_zepto_email(
             email_service_settings,
             recipients=[account.email_address],
             subject="Deleting your idosets.app account",
