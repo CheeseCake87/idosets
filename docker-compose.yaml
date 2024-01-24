@@ -1,0 +1,20 @@
+version: "3.8"
+
+volumes:
+    instance:
+
+services:
+    app:
+        container_name: "idosets"
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "4008:5000"
+        depends_on:
+            - database
+        env_file:
+            - .env
+        volumes:
+            - instance:/main/app_flask/instance
+        restart: always
