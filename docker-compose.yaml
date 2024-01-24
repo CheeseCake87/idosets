@@ -11,8 +11,6 @@ services:
             dockerfile: Dockerfile
         ports:
             - "4008:5000"
-        depends_on:
-            - database
         env_file:
             - .env
         volumes:
