@@ -8,7 +8,7 @@ export const mainContext = createContext();
 
 export function MainContextProvider(props) {
 
-    const API_URL = import.meta.env.DEV ? 'http://127.0.0.1:5000' : ''
+    const API_URL = import.meta.env.DEV ? 'http://localhost:5000' : ''
     const DEBUG = import.meta.env.DEV
 
     const navigate = useNavigate();

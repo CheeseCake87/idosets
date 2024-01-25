@@ -44,8 +44,8 @@ def create_app():
 
     @app.before_request
     def before_request():
-        imp.init_session()
         session.permanent = True
+        imp.init_session()
 
     @app.after_request
     def after_request(response):
