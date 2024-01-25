@@ -41,10 +41,10 @@ export default function Auth(props) {
             {try_auth.loading ? <div className={"pt-20"}><Loading/></div> :
                 <div className={"login py-6"}>
                     <h2 className={"pb-4"}>💪 I Do Sets</h2>
-                    <Show when={auth() == "processing"}>
+                    <Show when={auth() === "processing"}>
                         <p>Logging in, please wait...</p>
                     </Show>
-                    <Show when={auth() == "error"}>
+                    <Show when={auth() === "error"}>
                         <p className={"pb-6"}>This login link has expired.</p>
                         <button type="button" onClick={
                             () => {
