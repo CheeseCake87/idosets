@@ -96,7 +96,8 @@ export default function Workouts() {
     }
 
     function StartWorkoutPopOut(props) {
-        let [workout, i] = props
+        let workout = props.workout
+        let i = props.i
         return (
             <Show
                 when={startWorkout() === i() && activeSessions()[workout.workout_id] === undefined}>
@@ -192,7 +193,8 @@ export default function Workouts() {
     }
 
     function DeleteWorkoutPopOut(props) {
-        let [workout, i] = props
+        let workout = props.workout
+        let i = props.i
         return (
             <Show when={deleteWorkout() === i()}>
                 <div
