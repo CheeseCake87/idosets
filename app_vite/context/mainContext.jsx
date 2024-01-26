@@ -8,8 +8,8 @@ export const mainContext = createContext();
 
 export function MainContextProvider(props) {
 
-    const API_URL = import.meta.env.DEV ? 'http://localhost:5000' : ''
-    const DEBUG = import.meta.env.DEV
+    const DEV = import.meta.env.DEV
+    const API_URL = DEV ? import.meta.env.VITE_FLASK_URL : ''
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -24,7 +24,7 @@ export function MainContextProvider(props) {
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             const json = await response.json()
-            if (DEBUG) {
+            if (DEV) {
                 console.log(url, json)
             }
             return json
@@ -47,7 +47,7 @@ export function MainContextProvider(props) {
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             const json = await response.json()
-            if (DEBUG) {
+            if (DEV) {
                 console.log(url, json)
             }
             return json
@@ -66,7 +66,7 @@ export function MainContextProvider(props) {
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             const json = await response.json()
-            if (DEBUG) {
+            if (DEV) {
                 console.log(url, json)
             }
             return json
