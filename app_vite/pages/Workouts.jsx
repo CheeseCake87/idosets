@@ -38,72 +38,6 @@ export default function Workouts() {
         }
     })
 
-    function StartWorkoutPopOut(props) {
-        let [workout, i] = props
-        return (
-            <Show
-                when={startWorkout() === i() && activeSessions()[workout.workout_id] === undefined}>
-                <div className={"display-box flex-reactive items-center justify-between mt-4"}>
-                    <p>Are you sure you want to start this workout?</p>
-                    <div className={'flex gap-2'}>
-
-                        <button onClick={() => {
-                            setStartWorkout(null)
-                        }}>
-                            Not ready
-                        </button>
-                        <button className={'button-good'} onClick={() => {
-                            ctx.startSession(
-                                {workout_id: workout.workout_id}
-                            ).then(json => {
-                                if (json.status === 'success') {
-                                    navigate(
-                                        `/workout/${workout.workout_id}` +
-                                        `/session/${json.workout_session_id}`
-                                    )
-                                }
-                            })
-                        }}>
-                            Start
-                        </button>
-                    </div>
-                </div>
-            </Show>
-        )
-    }
-
-    function DeleteWorkoutPopOut(props) {
-        let [workout, i] = props
-        return (
-            <Show when={deleteWorkout() === i()}>
-                <div
-                    className={"display-box flex-reactive items-center justify-between mt-4"}>
-                    <p>Are you sure you want to delete this workout?</p>
-
-                    <div className={'flex gap-2'}>
-                        <button className={'button-bad'} onClick={() => {
-                            ctx.deleteWorkout({
-                                workout_id: workout.workout_id,
-                            }).then(json => {
-                                if (json.status === 'success') {
-                                    setDeleteWorkout(null)
-                                    workouts.refetch()
-                                }
-                            })
-                        }}>
-                            Delete
-                        </button>
-                        <button onClick={() => {
-                            setDeleteWorkout(null)
-                        }}>
-                            No
-                        </button>
-                    </div>
-
-                </div>
-            </Show>
-        )
-    }
 
     function LoopWorkouts() {
         return (
@@ -158,6 +92,40 @@ export default function Workouts() {
                     </div>
                 }
             </For>
+        )
+    }
+
+    function StartWorkoutPopOut(props) {
+        let [workout, i] = props
+        return (
+            <Show
+                when={startWorkout() === i() && activeSessions()[workout.workout_id] === undefined}>
+                <div className={"display-box flex-reactive items-center justify-between mt-4"}>
+                    <p>Are you sure you want to start this workout?</p>
+                    <div className={'flex gap-2'}>
+
+                        <button onClick={() => {
+                            setStartWorkout(null)
+                        }}>
+                            Not ready
+                        </button>
+                        <button className={'button-good'} onClick={() => {
+                            ctx.startSession(
+                                {workout_id: workout.workout_id}
+                            ).then(json => {
+                                if (json.status === 'success') {
+                                    navigate(
+                                        `/workout/${workout.workout_id}` +
+                                        `/session/${json.workout_session_id}`
+                                    )
+                                }
+                            })
+                        }}>
+                            Start
+                        </button>
+                    </div>
+                </div>
+            </Show>
         )
     }
 
@@ -217,6 +185,39 @@ export default function Workouts() {
 
                         </div>
                     </form>
+
+                </div>
+            </Show>
+        )
+    }
+
+    function DeleteWorkoutPopOut(props) {
+        let [workout, i] = props
+        return (
+            <Show when={deleteWorkout() === i()}>
+                <div
+                    className={"display-box flex-reactive items-center justify-between mt-4"}>
+                    <p>Are you sure you want to delete this workout?</p>
+
+                    <div className={'flex gap-2'}>
+                        <button className={'button-bad'} onClick={() => {
+                            ctx.deleteWorkout({
+                                workout_id: workout.workout_id,
+                            }).then(json => {
+                                if (json.status === 'success') {
+                                    setDeleteWorkout(null)
+                                    workouts.refetch()
+                                }
+                            })
+                        }}>
+                            Delete
+                        </button>
+                        <button onClick={() => {
+                            setDeleteWorkout(null)
+                        }}>
+                            No
+                        </button>
+                    </div>
 
                 </div>
             </Show>
