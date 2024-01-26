@@ -44,10 +44,10 @@ export default function Workouts() {
         return (
             !getLastWorkoutSession.data.loading ?
                 <Show when={getLastWorkoutSession.get("last_workout_session")}>
+                    <small className={"px-2"}>Last Workout</small>
                     <div className={"display-box success-border flex-col"}>
                         <div className={'flex-reactive justify-between'}>
                             <div className={'flex flex-col gap-1'}>
-                                <small>Last Workout</small>
                                 <h1 className={'m-0'}>
                                     {getLastWorkoutSession.get("last_workout_session").name}
                                 </h1>
@@ -253,6 +253,7 @@ export default function Workouts() {
                     <LastWorkoutSession/>
                 </div>
                 <div className={"pb-4 flex flex-col gap-2"}>
+                    <small className={"px-2"}>Workouts</small>
                     <LoopWorkouts/>
                 </div>
                 <AddWorkout/>

@@ -288,8 +288,8 @@ export default function Workout() {
                 <WorkoutDisplay/>
                 <EditWorkout/>
 
-                {/* Exercises */}
                 <div className={"py-4 flex flex-col gap-2"}>
+                    <small className={"px-2"}>Exercises</small>
                     <LoopExercises/>
                 </div>
 

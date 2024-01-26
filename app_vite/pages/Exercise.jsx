@@ -753,6 +753,7 @@ export default function Exercise() {
                 <ExerciseDisplay/>
                 <EditExercise/>
                 <div className={"py-4 flex flex-col gap-2"}>
+                    <small className={"px-2"}>Sets</small>
                     <LoopSets/>
                 </div>
                 <AddSet/>
