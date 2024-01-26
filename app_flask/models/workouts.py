@@ -23,6 +23,23 @@ class WorkoutSessions(db.Model, UtilityMixin):
     duration = Column(Integer, nullable=True, default=0)
 
     @classmethod
+    def get_last_session(cls, account_id: int) -> dict:
+        q = select(cls).where(
+            and_(
+                cls.account_id == account_id,
+                cls.is_finished == True,
+            )
+        ).order_by(desc(cls.finished))
+        r = db.session.execute(q).scalars().first()
+        return {
+            "workout_session_id": r.workout_session_id,
+            "workout_id": r.workout_id,
+            "started": r.started,
+            "finished": r.finished,
+            "duration": r.duration,
+        } if r else None
+
+    @classmethod
     def sessions(cls, account_id: int) -> dict:
         return cls.as_jsonable_dict(
             select(cls).where(
@@ -158,11 +175,11 @@ class Workouts(db.Model, UtilityMixin):
 
     @classmethod
     def get_session(
-        cls,
-        account_id: int,
-        workout_id: int,
-        workout_session_id: int,
-        weight_unit: str = "kgs",
+            cls,
+            account_id: int,
+            workout_id: int,
+            workout_session_id: int,
+            weight_unit: str = "kgs",
     ) -> dict:
         from app_flask.models.exercises import Exercises
         from app_flask.models.sets import Sets, SetLogs
@@ -253,7 +270,7 @@ class Workouts(db.Model, UtilityMixin):
 
         if workout_session["is_finished"]:
             workout_session["duration"] = (
-                workout_session["finished"] - workout_session["started"]
+                    workout_session["finished"] - workout_session["started"]
             ).seconds
             workout_session["total_weight"] = converters.get(weight_unit)(
                 total_weight
@@ -277,7 +294,7 @@ class Workouts(db.Model, UtilityMixin):
         ).scalar()
 
     @classmethod
-    def select_all(cls, account_it: str):
+    def select_all(cls, account_it: int):
         return cls.as_jsonable_dict(
             select(cls)
             .where(cls.account_id == account_it)
@@ -286,7 +303,7 @@ class Workouts(db.Model, UtilityMixin):
         )
 
     @classmethod
-    def select_by_id(cls, account_id, workout_id: str):
+    def select_by_id(cls, account_id, workout_id: int):
         return cls.as_jsonable_dict(
             select(cls).where(
                 and_(
@@ -294,4 +311,12 @@ class Workouts(db.Model, UtilityMixin):
                     cls.workout_id == workout_id,
                 )
             )
+        )
+
+    @classmethod
+    def get_workout(cls, workout_id: int):
+        return cls.as_jsonable_dict(
+            select(cls).where(cls.workout_id == workout_id),
+            one_or_none=True,
+            remove_return_key=True,
         )

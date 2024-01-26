@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import session, request
 from flask_imp.security import api_login_check
 
@@ -15,6 +17,30 @@ from .. import bp
 def workouts_():
     _workouts = Workouts.select_all(session.get("account_id", 0))
     return {"status": "success", **_workouts}
+
+
+@bp.get("/workouts/last")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def last_workout_():
+    workout_session = WorkoutSessions.get_last_session(session.get("account_id", 0))
+    if workout_session:
+        workout = Workouts.get_workout(workout_session.get("workout_id"))
+        name = workout.get("name")
+        finished: datetime = workout_session.get("finished")
+        if workout:
+            return {
+                "status": "success",
+                "last_workout_session": {
+                    "name": name,
+                    "finished": finished.strftime("%a, %d %b, %H:%M"),
+                },
+            }
+    return {
+        "status": "success",
+        "last_workout_session": None,
+    }
 
 
 @bp.get("/workouts/<workout_id>")

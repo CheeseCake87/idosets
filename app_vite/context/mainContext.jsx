@@ -231,6 +231,11 @@ export function MainContextProvider(props) {
         },
 
         // Workouts
+        async getLastWorkoutSession() {
+            return await getFetch(
+                `${API_URL}/api/workouts/last`,
+            )
+        },
         async getWorkouts() {
             return await getFetch(
                 `${API_URL}/api/workouts`,

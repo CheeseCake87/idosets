@@ -405,6 +405,10 @@ body {
         border-color: var(--button-good-border-color);
     }
 
+    .success-border {
+        border-color: var(--button-good-border-color);
+    }
+
     .button-good {
         background-color: var(--button-good-bg-color) !important;
         border-color: var(--button-good-border-color) !important;;

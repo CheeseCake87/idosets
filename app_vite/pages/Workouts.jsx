@@ -11,6 +11,7 @@ export default function Workouts() {
     const [ctx, setCtx] = useContext(mainContext);
     const navigate = useNavigate();
 
+    const getLastWorkoutSession = new Fetcher(ctx.getLastWorkoutSession)
     const workouts = new Fetcher(ctx.getWorkouts)
     const getActiveSessions = new Fetcher(ctx.getActiveSessions)
 
@@ -20,10 +21,11 @@ export default function Workouts() {
     const [deleteWorkout, setDeleteWorkout] = createSignal(null)
     const [startWorkout, setStartWorkout] = createSignal(null)
 
+    const [lastWorkoutSession, setLastWorkSession] = createSignal({})
     const [activeSessions, setActiveSessions] = createSignal({})
 
     createEffect(() => {
-        if (workouts.data.loading === false) {
+        if (!workouts.data.loading) {
             if (workouts.data().status === 'unauthorized') {
                 navigate('/login')
             }
@@ -38,6 +40,24 @@ export default function Workouts() {
         }
     })
 
+    function LastWorkoutSession() {
+        return (
+            !getLastWorkoutSession.data.loading ?
+                <Show when={getLastWorkoutSession.get("last_workout_session")}>
+                    <div className={"display-box success-border flex-col"}>
+                        <div className={'flex-reactive justify-between'}>
+                            <div className={'flex flex-col gap-1'}>
+                                <small>Last Workout</small>
+                                <h1 className={'m-0'}>
+                                    {getLastWorkoutSession.get("last_workout_session").name}
+                                </h1>
+                                <small>Done: {getLastWorkoutSession.get("last_workout_session").finished}</small>
+                            </div>
+                        </div>
+                    </div>
+                </Show> : <></>
+        )
+    }
 
     function LoopWorkouts() {
         return (
@@ -229,6 +249,9 @@ export default function Workouts() {
     function Page() {
         return (
             <div className={"container"}>
+                <div className={"pb-4 flex flex-col gap-2"}>
+                    <LastWorkoutSession/>
+                </div>
                 <div className={"pb-4 flex flex-col gap-2"}>
                     <LoopWorkouts/>
                 </div>
