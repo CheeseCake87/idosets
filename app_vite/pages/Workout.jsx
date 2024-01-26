@@ -142,7 +142,7 @@ export default function Workout() {
                                        referrerPolicy={"no-referrer"}
                                        className={"flex items-center gap-2 opacity-80 hover:opacity-100"}>
                                         <img src={exercise.info_url_favicon}
-                                             className={"w-8 h-8 rounded-full inline-block"}/>
+                                             className={"w-8 h-8 rounded-full inline-block"} alt={"🚫ico"}/>
                                         <span className={"underline"}>Instructions</span>
                                         <span className={"material-icons w-5 h-5"}>open_in_new</span>
                                     </a>
