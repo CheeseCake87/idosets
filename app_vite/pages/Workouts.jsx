@@ -47,7 +47,7 @@ export default function Workouts() {
 
                         <div className={'flex-reactive justify-between'}>
 
-                            <div className={'flex flex-col pb-2'}>
+                            <div className={'flex flex-col gap-4 pb-2'}>
                                 <h1 className={'m-0'}>{workout.name}</h1>
                                 <p>{workout.rel_exercises.length} Exercises</p>
                             </div>

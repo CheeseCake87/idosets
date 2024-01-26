@@ -107,9 +107,19 @@ export default function Exercise() {
                     <h1>
                         {editExercise() ? newExerciseName() : _exercise().name}
                     </h1>
-                    <Show when={_exercise().info_url !== null}>
-                        <a href={_exercise().info_url} className={"underline opacity-80 hover:opacity-100"}>
-                            Info Link &#128279;
+                    <Show when={
+                        _exercise().info_url !== null &&
+                        _exercise().info_url !== '' &&
+                        _exercise().info_url !== undefined
+                    }>
+                        <a href={_exercise().info_url}
+                           target={"_blank"}
+                           referrerPolicy={"no-referrer"}
+                           className={"flex items-center gap-2 opacity-80 hover:opacity-100"}>
+                            <img src={_exercise().info_url_favicon}
+                                 className={"w-8 h-8 rounded-full inline-block"}/>
+                            <span className={"underline"}>Instructions</span>
+                            <span className={"material-icons w-5 h-5"}>open_in_new</span>
                         </a>
                     </Show>
                 </div>
@@ -135,7 +145,7 @@ export default function Exercise() {
                             type="text"
                             id="new_exercise_name"
                             name="new_exercise_name"
-                            placeholder={"Exercise Name"}
+                            placeholder={"Name"}
                             value={newExerciseName()}
                             onKeyUp={(e) => {
                                 setNewExerciseName(e.target.value)
@@ -146,7 +156,7 @@ export default function Exercise() {
                             type="text"
                             id="new_exercise_info_url"
                             name="new_exercise_info_url"
-                            placeholder={"Exercise Info Url"}
+                            placeholder={"Instructions URL (https://example.com/to/instructions)"}
                             value={newExerciseInfoUrl()}
                             onKeyUp={(e) => {
                                 setNewExerciseInfoUrl(e.target.value)

@@ -13,6 +13,7 @@ class Exercises(db.Model, UtilityMixin):
     order = Column(Integer, nullable=False, default=0)
     name = Column(String(255), nullable=False)
     info_url = Column(String, nullable=True)
+    info_url_favicon = Column(String, nullable=True)
 
     rel_workouts = relationship(
         "Workouts",

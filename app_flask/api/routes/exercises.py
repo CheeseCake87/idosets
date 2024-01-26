@@ -1,3 +1,6 @@
+import validators
+import requests
+from bs4 import BeautifulSoup
 from flask import session, request
 from flask_imp.security import api_login_check
 
@@ -47,6 +50,20 @@ def exercises_add_(workout_id):
     info_url = jsond.get("info_url")
     order = jsond.get("order")
 
+    favicon_url = None
+
+    if validators.url(info_url):
+        resp = requests.get(info_url)
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.content, "html.parser")
+            favicon_shortcut_icon = soup.find("link", rel="shortcut icon")
+            favicon_icon = soup.find("link", rel="icon")
+
+            if favicon_shortcut_icon:
+                favicon_url = favicon_shortcut_icon["href"]
+            elif favicon_icon:
+                favicon_url = favicon_icon["href"]
+
     if name and len(name) > 0:
         _exercise, _exercise_id = Exercises.insert(
             {
@@ -55,6 +72,7 @@ def exercises_add_(workout_id):
                 "order": order,
                 "name": name,
                 "info_url": info_url,
+                "info_url_favicon": favicon_url,
                 "created": DatetimeDelta().datetime,
             }
         )
@@ -77,8 +95,28 @@ def exercises_add_(workout_id):
 )
 def exercises_edit_(workout_id, exercise_id):
     jsond = request.json
+
+    favicon_url = None
+
+    if validators.url(jsond.get("info_url")):
+        resp = requests.get(jsond.get("info_url"))
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.content, "html.parser")
+            favicon_shortcut_icon = soup.find("link", rel="shortcut icon")
+            favicon_icon = soup.find("link", rel="icon")
+
+            if favicon_shortcut_icon:
+                favicon_url = favicon_shortcut_icon["href"]
+            elif favicon_icon:
+                favicon_url = favicon_icon["href"]
+
     _exercise = Exercises.update_(
-        {"workout_id": workout_id, "exercise_id": exercise_id, **jsond}
+        {
+            "workout_id": workout_id,
+            "exercise_id": exercise_id,
+            "info_url_favicon": favicon_url,
+            **jsond
+        }
     )
 
     return {

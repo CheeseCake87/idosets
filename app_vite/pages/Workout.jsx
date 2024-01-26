@@ -129,8 +129,25 @@ export default function Workout() {
                     <div className={"display-box flex-col"}>
 
                         <div className={'flex-reactive justify-between'}>
-                            <div className={'flex flex-col pb-2'}>
+                            <div className={'flex flex-col gap-4 pb-2'}>
                                 <h1 className={'m-0'}>{exercise.name}</h1>
+
+                                <Show when={
+                                    exercise.info_url !== null &&
+                                    exercise.info_url !== '' &&
+                                    exercise.info_url !== undefined
+                                }>
+                                    <a href={exercise.info_url}
+                                       target={"_blank"}
+                                       referrerPolicy={"no-referrer"}
+                                       className={"flex items-center gap-2 opacity-80 hover:opacity-100"}>
+                                        <img src={exercise.info_url_favicon}
+                                             className={"w-8 h-8 rounded-full inline-block"}/>
+                                        <span className={"underline"}>Instructions</span>
+                                        <span className={"material-icons w-5 h-5"}>open_in_new</span>
+                                    </a>
+                                </Show>
+
                                 <p>{exercise.rel_sets.length} Sets</p>
                             </div>
                             <div className={'action-options items-center justify-between gap-2'}>
