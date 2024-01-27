@@ -1,4 +1,4 @@
-import {createEffect, createSignal, For, Show, useContext} from "solid-js";
+import {createSignal, Show, useContext} from "solid-js";
 import {useNavigate} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
@@ -9,7 +9,6 @@ import Fetcher from "../utilities/fetcher";
 export default function Account() {
 
     const [ctx, setCtx] = useContext(mainContext);
-    const navigate = useNavigate();
 
     const [deleteAccount, setDeleteAccount] = createSignal(false)
     const [deleteEmailSent, setDeleteEmailSent] = createSignal(false)
@@ -51,7 +50,7 @@ export default function Account() {
                                 className={"flex rounded-full"}
                                 onClick={() => {
                                     ctx.setTheme('light').then(json => {
-                                        setCtx('theme', json.theme)
+                                        location.reload()
                                     })
                                 }}
                             >
@@ -64,7 +63,7 @@ export default function Account() {
                                 className={"flex rounded-full"}
                                 onClick={() => {
                                     ctx.setTheme('dark').then(json => {
-                                        setCtx('theme', json.theme)
+                                        location.reload()
                                     })
                                 }}>
                                 <span className="material-icons-round">dark_mode</span>
