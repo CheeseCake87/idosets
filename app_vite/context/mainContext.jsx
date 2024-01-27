@@ -15,12 +15,9 @@ export function MainContextProvider(props) {
     const location = useLocation();
 
     async function getFetch(url) {
-        const response = await fetch(
-            url, {
-                credentials: "include",
-                method: "GET"
-            }
-        )
+        const response = await fetch(url, {
+            credentials: "include", method: "GET"
+        })
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             const json = await response.json()
@@ -30,20 +27,14 @@ export function MainContextProvider(props) {
             return json
         }
 
-        navigate('/error')
     }
 
     async function postFetch(url, data) {
-        const response = await fetch(
-            url, {
-                credentials: "include",
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data)
-            }
-        )
+        const response = await fetch(url, {
+            credentials: "include", method: "POST", headers: {
+                "Content-Type": "application/json",
+            }, body: JSON.stringify(data)
+        })
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             const json = await response.json()
@@ -53,16 +44,12 @@ export function MainContextProvider(props) {
             return json
         }
 
-        navigate('/error')
     }
 
     async function deleteFetch(url) {
-        const response = await fetch(
-            url, {
-                credentials: "include",
-                method: "DELETE",
-            }
-        )
+        const response = await fetch(url, {
+            credentials: "include", method: "DELETE",
+        })
 
         if (response.headers.get('content-type')?.includes('application/json')) {
             const json = await response.json()
@@ -72,13 +59,10 @@ export function MainContextProvider(props) {
             return json
         }
 
-        navigate('/error')
     }
 
     async function getAuthSession() {
-        return await getFetch(
-            `${API_URL}/api/auth/session`,
-        )
+        return await getFetch(`${API_URL}/api/auth/session`,)
     }
 
     const [store, setStore] = createStore({
@@ -87,8 +71,7 @@ export function MainContextProvider(props) {
         truncate: (str, n) => {
             if (str === undefined) return ('')
             return (str.length > n) ? str.substring(0, n - 1) + '...' : str;
-        },
-        fancyTimeFormat(duration) {
+        }, fancyTimeFormat(duration) {
             // Hours, minutes and seconds
 
             if (duration === undefined || duration === 0) return ('0 secs')
@@ -113,8 +96,7 @@ export function MainContextProvider(props) {
             }
 
             return ret;
-        },
-        fancyRepFormat(min_reps, max_reps) {
+        }, fancyRepFormat(min_reps, max_reps) {
             let ret = "";
             if (min_reps === max_reps) {
                 ret += "" + min_reps + " reps";
@@ -129,8 +111,7 @@ export function MainContextProvider(props) {
                 ret += "" + min_reps + " reps";
             }
             return ret;
-        },
-        async fold(container_id, content_id) {
+        }, async fold(container_id, content_id) {
             const container = document.getElementById(container_id)
             const content = document.getElementById(content_id)
 
@@ -172,221 +153,95 @@ export function MainContextProvider(props) {
 
         // Settings
         async setTheme(theme) {
-            return await getFetch(
-                `${API_URL}/api/set/theme/${theme}`,
-            )
-        },
-        async setUnits(unit) {
-            return await getFetch(
-                `${API_URL}/api/set/unit/${unit}`,
-            )
+            return await getFetch(`${API_URL}/api/set/theme/${theme}`,)
+        }, async setUnits(unit) {
+            return await getFetch(`${API_URL}/api/set/unit/${unit}`,)
         },
 
         // Auth
         async tryAuth(params) {
-            return await postFetch(
-                `${API_URL}/api/auth`,
-                {
-                    account_id: params.account_id,
-                    auth_code: params.auth_code,
-                }
-            )
+            return await postFetch(`${API_URL}/api/auth`, {
+                account_id: params.account_id, auth_code: params.auth_code,
+            })
         },
 
         // Login / Logout
         async tryLogin(email_address) {
-            return await postFetch(
-                `${API_URL}/api/login`,
-                {
-                    email_address: email_address,
-                }
-            )
-        },
-        async tryLogout() {
-            return await getFetch(
-                `${API_URL}/api/logout`,
-            )
+            return await postFetch(`${API_URL}/api/login`, {
+                email_address: email_address,
+            })
+        }, async tryLogout() {
+            return await getFetch(`${API_URL}/api/logout`,)
         },
 
         // Account
         async getAccount() {
-            return await getFetch(
-                `${API_URL}/api/account`,
-            )
-        },
-        async sendDeleteAccountAuth() {
-            return await getFetch(
-                `${API_URL}/api/account/send/delete`,
-            )
-        },
-        async tryDeleteAccount(params) {
-            return await postFetch(
-                `${API_URL}/api/account/delete`,
-                {
-                    account_id: params.account_id,
-                    auth_code: params.auth_code,
-                }
-            )
+            return await getFetch(`${API_URL}/api/account`,)
+        }, async sendDeleteAccountAuth() {
+            return await getFetch(`${API_URL}/api/account/send/delete`,)
+        }, async tryDeleteAccount(params) {
+            return await postFetch(`${API_URL}/api/account/delete`, {
+                account_id: params.account_id, auth_code: params.auth_code,
+            })
         },
 
         // Workouts
         async getLastWorkoutSession() {
-            return await getFetch(
-                `${API_URL}/api/workouts/last`,
-            )
-        },
-        async getWorkouts() {
-            return await getFetch(
-                `${API_URL}/api/workouts`,
-            )
-        },
-        async addWorkout(params) {
-            return await postFetch(
-                `${API_URL}/api/workouts/add`,
-                {
-                    name: params.name,
-                }
-            )
-        },
-        async getWorkout(params) {
-            return await getFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}`
-            )
-        },
-        async editWorkout(params) {
-            return await postFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/edit`,
-                params.data
-            )
-        },
-        async deleteWorkout(params) {
-            return await deleteFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/delete`
-            )
+            return await getFetch(`${API_URL}/api/workouts/last`,)
+        }, async getWorkouts() {
+            return await getFetch(`${API_URL}/api/workouts`,)
+        }, async addWorkout(params) {
+            return await postFetch(`${API_URL}/api/workouts/add`, {
+                name: params.name,
+            })
+        }, async getWorkout(params) {
+            return await getFetch(`${API_URL}/api/` + `workouts/${params.workout_id}`)
+        }, async editWorkout(params) {
+            return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/edit`, params.data)
+        }, async deleteWorkout(params) {
+            return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/delete`)
         },
 
         // Sessions
         async getSessions(params) {
-            return await getFetch(
-                `${API_URL}/api/` +
-                `workout/${params.workout_id}/sessions`
-            )
-        },
-        async getActiveSessions(params) {
-            return await getFetch(
-                `${API_URL}/api/sessions/active`
-            )
-        },
-        async startSession(params) {
-            return await getFetch(
-                `${API_URL}/api/` +
-                `workout/${params.workout_id}/sessions/start`
-            )
-        },
-        async stopSession(params) {
-            return await getFetch(
-                `${API_URL}/api/` +
-                `workout/${params.workout_id}/` +
-                `sessions/${params.workout_session_id}/stop`
-            )
-        },
-        async getSession(params) {
-            return await getFetch(
-                `${API_URL}/api/` +
-                `workout/${params.workout_id}/` +
-                `sessions/${params.workout_session_id}`
-            )
-        },
-        async deleteSession(params) {
-            return await deleteFetch(
-                `${API_URL}/api/` +
-                `workout/${params.workout_id}/` +
-                `sessions/${params.workout_session_id}/delete`
-            )
-        },
-        async logSet(params) {
-            return await postFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `sessions/${params.workout_session_id}/log-set`,
-                params.data
-            )
-        },
-        async deleteLogSet(params) {
-            return await deleteFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `sessions/${params.workout_session_id}/` +
-                `log-set/${params.set_log_id}/delete`
-            )
+            return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/sessions`)
+        }, async getActiveSessions(params) {
+            return await getFetch(`${API_URL}/api/sessions/active`)
+        }, async startSession(params) {
+            return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/sessions/start`)
+        }, async stopSession(params) {
+            return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/stop`)
+        }, async getSession(params) {
+            return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}`)
+        }, async deleteSession(params) {
+            return await deleteFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/delete`)
+        }, async logSet(params) {
+            return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `sessions/${params.workout_session_id}/log-set`, params.data)
+        }, async deleteLogSet(params) {
+            return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `sessions/${params.workout_session_id}/` + `log-set/${params.set_log_id}/delete`)
         },
 
         // Exercises
         async addExercise(params) {
-            return await postFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `exercises/add`,
-                params.data
-            )
-        },
-        async getExercise(params) {
-            return await getFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `exercises/${params.exercise_id}`
-            )
-        },
-        async editExercise(params) {
-            return await postFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `exercises/${params.exercise_id}/edit`,
-                params.data
-            )
-        },
-        async deleteExercise(params) {
-            return await deleteFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `exercises/${params.exercise_id}/delete`
-            )
+            return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/add`, params.data)
+        }, async getExercise(params) {
+            return await getFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}`)
+        }, async editExercise(params) {
+            return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/edit`, params.data)
+        }, async deleteExercise(params) {
+            return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/delete`)
         },
 
         // Sets
         async addSet(params) {
-            return await postFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `exercises/${params.exercise_id}/sets/add`,
-                params.data
-            )
-        },
-        async copySet(params) {
-            return await getFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `exercises/${params.exercise_id}/` +
-                `sets/${params.set_id}/copy`
-            )
-        },
-        async deleteSet(params) {
-            return await deleteFetch(
-                `${API_URL}/api/` +
-                `workouts/${params.workout_id}/` +
-                `exercises/${params.exercise_id}/` +
-                `sets/${params.set_id}/delete`
-            )
+            return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/sets/add`, params.data)
+        }, async copySet(params) {
+            return await getFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/` + `sets/${params.set_id}/copy`)
+        }, async deleteSet(params) {
+            return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/` + `sets/${params.set_id}/delete`)
         },
 
-        logged_in: false,
-        theme: 'dark',
-        units: 'kgs',
-        account_id: 0,
-        email_address: '',
+        logged_in: false, theme: 'dark', units: 'kgs', account_id: 0, email_address: '',
 
         session: new Fetcher(getAuthSession),
 
@@ -401,18 +256,11 @@ export function MainContextProvider(props) {
         html.setAttribute('data-theme', store.theme)
     })
 
-    if (
-        location.pathname.includes('/auth/')
-        || location.pathname.includes('/logout')
-    ) {
+    if (location.pathname.includes('/auth/') || location.pathname.includes('/logout')) {
 
-        console.log('auth or logout')
-
-        return (
-            <mainContext.Provider value={[store, setStore]}>
-                <Outlet/>
-            </mainContext.Provider>
-        );
+        return (<mainContext.Provider value={[store, setStore]}>
+            <Outlet/>
+        </mainContext.Provider>);
 
     }
 
@@ -438,16 +286,11 @@ export function MainContextProvider(props) {
         }
     })
 
-    return (
-        <mainContext.Provider value={[store, setStore]}>
-            {
-                store.session.data.loading ?
-                    <div className={"pt-20"}><Loading/></div> :
-                    !store.session.data().logged_in && location.pathname !== '/login' ?
-                        <Navigate href={"/login"}/> : <Outlet/>
-            }
-        </mainContext.Provider>
-    );
+    return (<mainContext.Provider value={[store, setStore]}>
+        {store.session.data.loading ? <div className={"pt-20"}><Loading/>
+        </div> : !store.session.data().logged_in && location.pathname !== '/login' ? <Navigate href={"/login"}/> :
+            <Outlet/>}
+    </mainContext.Provider>);
 
 }
 
