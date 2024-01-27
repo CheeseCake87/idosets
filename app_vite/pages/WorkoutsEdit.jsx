@@ -1,4 +1,4 @@
-import {createEffect, onMount, useContext} from "solid-js";
+import {createEffect, useContext} from "solid-js";
 import {useNavigate} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
