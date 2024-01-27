@@ -4,10 +4,34 @@ from flask import Flask, session, render_template
 
 from app_flask.extensions import imp, db, head
 
+solidjs_routes = (
+    "/login",
+    "/logout",
+    "/auth/<account_id>/<auth_code>",
+    "/account",
+    "/account/delete/<account_id>/<auth_code>",
+    "/workouts",
+    "/workout/<workout_id>",
+    "/workout/<workout_id>/exercise/<exercise_id>",
+    "/workout/<workout_id>/session/<workout_session_id>"
+)
+
 
 def create_app():
+    # Create and configure the app, auto import resources, and models
     app = Flask(__name__, static_url_path="/")
+    imp.init_app(app)
+    imp.import_app_resources(
+        files_to_import=["error_handlers.py", "cli.py"],
+        folders_to_import=[None],
+    )
+    imp.import_blueprint("api")
+    imp.import_models("models")
 
+    # Init the database
+    db.init_app(app)
+
+    # Search for the vite build assets folder
     vite_assets = Path(app.root_path) / "resources" / "static" / "assets"
     if not vite_assets.exists():
         raise FileNotFoundError(f"{vite_assets} not found.")
@@ -20,6 +44,7 @@ def create_app():
     vite_css_file = next(find_vite_css)
     vite_css_file_url = "/assets/" + vite_css_file.name
 
+    # Set the head tag for the index.html template
     head.set_script_tag(
         src=vite_js_file_url,
         type="module",
@@ -29,50 +54,34 @@ def create_app():
         href=vite_css_file_url,
     )
 
-    imp.init_app(app)
-    imp.import_app_resources(
-        files_to_import=["error_handlers.py", "cli.py"],
-        folders_to_import=[None],
-    )
-    imp.import_blueprint("api")
-    imp.import_models("models")
-    db.init_app(app)
-
-    @app.route("/")
-    def index():
-        return render_template("index.html")
-
-    @app.route("/failed")
-    @app.route("/logout")
-    @app.route("/login")
-    @app.route("/auth", defaults={"wildcard": ""})
-    @app.route("/auth/<path:wildcard>")
-    @app.route("/workouts", defaults={"wildcard": ""})
-    @app.route("/workouts/<path:wildcard>")
-    @app.route("/workout", defaults={"wildcard": ""})
-    @app.route("/workout/<path:wildcard>")
-    @app.route("/session", defaults={"wildcard": ""})
-    @app.route("/session/<path:wildcard>")
-    @app.route("/account", defaults={"wildcard": ""})
-    @app.route("/account/<path:wildcard>")
-    @app.route("/error", defaults={"wildcard": ""})
-    @app.route("/error/<path:wildcard>")
-    def catch_all(wildcard):
-        _ = wildcard
-        return render_template("index.html")
-
+    # make the head tag available to all templates
     @app.context_processor
     def context_processor():
         return dict(head=head)
 
+    # Add the solidjs routes to the app
+    for route in solidjs_routes:
+        app.add_url_rule(route, "solidjs")
+
+    @app.endpoint("solidjs")
+    def solidjs(*_, **__):
+        return render_template("index.html")
+
+    # Add the index route to the app
+    @app.route("/")
+    def index():
+        return render_template("index.html")
+
+    # Set the session
     @app.before_request
     def before_request():
         session.permanent = True
         imp.init_session()
 
-    @app.after_request
-    def after_request(response):
-        if app.config["RUN_ENV"] == "development":
+    # Set the CORS headers if in the development environment
+    if app.config["RUN_ENV"] == "development":
+        @app.after_request
+        def after_request(response):
             response.headers.add(
                 "Access-Control-Allow-Origin", app.config["VITE_URL"]
             )
@@ -83,6 +92,6 @@ def create_app():
                 "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE"
             )
             response.headers.add("Access-Control-Allow-Credentials", "true")
-        return response
+            return response
 
     return app
