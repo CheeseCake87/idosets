@@ -1,19 +1,20 @@
 from pathlib import Path
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, redirect
 
 from app_flask.extensions import imp, db, head
+from app_flask.models.accounts import Accounts
 
 solidjs_routes = (
-    "/login",
-    "/logout",
-    "/auth/<account_id>/<auth_code>",
-    "/account",
-    "/account/delete/<account_id>/<auth_code>",
-    "/workouts",
-    "/workout/<workout_id>",
-    "/workout/<workout_id>/exercise/<exercise_id>",
-    "/workout/<workout_id>/session/<workout_session_id>"
+    ("/login", "solidjs"),
+    ("/logout", "solidjs"),
+    ("/auth/<account_id>/<auth_code>", "auth"),
+    ("/account", "solidjs"),
+    ("/account/delete/<account_id>/<auth_code>", "solidjs"),
+    ("/workouts", "solidjs"),
+    ("/workout/<workout_id>", "solidjs"),
+    ("/workout/<workout_id>/exercise/<exercise_id>", "solidjs"),
+    ("/workout/<workout_id>/session/<workout_session_id>", "solidjs")
 )
 
 
@@ -61,11 +62,25 @@ def create_app():
 
     # Add the solidjs routes to the app
     for route in solidjs_routes:
-        app.add_url_rule(route, "solidjs")
+        app.add_url_rule(route[0], route[1])
 
     @app.endpoint("solidjs")
     def solidjs(*_, **__):
         return render_template("index.html")
+
+    @app.endpoint("auth")
+    def auth(account_id, auth_code):
+        account_ = Accounts.process_auth_code(account_id, auth_code)
+
+        if account_:
+            settings = account_.settings
+
+            session["logged_in"] = True
+            session["account_id"] = account_.account_id
+            session["theme"] = settings.get("theme", "dark")
+            session["units"] = settings.get("units", "kgs")
+
+            return redirect("/workouts")
 
     # Add the index route to the app
     @app.route("/")

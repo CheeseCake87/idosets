@@ -315,7 +315,7 @@ export function MainContextProvider(props) {
     })
 
     if (
-        location.pathname.includes('/auth/')
+        location.pathname.includes('/auth')
         || location.pathname.includes('/logout')
     ) {
         return (
