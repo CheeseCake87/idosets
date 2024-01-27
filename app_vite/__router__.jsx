@@ -4,6 +4,7 @@ import {Navigate, Route, Router, Routes} from "@solidjs/router";
 import {MainContextProvider} from "./context/mainContext";
 import Workouts from "./pages/Workouts";
 import Login from "./pages/Login";
+import Logout from "./pages/Logout";
 import Auth from "./pages/Auth";
 import PageNotFound from "./pages/PageNotFound";
 import Workout from "./pages/Workout";
@@ -29,6 +30,7 @@ render(() => (
 
                 <Route path="/auth/:account_id/:auth_code" component={Auth}/>
                 <Route path="/login" component={Login}/>
+                <Route path="/logout" component={Logout}/>
 
                 <Route path="/account" component={Account}/>
                 <Route path="/account/delete/:account_id/:auth_code" component={DeleteAccount}/>

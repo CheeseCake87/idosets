@@ -24,7 +24,9 @@ def workouts_():
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def last_workout_():
-    workout_session = WorkoutSessions.get_last_session(session.get("account_id", 0))
+    workout_session = WorkoutSessions.get_last_session(
+        session.get("account_id", 0)
+    )
     if workout_session:
         workout = Workouts.get_workout(workout_session.get("workout_id"))
         name = workout.get("name")

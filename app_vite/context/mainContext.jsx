@@ -83,7 +83,6 @@ export function MainContextProvider(props) {
 
     const [store, setStore] = createStore({
 
-
         // Utilities
         truncate: (str, n) => {
             if (str === undefined) return ('')
@@ -402,7 +401,12 @@ export function MainContextProvider(props) {
         html.setAttribute('data-theme', store.theme)
     })
 
-    if (location.pathname.includes('/auth/')) {
+    if (
+        location.pathname.includes('/auth/')
+        || location.pathname.includes('/logout')
+    ) {
+
+        console.log('auth or logout')
 
         return (
             <mainContext.Provider value={[store, setStore]}>
@@ -410,40 +414,40 @@ export function MainContextProvider(props) {
             </mainContext.Provider>
         );
 
-    } else {
+    }
 
-        createEffect(() => {
-            if (!store.session.data.loading) {
-                if (store.session.get("status") === 'failed') {
-                    setStore("logged_in", false)
-                    setStore("theme", "dark")
-                    setStore("units", "kgs")
-                    setStore("account_id", 0)
-                    setStore("email_address", null)
-                    navigate('/login')
-                } else {
-                    setStore("logged_in", store.session.data().logged_in)
-                    setStore("theme", store.session.data().theme)
-                    setStore("units", store.session.data().units)
-                    setStore("account_id", store.session.data().account_id)
-                    setStore("email_address", store.session.data().email_address)
-                    if (location.pathname === '/login' && store.session.data().logged_in) {
-                        navigate('/workouts')
-                    }
+    createEffect(() => {
+        if (!store.session.data.loading) {
+            if (store.session.get("status") === 'failed') {
+                setStore("logged_in", false)
+                setStore("theme", "dark")
+                setStore("units", "kgs")
+                setStore("account_id", 0)
+                setStore("email_address", null)
+                navigate('/login')
+            } else {
+                setStore("logged_in", store.session.data().logged_in)
+                setStore("theme", store.session.data().theme)
+                setStore("units", store.session.data().units)
+                setStore("account_id", store.session.data().account_id)
+                setStore("email_address", store.session.data().email_address)
+                if (location.pathname === '/login' && store.session.data().logged_in) {
+                    navigate('/workouts')
                 }
             }
-        })
+        }
+    })
 
-        return (
-            <mainContext.Provider value={[store, setStore]}>
-                {
-                    store.session.data.loading ?
-                        <div className={"pt-20"}><Loading/></div> :
-                        !store.session.data().logged_in && location.pathname !== '/login' ?
-                            <Navigate href={"/login"}/> : <Outlet/>
-                }
-            </mainContext.Provider>
-        );
-    }
+    return (
+        <mainContext.Provider value={[store, setStore]}>
+            {
+                store.session.data.loading ?
+                    <div className={"pt-20"}><Loading/></div> :
+                    !store.session.data().logged_in && location.pathname !== '/login' ?
+                        <Navigate href={"/login"}/> : <Outlet/>
+            }
+        </mainContext.Provider>
+    );
+
 }
 

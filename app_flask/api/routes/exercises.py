@@ -115,7 +115,7 @@ def exercises_edit_(workout_id, exercise_id):
             "workout_id": workout_id,
             "exercise_id": exercise_id,
             "info_url_favicon": favicon_url,
-            **jsond
+            **jsond,
         }
     )
 

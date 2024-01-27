@@ -24,20 +24,28 @@ class WorkoutSessions(db.Model, UtilityMixin):
 
     @classmethod
     def get_last_session(cls, account_id: int) -> dict:
-        q = select(cls).where(
-            and_(
-                cls.account_id == account_id,
-                cls.is_finished == True,
+        q = (
+            select(cls)
+            .where(
+                and_(
+                    cls.account_id == account_id,
+                    cls.is_finished == True,
+                )
             )
-        ).order_by(desc(cls.finished))
+            .order_by(desc(cls.finished))
+        )
         r = db.session.execute(q).scalars().first()
-        return {
-            "workout_session_id": r.workout_session_id,
-            "workout_id": r.workout_id,
-            "started": r.started,
-            "finished": r.finished,
-            "duration": r.duration,
-        } if r else None
+        return (
+            {
+                "workout_session_id": r.workout_session_id,
+                "workout_id": r.workout_id,
+                "started": r.started,
+                "finished": r.finished,
+                "duration": r.duration,
+            }
+            if r
+            else None
+        )
 
     @classmethod
     def sessions(cls, account_id: int) -> dict:
@@ -175,11 +183,11 @@ class Workouts(db.Model, UtilityMixin):
 
     @classmethod
     def get_session(
-            cls,
-            account_id: int,
-            workout_id: int,
-            workout_session_id: int,
-            weight_unit: str = "kgs",
+        cls,
+        account_id: int,
+        workout_id: int,
+        workout_session_id: int,
+        weight_unit: str = "kgs",
     ) -> dict:
         from app_flask.models.exercises import Exercises
         from app_flask.models.sets import Sets, SetLogs
@@ -270,7 +278,7 @@ class Workouts(db.Model, UtilityMixin):
 
         if workout_session["is_finished"]:
             workout_session["duration"] = (
-                    workout_session["finished"] - workout_session["started"]
+                workout_session["finished"] - workout_session["started"]
             ).seconds
             workout_session["total_weight"] = converters.get(weight_unit)(
                 total_weight

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from flask import Flask, session
+from flask import Flask, session, render_template
 
 from app_flask.extensions import imp, db, head
 
@@ -31,12 +31,35 @@ def create_app():
 
     imp.init_app(app)
     imp.import_app_resources(
-        files_to_import=["routes.py", "error_handlers.py", "cli.py"],
+        files_to_import=["error_handlers.py", "cli.py"],
         folders_to_import=[None],
     )
     imp.import_blueprint("api")
     imp.import_models("models")
     db.init_app(app)
+
+    @app.route("/")
+    def index():
+        return render_template("index.html")
+
+    @app.route("/failed")
+    @app.route("/logout")
+    @app.route("/login")
+    @app.route("/auth", defaults={"wildcard": ""})
+    @app.route("/auth/<path:wildcard>")
+    @app.route("/workouts", defaults={"wildcard": ""})
+    @app.route("/workouts/<path:wildcard>")
+    @app.route("/workout", defaults={"wildcard": ""})
+    @app.route("/workout/<path:wildcard>")
+    @app.route("/session", defaults={"wildcard": ""})
+    @app.route("/session/<path:wildcard>")
+    @app.route("/account", defaults={"wildcard": ""})
+    @app.route("/account/<path:wildcard>")
+    @app.route("/error", defaults={"wildcard": ""})
+    @app.route("/error/<path:wildcard>")
+    def catch_all(wildcard):
+        _ = wildcard
+        return render_template("index.html")
 
     @app.context_processor
     def context_processor():

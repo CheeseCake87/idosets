@@ -11,8 +11,8 @@ export default function Workouts() {
     const [ctx, setCtx] = useContext(mainContext);
     const navigate = useNavigate();
 
+    const getWorkouts = new Fetcher(ctx.getWorkouts)
     const getLastWorkoutSession = new Fetcher(ctx.getLastWorkoutSession)
-    const workouts = new Fetcher(ctx.getWorkouts)
     const getActiveSessions = new Fetcher(ctx.getActiveSessions)
 
     const [addingWorkout, setAddingWorkout] = createSignal(false)
@@ -25,9 +25,17 @@ export default function Workouts() {
     const [activeSessions, setActiveSessions] = createSignal({})
 
     createEffect(() => {
-        if (!workouts.data.loading) {
-            if (workouts.data().status === 'unauthorized') {
+        if (!getWorkouts.data.loading) {
+            if (getWorkouts.data().status === 'unauthorized') {
                 navigate('/login')
+            }
+        }
+    })
+
+    createEffect(() => {
+        if (!getLastWorkoutSession.data.loading) {
+            if (getLastWorkoutSession.get("status") === 'success') {
+                setLastWorkSession(getLastWorkoutSession.get("last_workout_session"))
             }
         }
     })
@@ -42,26 +50,25 @@ export default function Workouts() {
 
     function LastWorkoutSession() {
         return (
-            !getLastWorkoutSession.data.loading ?
-                <Show when={getLastWorkoutSession.get("last_workout_session")}>
-                    <small className={"px-2"}>Last Workout</small>
-                    <div className={"display-box success-border flex-col"}>
-                        <div className={'flex-reactive justify-between'}>
-                            <div className={'flex flex-col gap-1'}>
-                                <h1 className={'m-0'}>
-                                    {getLastWorkoutSession.get("last_workout_session").name}
-                                </h1>
-                                <small>Done: {getLastWorkoutSession.get("last_workout_session").finished}</small>
-                            </div>
+            <Show when={lastWorkoutSession()}>
+                <small className={"px-2"}>Last Workout</small>
+                <div className={"display-box success-border flex-col"}>
+                    <div className={'flex-reactive justify-between'}>
+                        <div className={'flex flex-col gap-1'}>
+                            <h1 className={'m-0'}>
+                                {lastWorkoutSession().name}
+                            </h1>
+                            <small>Done: {lastWorkoutSession().finished}</small>
                         </div>
                     </div>
-                </Show> : <></>
+                </div>
+            </Show>
         )
     }
 
     function LoopWorkouts() {
         return (
-            <For each={workouts.get("Workouts")}>
+            <For each={getWorkouts.get("Workouts")}>
                 {(workout, i) =>
                     <div className={"display-box flex-col"}>
 
@@ -228,7 +235,7 @@ export default function Workouts() {
                             }).then(json => {
                                 if (json.status === 'success') {
                                     setDeleteWorkout(null)
-                                    workouts.refetch()
+                                    getWorkouts.refetch()
                                 }
                             })
                         }}>
@@ -265,7 +272,7 @@ export default function Workouts() {
         <>
             <TopMenu/>
             {
-                workouts.data.loading ?
+                getWorkouts.data.loading ?
                     <div className={"pt-10"}><Loading/></div> :
                     <Page/>
             }

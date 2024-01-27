@@ -764,7 +764,7 @@ export default function Exercise() {
     return (
         <>
             <TopMenu/>
-            {exercise.loading ? <div className={"pt-10"}><Loading/></div> : <Page/>}
+            {exercise.data.loading ? <div className={"pt-10"}><Loading/></div> : <Page/>}
         </>
     );
 };

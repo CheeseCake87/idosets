@@ -44,14 +44,7 @@ export default function TopMenu(props) {
 
                 <button onClick={
                     () => {
-                        ctx.tryLogout().then(json => {
-                            if (json.status === 'success') {
-                                ctx.session.refetch()
-                                if (!ctx.session.data.loading) {
-                                    location.reload()
-                                }
-                            }
-                        })
+                        navigate('/logout')
                     }
                 }>
                     <span className={"desktop-block"}>Logout</span>
