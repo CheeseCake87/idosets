@@ -1,7 +1,7 @@
 import {createContext, createEffect, onMount} from "solid-js";
 import {Navigate, Outlet, useLocation, useNavigate} from "@solidjs/router";
 import {createStore} from "solid-js/store";
-import Loading from "../components/Loading";
+import {Loading} from "../components/Loading";
 import Fetcher from "../utilities/fetcher";
 
 export const mainContext = createContext();
@@ -24,6 +24,14 @@ export function MainContextProvider(props) {
             if (DEV) {
                 console.log(url, json)
             }
+            if (json.status === 'unauthorized') {
+                setStore("logged_in", false)
+                setStore("theme", "dark")
+                setStore("units", "kgs")
+                setStore("account_id", 0)
+                setStore("email_address", null)
+                navigate('/login')
+            }
             return json
         }
 
@@ -41,6 +49,14 @@ export function MainContextProvider(props) {
             if (DEV) {
                 console.log(url, json)
             }
+            if (json.status === 'unauthorized') {
+                setStore("logged_in", false)
+                setStore("theme", "dark")
+                setStore("units", "kgs")
+                setStore("account_id", 0)
+                setStore("email_address", null)
+                navigate('/login')
+            }
             return json
         }
 
@@ -55,6 +71,14 @@ export function MainContextProvider(props) {
             const json = await response.json()
             if (DEV) {
                 console.log(url, json)
+            }
+            if (json.status === 'unauthorized') {
+                setStore("logged_in", false)
+                setStore("theme", "dark")
+                setStore("units", "kgs")
+                setStore("account_id", 0)
+                setStore("email_address", null)
+                navigate('/login')
             }
             return json
         }
@@ -71,7 +95,8 @@ export function MainContextProvider(props) {
         truncate: (str, n) => {
             if (str === undefined) return ('')
             return (str.length > n) ? str.substring(0, n - 1) + '...' : str;
-        }, fancyTimeFormat(duration) {
+        },
+        fancyTimeFormat(duration) {
             // Hours, minutes and seconds
 
             if (duration === undefined || duration === 0) return ('0 secs')
@@ -96,7 +121,8 @@ export function MainContextProvider(props) {
             }
 
             return ret;
-        }, fancyRepFormat(min_reps, max_reps) {
+        },
+        fancyRepFormat(min_reps, max_reps) {
             let ret = "";
             if (min_reps === max_reps) {
                 ret += "" + min_reps + " reps";
@@ -111,7 +137,8 @@ export function MainContextProvider(props) {
                 ret += "" + min_reps + " reps";
             }
             return ret;
-        }, async fold(container_id, content_id) {
+        },
+        async fold(container_id, content_id) {
             const container = document.getElementById(container_id)
             const content = document.getElementById(content_id)
 
@@ -154,7 +181,8 @@ export function MainContextProvider(props) {
         // Settings
         async setTheme(theme) {
             return await getFetch(`${API_URL}/api/set/theme/${theme}`,)
-        }, async setUnits(unit) {
+        },
+        async setUnits(unit) {
             return await getFetch(`${API_URL}/api/set/unit/${unit}`,)
         },
 
@@ -170,16 +198,19 @@ export function MainContextProvider(props) {
             return await postFetch(`${API_URL}/api/login`, {
                 email_address: email_address,
             })
-        }, async tryLogout() {
+        },
+        async tryLogout() {
             return await getFetch(`${API_URL}/api/logout`,)
         },
 
         // Account
         async getAccount() {
             return await getFetch(`${API_URL}/api/account`,)
-        }, async sendDeleteAccountAuth() {
+        },
+        async sendDeleteAccountAuth() {
             return await getFetch(`${API_URL}/api/account/send/delete`,)
-        }, async tryDeleteAccount(params) {
+        },
+        async tryDeleteAccount(params) {
             return await postFetch(`${API_URL}/api/account/delete`, {
                 account_id: params.account_id, auth_code: params.auth_code,
             })
@@ -188,56 +219,73 @@ export function MainContextProvider(props) {
         // Workouts
         async getLastWorkoutSession() {
             return await getFetch(`${API_URL}/api/workouts/last`,)
-        }, async getWorkouts() {
+        },
+        async getWorkouts() {
             return await getFetch(`${API_URL}/api/workouts`,)
-        }, async addWorkout(params) {
+        },
+        async addWorkout(params) {
             return await postFetch(`${API_URL}/api/workouts/add`, {
                 name: params.name,
             })
-        }, async getWorkout(params) {
+        },
+        async getWorkout(params) {
             return await getFetch(`${API_URL}/api/` + `workouts/${params.workout_id}`)
-        }, async editWorkout(params) {
+        },
+        async editWorkout(params) {
             return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/edit`, params.data)
-        }, async deleteWorkout(params) {
+        },
+        async deleteWorkout(params) {
             return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/delete`)
         },
 
         // Sessions
         async getSessions(params) {
             return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/sessions`)
-        }, async getActiveSessions(params) {
+        },
+        async getActiveSessions(params) {
             return await getFetch(`${API_URL}/api/sessions/active`)
-        }, async startSession(params) {
+        },
+        async startSession(params) {
             return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/sessions/start`)
-        }, async stopSession(params) {
+        },
+        async stopSession(params) {
             return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/stop`)
-        }, async getSession(params) {
+        },
+        async getSession(params) {
             return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}`)
-        }, async deleteSession(params) {
+        },
+        async deleteSession(params) {
             return await deleteFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/delete`)
-        }, async logSet(params) {
+        },
+        async logSet(params) {
             return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `sessions/${params.workout_session_id}/log-set`, params.data)
-        }, async deleteLogSet(params) {
+        },
+        async deleteLogSet(params) {
             return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `sessions/${params.workout_session_id}/` + `log-set/${params.set_log_id}/delete`)
         },
 
         // Exercises
         async addExercise(params) {
             return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/add`, params.data)
-        }, async getExercise(params) {
+        },
+        async getExercise(params) {
             return await getFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}`)
-        }, async editExercise(params) {
+        },
+        async editExercise(params) {
             return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/edit`, params.data)
-        }, async deleteExercise(params) {
+        },
+        async deleteExercise(params) {
             return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/delete`)
         },
 
         // Sets
         async addSet(params) {
             return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/sets/add`, params.data)
-        }, async copySet(params) {
+        },
+        async copySet(params) {
             return await getFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/` + `sets/${params.set_id}/copy`)
-        }, async deleteSet(params) {
+        },
+        async deleteSet(params) {
             return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/` + `sets/${params.set_id}/delete`)
         },
 
