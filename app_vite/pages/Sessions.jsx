@@ -1,5 +1,5 @@
-import {createEffect, createSignal, For, Show, useContext} from "solid-js";
-import {useNavigate, useParams} from "@solidjs/router";
+import {createEffect, createSignal, useContext} from "solid-js";
+import {useNavigate} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
 import Loading from "../components/Loading";
