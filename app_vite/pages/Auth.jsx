@@ -1,7 +1,7 @@
 import {createEffect, createResource, createSignal, Show, useContext} from "solid-js";
 import {mainContext} from "../context/mainContext";
 import {useNavigate, useParams} from "@solidjs/router";
-import Loading from "../components/Loading";
+import {Loading} from "../components/Loading";
 
 export default function Auth(props) {
     const navigate = useNavigate();

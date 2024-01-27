@@ -5,7 +5,6 @@ import {MainContextProvider} from "./context/mainContext";
 import Workouts from "./pages/Workouts";
 import Login from "./pages/Login";
 import Auth from "./pages/Auth";
-import PageNotFound from "./pages/PageNotFound";
 import Workout from "./pages/Workout";
 import Exercise from "./pages/Exercise";
 import Account from "./pages/Account";
@@ -39,8 +38,6 @@ render(() => (
 
                 <Route path="/workout/sessions" component={Sessions}/>
                 <Route path="/workout/:workout_id/session/:workout_session_id" component={Session}/>
-
-                <Route path="*" component={PageNotFound}/>
             </Route>
         </Routes>
     </Router>

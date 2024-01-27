@@ -178,6 +178,10 @@ export function MainContextProvider(props) {
             return true
         },
 
+        async getFakeError() {
+            return await getFetch(`${API_URL}/api/fake-error`,)
+        },
+
         // Settings
         async setTheme(theme) {
             return await getFetch(`${API_URL}/api/set/theme/${theme}`,)
@@ -289,7 +293,13 @@ export function MainContextProvider(props) {
             return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/` + `sets/${params.set_id}/delete`)
         },
 
-        logged_in: false, theme: 'dark', units: 'kgs', account_id: 0, email_address: '',
+        system_error: false,
+
+        logged_in: false,
+        theme: 'dark',
+        units: 'kgs',
+        account_id: 0,
+        email_address: '',
 
         session: new Fetcher(getAuthSession),
 
@@ -304,12 +314,15 @@ export function MainContextProvider(props) {
         html.setAttribute('data-theme', store.theme)
     })
 
-    if (location.pathname.includes('/auth/') || location.pathname.includes('/logout')) {
-
-        return (<mainContext.Provider value={[store, setStore]}>
-            <Outlet/>
-        </mainContext.Provider>);
-
+    if (
+        location.pathname.includes('/auth/')
+        || location.pathname.includes('/logout')
+    ) {
+        return (
+            <mainContext.Provider value={[store, setStore]}>
+                <Outlet/>
+            </mainContext.Provider>
+        );
     }
 
     createEffect(() => {
@@ -334,11 +347,17 @@ export function MainContextProvider(props) {
         }
     })
 
-    return (<mainContext.Provider value={[store, setStore]}>
-        {store.session.data.loading ? <div className={"pt-20"}><Loading/>
-        </div> : !store.session.data().logged_in && location.pathname !== '/login' ? <Navigate href={"/login"}/> :
-            <Outlet/>}
-    </mainContext.Provider>);
+    return (
+        <mainContext.Provider value={[store, setStore]}>
+            {
+                store.session.data.loading ?
+                    <div className={"pt-20"}><Loading/></div> :
+                    !store.session.data().logged_in && location.pathname !== '/login' ?
+                        <Navigate href={"/login"}/> :
+                        <Outlet/>
+            }
+        </mainContext.Provider>
+    );
 
 }
 

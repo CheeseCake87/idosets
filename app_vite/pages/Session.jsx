@@ -2,7 +2,7 @@ import {createEffect, createSignal, For, Show, useContext} from "solid-js";
 import {useNavigate, useParams} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
-import Loading from "../components/Loading";
+import {Loading} from "../components/Loading";
 import Fetcher from "../utilities/fetcher";
 
 export default function Session() {
@@ -806,7 +806,7 @@ export default function Session() {
                                                referrerPolicy={"no-referrer"}
                                                className={"flex items-center gap-2 opacity-80 hover:opacity-100"}>
                                                 <img src={exercise.info_url_favicon}
-                                                     className={"w-8 h-8 rounded-full inline-block"} alt={"🚫ico"}/>
+                                                     className={"w-8 h-8 rounded-full inline-block border bg-black"} alt={"🚫ico"}/>
                                                 <span className={"underline"}>Instructions</span>
                                                 <span className={"material-icons w-5 h-5"}>open_in_new</span>
                                             </a>
