@@ -11,8 +11,6 @@ export default function Workouts() {
     const [ctx, setCtx] = useContext(mainContext);
     const navigate = useNavigate();
 
-    const fakeError = new Fetcher(ctx.getFakeError)
-
     const getWorkouts = new Fetcher(ctx.getWorkouts)
     const getLastWorkoutSession = new Fetcher(ctx.getLastWorkoutSession)
     const getActiveSessions = new Fetcher(ctx.getActiveSessions)
