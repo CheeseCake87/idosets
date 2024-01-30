@@ -5,6 +5,7 @@ from app_flask.models.sets import SetLogs
 from app_flask.models.workouts import Workouts, WorkoutSessions
 from .. import bp
 
+from pprint import pprint
 
 @bp.get("/workout/<workout_id>/sessions/<workout_session_id>")
 @api_login_check(
