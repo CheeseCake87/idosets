@@ -7,7 +7,7 @@ import Fetcher from "../utilities/fetcher";
 
 export default function Session() {
 
-    const [ctx, setCtx] = useContext(mainContext);
+    const [ctx] = useContext(mainContext);
     const navigate = useNavigate();
     const params = useParams();
 
@@ -716,8 +716,6 @@ export default function Session() {
 
         const [log, setLog] = createSignal(set.set_log)
 
-        console.log(log())
-
         return (
             <div className={"display-box flex-col"}>
 
@@ -789,16 +787,31 @@ export default function Session() {
                             className={"button-good flex-1"}
                             type="button"
                             onClick={() => {
+
+                                /*
+                                'set_log': {
+                                  'account_id': 1,
+                                  'duration': 0,
+                                  'exercise_id': 1,
+                                  'reps': 10,
+                                  'set_id': 1,
+                                  'set_log_id': 5,
+                                  'weight': 10.0,
+                                  'workout_id': 1,
+                                  'workout_session_id': 4
+                                  },
+                                 */
+
                                 let data = {
+                                    account_id: ctx.account_id,
                                     workout_id: workout_id,
                                     workout_session_id: workout_session_id,
-                                    log: {
-                                        exercise_id: exercise_id,
-                                        set_id: set.set_id,
-                                        weight: weight(),
-                                        reps: reps(),
-                                        duration: duration(),
-                                    }
+                                    exercise_id: exercise_id,
+                                    set_id: set.set_id,
+                                    weight: weight(),
+                                    reps: reps(),
+                                    duration: duration(),
+                                    set_log_index: logCollection().length + 1,
                                 }
 
                                 setLogCollection([...logCollection(), data])

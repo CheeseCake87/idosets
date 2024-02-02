@@ -8,7 +8,7 @@ import Fetcher from "../utilities/fetcher";
 
 export default function Workouts() {
 
-    const [ctx, setCtx] = useContext(mainContext);
+    const [ctx] = useContext(mainContext);
     const navigate = useNavigate();
 
     const getWorkouts = new Fetcher(ctx.getWorkouts)

@@ -1,11 +1,12 @@
 from datetime import datetime
+from time import sleep
 
 from flask import session, request
 from flask_imp.security import api_login_check
 
-from app_flask.models.workouts import Workouts, WorkoutSessions
 from app_flask.models.exercises import Exercises
 from app_flask.models.sets import Sets, SetLogs
+from app_flask.models.workouts import Workouts, WorkoutSessions
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
 

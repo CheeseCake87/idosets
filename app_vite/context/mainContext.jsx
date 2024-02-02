@@ -1,4 +1,4 @@
-import {createContext, createEffect, onMount} from "solid-js";
+import {createContext, createEffect, createSignal, onMount} from "solid-js";
 import {Navigate, Outlet, useLocation, useNavigate} from "@solidjs/router";
 import {createStore} from "solid-js/store";
 import {Loading} from "../components/Loading";
@@ -11,76 +11,140 @@ export function MainContextProvider(props) {
     const DEV = import.meta.env.DEV
     const API_URL = DEV ? import.meta.env.VITE_FLASK_URL : ''
 
+    const timeout_fetch_after = 1000
+    const [connection, setConnection] = createSignal(true)
+
     const navigate = useNavigate();
     const location = useLocation();
 
     async function getFetch(url) {
+
+        const controller = new AbortController()
+        const signal = controller.signal
+
+        let fetch_timeout = setTimeout(
+            () => {
+                controller.abort("fetch timeout")
+                setConnection(false)
+            },
+            timeout_fetch_after
+        )
+
         const response = await fetch(url, {
-            credentials: "include", method: "GET"
+            credentials: "include", method: "GET", signal: signal
         })
 
-        if (response.headers.get('content-type')?.includes('application/json')) {
-            const json = await response.json()
-            if (DEV) {
-                console.log(url, json)
+        if (response.ok) {
+            clearTimeout(fetch_timeout)
+
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                const json = await response.json()
+                if (DEV) {
+                    console.log(url, json)
+                }
+                if (json.status === 'unauthorized') {
+                    setStore("logged_in", false)
+                    setStore("theme", "dark")
+                    setStore("units", "kgs")
+                    setStore("account_id", 0)
+                    setStore("email_address", null)
+                }
+                return json
+
+            } else {
+                return {"status": "not json"}
             }
-            if (json.status === 'unauthorized') {
-                setStore("logged_in", false)
-                setStore("theme", "dark")
-                setStore("units", "kgs")
-                setStore("account_id", 0)
-                setStore("email_address", null)
-                navigate('/login')
-            }
-            return json
+
+        } else {
+            return {"status": "error"}
         }
 
     }
 
     async function postFetch(url, data) {
+
+        const controller = new AbortController()
+        const signal = controller.signal
+
+        let fetch_timeout = setTimeout(
+            () => {
+                controller.abort("fetch timeout")
+                setConnection(false)
+            },
+            timeout_fetch_after
+        )
+
         const response = await fetch(url, {
-            credentials: "include", method: "POST", headers: {
+            credentials: "include", method: "POST", signal: signal, headers: {
                 "Content-Type": "application/json",
             }, body: JSON.stringify(data)
         })
 
-        if (response.headers.get('content-type')?.includes('application/json')) {
-            const json = await response.json()
-            if (DEV) {
-                console.log(url, json)
+        if (response.ok) {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                const json = await response.json()
+                if (DEV) {
+                    console.log(url, json)
+                }
+                if (json.status === 'unauthorized') {
+                    setStore("logged_in", false)
+                    setStore("theme", "dark")
+                    setStore("units", "kgs")
+                    setStore("account_id", 0)
+                    setStore("email_address", null)
+                }
+                return json
+
+            } else {
+                return {"status": "not json"}
             }
-            if (json.status === 'unauthorized') {
-                setStore("logged_in", false)
-                setStore("theme", "dark")
-                setStore("units", "kgs")
-                setStore("account_id", 0)
-                setStore("email_address", null)
-                navigate('/login')
-            }
-            return json
+
+        } else {
+            return {"status": "error"}
         }
 
     }
 
     async function deleteFetch(url) {
+
+        const controller = new AbortController()
+        const signal = controller.signal
+
+        let fetch_timeout = setTimeout(
+            () => {
+                controller.abort("fetch timeout")
+                setConnection(false)
+            },
+            timeout_fetch_after
+        )
+
         const response = await fetch(url, {
-            credentials: "include", method: "DELETE",
+            credentials: "include", method: "DELETE", signal: signal
         })
 
-        if (response.headers.get('content-type')?.includes('application/json')) {
-            const json = await response.json()
-            if (DEV) {
-                console.log(url, json)
+        if (response.ok) {
+            clearTimeout(fetch_timeout)
+
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                const json = await response.json()
+                if (DEV) {
+                    console.log(url, json)
+                }
+                if (json.status === 'unauthorized') {
+                    setStore("logged_in", false)
+                    setStore("theme", "dark")
+                    setStore("units", "kgs")
+                    setStore("account_id", 0)
+                    setStore("email_address", null)
+                }
+                return json
+
+            } else {
+                return {"status": "not json"}
             }
-            if (json.status === 'unauthorized') {
-                setStore("logged_in", false)
-                setStore("theme", "dark")
-                setStore("units", "kgs")
-                setStore("account_id", 0)
-                setStore("email_address", null)
-                navigate('/login')
-            }
-            return json
+
+        } else {
+            return {"status": "error"}
         }
 
     }
@@ -89,7 +153,10 @@ export function MainContextProvider(props) {
         return await getFetch(`${API_URL}/api/auth/session`,)
     }
 
-    const [store, setStore] = createStore({
+    const [
+        store,
+        setStore
+    ] = createStore({
 
         // Utilities
         truncate: (str, n) => {
@@ -262,10 +329,20 @@ export function MainContextProvider(props) {
             return await deleteFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/delete`)
         },
         async logSet(params) {
-            return await postFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `sessions/${params.workout_session_id}/log-set`, params.data)
+            return await postFetch(
+                `${API_URL}/api/` +
+                `workouts/${params.workout_id}/` +
+                `sessions/${params.workout_session_id}/log-set`,
+                params.data
+            )
         },
         async deleteLogSet(params) {
-            return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `sessions/${params.workout_session_id}/` + `log-set/${params.set_log_id}/delete`)
+            return await deleteFetch(
+                `${API_URL}/api/` +
+                `workouts/${params.workout_id}/` +
+                `sessions/${params.workout_session_id}/` +
+                `log-set/${params.set_log_id}/delete`
+            )
         },
 
         // Exercises
@@ -348,13 +425,12 @@ export function MainContextProvider(props) {
     })
 
     return (
-        <mainContext.Provider value={[store, setStore]}>
+        <mainContext.Provider value={[store, setStore, connection]}>
             {
                 store.session.data.loading ?
                     <div className={"pt-20"}><Loading/></div> :
                     !store.session.data().logged_in && location.pathname !== '/login' ?
-                        <Navigate href={"/login"}/> :
-                        <Outlet/>
+                        <Navigate href={"/login"}/> : <Outlet/>
             }
         </mainContext.Provider>
     );
