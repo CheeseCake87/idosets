@@ -209,6 +209,10 @@ export default function Session() {
                 <p>Are you sure you want to undo this log?</p>
                 <div className={'flex gap-2'}>
                     <button className={'button-bad'} onClick={() => {
+                        setLog({})
+                        setUndoSet(null)
+
+                        /*
                         ctx.deleteLogSet({
                             workout_id: workout_id,
                             workout_session_id: workout_session_id,
@@ -217,6 +221,7 @@ export default function Session() {
                             setLog({})
                             setUndoSet(null)
                         })
+                        */
                     }}>
                         Yes
                     </button>
@@ -231,8 +236,9 @@ export default function Session() {
     }
 
     function FinishSetSections(props) {
+        // Provides the section buttons to switch between (duration / reps) and weight
 
-        const {set, set_i} = props
+        const {set} = props
 
         return (
             <div className={'flex flex-row gap-4 mt-4'}>
@@ -289,6 +295,7 @@ export default function Session() {
     }
 
     function FinishSetDuration(props) {
+        // Used to provide the interface to input duration done
 
         const {duration, setDuration} = props
         const [durationDisplay, setDurationDisplay] = createSignal(ctx.fancyTimeFormat(duration()))
@@ -397,6 +404,7 @@ export default function Session() {
     }
 
     function FinishSetWeight(props) {
+        // Used to provide the interface to input weight done
 
         const {set_id, weight, setWeight, manualInput, setManualInput} = props
 
@@ -548,6 +556,7 @@ export default function Session() {
     }
 
     function FinishSetReps(props) {
+        // Used to provide the interface to input reps done
 
         const {set_id, reps, setReps, manualInput, setManualInput} = props
 
@@ -714,7 +723,21 @@ export default function Session() {
         const [reps, setReps] = createSignal(0)
         const [duration, setDuration] = createSignal(0)
 
-        const [log, setLog] = createSignal(set.set_log)
+        const [log, setLog] = createSignal({})
+        // log collection index
+        const [lci, setLci] = createSignal(0)
+
+        // set log from refresh
+        if (Object.keys(set.set_log).length > 0) {
+            // build the log data
+            let log_data = {...set.set_log, lci: logCollection().length - 1}
+            // store log from api call
+            setLog(log_data)
+            // build the log list during render
+            setLogCollection([...logCollection(), log_data])
+            // get the last log index value (this logs location)
+            setLci(log_data.lci)
+        }
 
         return (
             <div className={"display-box flex-col"}>
@@ -770,6 +793,7 @@ export default function Session() {
                         </Show>
                     </Show>
 
+                    {/* Save the set log */}
                     <div className={'flex justify-between gap-4 pt-2'}>
 
                         <button
@@ -787,22 +811,7 @@ export default function Session() {
                             className={"button-good flex-1"}
                             type="button"
                             onClick={() => {
-
-                                /*
-                                'set_log': {
-                                  'account_id': 1,
-                                  'duration': 0,
-                                  'exercise_id': 1,
-                                  'reps': 10,
-                                  'set_id': 1,
-                                  'set_log_id': 5,
-                                  'weight': 10.0,
-                                  'workout_id': 1,
-                                  'workout_session_id': 4
-                                  },
-                                 */
-
-                                let data = {
+                                let log_data = {
                                     account_id: ctx.account_id,
                                     workout_id: workout_id,
                                     workout_session_id: workout_session_id,
@@ -811,12 +820,15 @@ export default function Session() {
                                     weight: weight(),
                                     reps: reps(),
                                     duration: duration(),
-                                    set_log_index: logCollection().length + 1,
+                                    lci: logCollection().length + 1,
                                 }
 
-                                setLogCollection([...logCollection(), data])
+                                ctx.logSet(log_data).then((_) => {
 
-                                setLog(json.set_log)
+                                })
+
+                                setLogCollection([...logCollection(), log_data])
+                                setLog(log_data)
                                 reset_view()
                                 setRepsManualInput(false)
                                 setWeightManualInput(false)
@@ -834,6 +846,15 @@ export default function Session() {
 
     function Page() {
         return (<div className={"container"}>
+
+            <div>
+                <For each={logCollection()}>
+                    {
+                        (lc, exercise_i) => <span>{lc.set_log_id}: {lc.set_id} </span>
+                    }
+
+                </For>
+            </div>
 
             <Show
                 when={!workout_session.get("workout_session").is_finished}

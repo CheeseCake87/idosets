@@ -323,7 +323,11 @@ export function MainContextProvider(props) {
             return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/stop`)
         },
         async getSession(params) {
-            return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}`)
+            return await getFetch(
+                `${API_URL}/api/` +
+                `workout/${params.workout_id}/` +
+                `sessions/${params.workout_session_id}`
+            )
         },
         async deleteSession(params) {
             return await deleteFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/delete`)
