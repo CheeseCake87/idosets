@@ -32,93 +32,6 @@ export default function Session() {
         workout_id: workout_id, workout_session_id: workout_session_id
     }, ctx.getSession)
 
-    // resp from workout_session
-
-    /*
-{'exercises': [{'account_id': 1,
-            'exercise_id': 1,
-            'info_url': 'https://www.bodybuilding.com/exercises/barbell-bench-press-medium-grip',
-            'info_url_favicon': 'https://cdn.shopify.com/s/files/1/0471/3332/7519/files/favicon.svg',
-            'name': 'Test Exercise',
-            'order': 1,
-            'sets': [{'account_id': 1,
-                      'duration_max': 0,
-                      'duration_min': 0,
-                      'exercise_id': 1,
-                      'is_duration': False,
-                      'is_reps': True,
-                      'order': 1,
-                      'reps_max': 0,
-                      'reps_min': 10,
-                      'set_id': 1,
-                      'set_log': {'account_id': 1,
-                                  'duration': 0,
-                                  'exercise_id': 1,
-                                  'reps': 10,
-                                  'set_id': 1,
-                                  'set_log_id': 5,
-                                  'weight': 10.0,
-                                  'workout_id': 1,
-                                  'workout_session_id': 4},
-                      'workout_id': 1},
-                     {'account_id': 1,
-                      'duration_max': 0,
-                      'duration_min': 0,
-                      'exercise_id': 1,
-                      'is_duration': False,
-                      'is_reps': True,
-                      'order': 2,
-                      'reps_max': 0,
-                      'reps_min': 10,
-                      'set_id': 2,
-                      'set_log': {},
-                      'workout_id': 1},
-                     {'account_id': 1,
-                      'duration_max': 0,
-                      'duration_min': 0,
-                      'exercise_id': 1,
-                      'is_duration': False,
-                      'is_reps': True,
-                      'order': 3,
-                      'reps_max': 0,
-                      'reps_min': 10,
-                      'set_id': 3,
-                      'set_log': {},
-                      'workout_id': 1},
-                     {'account_id': 1,
-                      'duration_max': 0,
-                      'duration_min': 0,
-                      'exercise_id': 1,
-                      'is_duration': False,
-                      'is_reps': True,
-                      'order': 4,
-                      'reps_max': 0,
-                      'reps_min': 10,
-                      'set_id': 4,
-                      'set_log': {},
-                      'workout_id': 1}],
-                'workout_id': 1},
-               {'account_id': 1,
-                'exercise_id': 2,
-                'info_url': 'https://github.com/CheeseCake87/idosets.app/issues',
-                'info_url_favicon': 'https://github.githubassets.com/favicons/favicon.png',
-                'name': 'Test',
-                'order': 2,
-                'sets': [],
-                'workout_id': 1}],
- 'workout': {'account_id': 1,
-             'created': datetime.datetime(2024, 1, 26, 23, 7, 57, 491998),
-             'name': 'New',
-             'workout_id': 1},
- 'workout_session': {'account_id': 1,
-                     'duration': 0,
-                     'finished': None,
-                     'is_finished': False,
-                     'started': datetime.datetime(2024, 1, 30, 7, 26, 12, 635594),
-                     'total_weight': 0,
-                     'workout_id': 1,
-                     'workout_session_id': 4}}
-*/
     createEffect(() => {
         if (workout_session.data.loading === false) {
             setExercises(workout_session.get("exercises"))
@@ -161,6 +74,7 @@ export default function Session() {
                     </Show>
                 </div>
 
+                {/* disable done button if set_log is not empty, done is enabled in fallback */}
                 <Show
                     when={Object.keys(set_log()).length > 0}
                     fallback={
@@ -202,26 +116,26 @@ export default function Session() {
 
     function UndoSet(props) {
 
-        const {log, setLog} = props
+        const {_, setLog} = props
 
         return (
             <div className={"display-box flex-reactive items-center justify-between mt-4"}>
                 <p>Are you sure you want to undo this log?</p>
                 <div className={'flex gap-2'}>
                     <button className={'button-bad'} onClick={() => {
+                        /*
+                        if (Object.hasOwnProperty(log(), 'set_log_id')) {
+                            ctx.deleteLogSet({
+                                workout_id: workout_id,
+                                workout_session_id: workout_session_id,
+                                set_log_id: log().set_log_id
+                            }).then((_) => {
+                                // do nothing
+                            })
+                        }
+                        */
                         setLog({})
                         setUndoSet(null)
-
-                        /*
-                        ctx.deleteLogSet({
-                            workout_id: workout_id,
-                            workout_session_id: workout_session_id,
-                            set_log_id: log().set_log_id
-                        }).then((_) => {
-                            setLog({})
-                            setUndoSet(null)
-                        })
-                        */
                     }}>
                         Yes
                     </button>
@@ -822,11 +736,13 @@ export default function Session() {
                                     duration: duration(),
                                     lci: logCollection().length + 1,
                                 }
-
-                                ctx.logSet(log_data).then((_) => {
-
+                                /*
+                                ctx.logSet(log_data).then((json) => {
+                                    if (json.status === 'success') {
+                                        log_data = {...log_data, set_log_id: json.set_log.set_log_id}
+                                    }
                                 })
-
+                                */
                                 setLogCollection([...logCollection(), log_data])
                                 setLog(log_data)
                                 reset_view()
@@ -846,16 +762,6 @@ export default function Session() {
 
     function Page() {
         return (<div className={"container"}>
-
-            <div>
-                <For each={logCollection()}>
-                    {
-                        (lc, exercise_i) => <span>{lc.set_log_id}: {lc.set_id} </span>
-                    }
-
-                </For>
-            </div>
-
             <Show
                 when={!workout_session.get("workout_session").is_finished}
                 fallback={
@@ -966,17 +872,40 @@ export default function Session() {
                                   </p>
 
                                   <div className={"flex gap-2"}>
-                                      <button className={"button-good flex-1"}
-                                              onClick={() => {
-                                                  ctx.stopSession({
-                                                      workout_id: workout_id,
-                                                      workout_session_id: workout_session_id
-                                                  }).then((_) => {
-                                                      workout_session.refetch()
-                                                  })
-                                              }}>
-                                          Finish Workout
-                                      </button>
+                                      <Show
+                                          when={ctx.connection()}
+                                          fallback={
+                                              <button className={"button-good flex-1"}
+                                                      onClick={() => {
+                                                          ctx.stopSession({
+                                                              workout_id: workout_id,
+                                                              workout_session_id: workout_session_id,
+                                                              data: {
+                                                                  log_collection: logCollection(),
+                                                              }
+                                                          }).then((_) => {
+                                                              workout_session.refetch()
+                                                          })
+                                                      }}>
+                                                  Try Again
+                                              </button>
+                                          }
+                                      >
+                                          <button className={"button-good flex-1"}
+                                                  onClick={() => {
+                                                      ctx.stopSession({
+                                                          workout_id: workout_id,
+                                                          workout_session_id: workout_session_id,
+                                                          data: {
+                                                              log_collection: logCollection(),
+                                                          }
+                                                      }).then((_) => {
+                                                          workout_session.refetch()
+                                                      })
+                                                  }}>
+                                              Finish Workout
+                                          </button>
+                                      </Show>
                                       <button className={"flex-1"}
                                               onClick={() => {
                                                   setFinishSession(false)

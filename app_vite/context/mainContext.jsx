@@ -81,6 +81,8 @@ export function MainContextProvider(props) {
         })
 
         if (response.ok) {
+            clearTimeout(fetch_timeout)
+
             if (response.headers.get('content-type')?.includes('application/json')) {
                 const json = await response.json()
                 if (DEV) {
@@ -320,7 +322,12 @@ export function MainContextProvider(props) {
             return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/sessions/start`)
         },
         async stopSession(params) {
-            return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/` + `sessions/${params.workout_session_id}/stop`)
+            return await postFetch(
+                `${API_URL}/api/` +
+                `workout/${params.workout_id}/` +
+                `sessions/${params.workout_session_id}/stop`,
+                params.data
+            )
         },
         async getSession(params) {
             return await getFetch(
