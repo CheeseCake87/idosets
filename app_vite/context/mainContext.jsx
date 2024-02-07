@@ -36,6 +36,7 @@ export function MainContextProvider(props) {
 
         if (response.ok) {
             clearTimeout(fetch_timeout)
+            if (!connection()) {setConnection(true)}
 
             if (response.headers.get('content-type')?.includes('application/json')) {
                 const json = await response.json()
@@ -82,6 +83,7 @@ export function MainContextProvider(props) {
 
         if (response.ok) {
             clearTimeout(fetch_timeout)
+            if (!connection()) {setConnection(true)}
 
             if (response.headers.get('content-type')?.includes('application/json')) {
                 const json = await response.json()
@@ -126,6 +128,7 @@ export function MainContextProvider(props) {
 
         if (response.ok) {
             clearTimeout(fetch_timeout)
+            if (!connection()) {setConnection(true)}
 
             if (response.headers.get('content-type')?.includes('application/json')) {
                 const json = await response.json()

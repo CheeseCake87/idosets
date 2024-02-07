@@ -2,12 +2,12 @@ import {createEffect, createSignal, For, Show, useContext} from "solid-js";
 import {useNavigate, useParams} from "@solidjs/router";
 import {mainContext} from "../context/mainContext";
 import TopMenu from "../components/TopMenu";
-import {Loading} from "../components/Loading";
+import {Loading, LoadingSmall} from "../components/Loading";
 import Fetcher from "../utilities/fetcher";
 
 export default function Session() {
 
-    const [ctx] = useContext(mainContext);
+    const [ctx, _, connection] = useContext(mainContext);
     const navigate = useNavigate();
     const params = useParams();
 
@@ -17,6 +17,7 @@ export default function Session() {
     const [finishSet, setFinishSet] = createSignal(null)
     const [undoSet, setUndoSet] = createSignal(null)
 
+    const [finishing, setFinishing] = createSignal(false)
     const [finishSession, setFinishSession] = createSignal(false)
 
     const [showDurationInput, setShowDurationInput] = createSignal(true)
@@ -862,21 +863,33 @@ export default function Session() {
                 </div>
 
                 {/* Finish workout */}
-                <div className={"display-box success flex-col gap-2 mb-2"}>
+                <div
+                    className={"display-box flex-col gap-2 mb-2"}>
                     <Show when={finishSession()}
                           children={
-                              <div className={"display-box no-bg flex-col text-center gap-6"}>
+                              <div
+                                  className={connection() ? "display-box no-bg flex-col text-center gap-6" : "display-box flex-col text-center gap-6"}>
 
-                                  <p className={"opacity-90"}>
-                                      Are you sure you want to finish this workout?
-                                  </p>
+                                  <Show when={!connection()}
+                                        fallback={
+                                            <p className={"opacity-90"}>
+                                                Are you sure you want to finish this workout?
+                                            </p>
+                                        }>
+                                      <div>
+                                          <p className={'m-0'}>Oh no! It looks like you might be offline.</p>
+                                          <p>Don't refresh this page, and try again when you're back online.</p>
+                                      </div>
+                                  </Show>
+
 
                                   <div className={"flex gap-2"}>
                                       <Show
-                                          when={ctx.connection()}
+                                          when={connection()}
                                           fallback={
                                               <button className={"button-good flex-1"}
                                                       onClick={() => {
+                                                          setFinishing(true)
                                                           ctx.stopSession({
                                                               workout_id: workout_id,
                                                               workout_session_id: workout_session_id,
@@ -885,14 +898,20 @@ export default function Session() {
                                                               }
                                                           }).then((_) => {
                                                               workout_session.refetch()
-                                                          })
+                                                              setFinishing(false)
+                                                          }).catch(
+                                                              (_) => {
+                                                                  setFinishing(false)
+                                                              }
+                                                          )
                                                       }}>
-                                                  Try Again
+                                                  {finishing() ? <LoadingSmall/> : 'Try Again'}
                                               </button>
                                           }
                                       >
                                           <button className={"button-good flex-1"}
                                                   onClick={() => {
+                                                      setFinishing(true)
                                                       ctx.stopSession({
                                                           workout_id: workout_id,
                                                           workout_session_id: workout_session_id,
@@ -901,17 +920,24 @@ export default function Session() {
                                                           }
                                                       }).then((_) => {
                                                           workout_session.refetch()
-                                                      })
+                                                          setFinishing(false)
+                                                      }).catch(
+                                                          (_) => {
+                                                              setFinishing(false)
+                                                          }
+                                                      )
                                                   }}>
-                                              Finish Workout
+                                              {finishing() ? <LoadingSmall/> : 'Finish Workout'}
                                           </button>
                                       </Show>
-                                      <button className={"flex-1"}
-                                              onClick={() => {
-                                                  setFinishSession(false)
-                                              }}>
-                                          Cancel
-                                      </button>
+                                      <Show when={connection()}>
+                                          <button className={"flex-1"}
+                                                  onClick={() => {
+                                                      setFinishSession(false)
+                                                  }}>
+                                              Cancel
+                                          </button>
+                                      </Show>
                                   </div>
                               </div>
                           }
