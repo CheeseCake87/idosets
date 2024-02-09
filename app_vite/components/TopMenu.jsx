@@ -18,10 +18,8 @@ export default function TopMenu (props) {
                             </span>
                     </Show>
                 </h3>
-
             </A>
             <div className={'flex gap-4'}>
-
                 <Show when={location.pathname.includes('/account')}
                       children={
                           <button onClick={

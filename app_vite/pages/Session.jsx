@@ -49,7 +49,7 @@ export default function Session () {
     const { set, set_i, set_log } = props
 
     return (
-            <div className={'flex-reactive justify-between'}>
+            <div className={'flex-reactive justify-between'} id={`set_${set_i()}`}>
 
                 <div className={'flex gap-4 items-center'}>
                     <h1 className={'m-0 opacity-50'}>{set_i() + 1}</h1>
@@ -121,17 +121,6 @@ export default function Session () {
                 <p>Are you sure you want to undo this log?</p>
                 <div className={'flex gap-2'}>
                     <button className={'button-bad'} onClick={() => {
-                      /*
-                        if (Object.hasOwnProperty(log(), 'set_log_id')) {
-                            ctx.deleteLogSet({
-                                workout_id: workout_id,
-                                workout_session_id: workout_session_id,
-                                set_log_id: log().set_log_id
-                            }).then((_) => {
-                                // do nothing
-                            })
-                        }
-                        */
                       setLog({})
                       setUndoSet(null)
                     }}>
@@ -732,18 +721,13 @@ export default function Session () {
                                 duration: duration(),
                                 lci: logCollection().length + 1
                               }
-                              /*
-                                ctx.logSet(log_data).then((json) => {
-                                    if (json.status === 'success') {
-                                        log_data = {...log_data, set_log_id: json.set_log.set_log_id}
-                                    }
-                                })
-                                */
                               setLogCollection([...logCollection(), log_data])
                               setLog(log_data)
                               reset_view()
                               setRepsManualInput(false)
                               setWeightManualInput(false)
+                              const scrollDiv = document.getElementById(`set_${set_i()}`).offsetTop
+                              window.scrollTo({ top: scrollDiv - 70, behavior: 'smooth' })
                             }}>
                             Add
                         </button>
