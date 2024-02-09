@@ -433,6 +433,20 @@ body {
         animation: flashing-good-kf 2s infinite;
     }
 
+    .flashing-bad {
+        animation: flashing-bad-kf 2s infinite;
+    }
+
+    .flashing-bad-color {
+        animation: flashing-bad-color-kf 2s infinite;
+    }
+
+
+    .flashing-warning-color {
+        animation: flashing-warning-color-kf 2s infinite;
+    }
+
+
     @keyframes flashing-good-kf {
         0% {
             background-color: rgba(0, 255, 0, 0.1);
@@ -442,6 +456,42 @@ body {
         }
         100% {
             background-color: rgba(0, 255, 0, 0.1);
+        }
+    }
+
+    @keyframes flashing-bad-kf {
+        0% {
+            background-color: rgba(255, 0, 0, 0.1);
+        }
+        50% {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+        100% {
+            background-color: rgba(255, 0, 0, 0.1);
+        }
+    }
+
+    @keyframes flashing-bad-color-kf {
+        0% {
+            color: rgba(255, 0, 0, 0.1);
+        }
+        50% {
+            color: rgba(255, 0, 0, 0.3);
+        }
+        100% {
+            color: rgba(255, 0, 0, 0.1);
+        }
+    }
+
+    @keyframes flashing-warning-color-kf {
+        0% {
+            color: rgba(255, 234, 0, 0.1);
+        }
+        50% {
+            color: rgba(255, 234, 0, 0.5);
+        }
+        100% {
+            color: rgba(255, 234, 0, 0.1);
         }
     }
 

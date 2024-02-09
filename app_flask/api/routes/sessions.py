@@ -1,3 +1,5 @@
+from time import sleep
+
 from flask import session, request
 from flask_imp.security import api_login_check
 
@@ -95,12 +97,32 @@ def sessions_start_(workout_id):
     }
 
 
-@bp.get("/workout/<workout_id>/sessions/<workout_session_id>/stop")
+@bp.post("/workout/<workout_id>/sessions/<workout_session_id>/stop")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def sessions_stop_(workout_id, workout_session_id):
+    sleep(5)
+
+    jsond = request.json
+
     _ = workout_id
+
+    log_collection = jsond.get("log_collection")
+
+    if log_collection:
+        for log in log_collection:
+            SetLogs.add_log(
+                account_id=log.get("account_id"),
+                workout_id=log.get("workout_id"),
+                workout_session_id=log.get("workout_session_id"),
+                exercise_id=log.get("exercise_id"),
+                set_id=log.get("set_id"),
+                weight=log.get("weight"),
+                duration=log.get("duration"),
+                reps=log.get("reps"),
+                weight_unit=session.get("units", "kgs"),
+            )
 
     session_ = WorkoutSessions.stop_session(
         account_id=session.get("account_id", 0),
