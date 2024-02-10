@@ -1,29 +1,29 @@
-import { createSignal, Show, useContext } from 'solid-js'
-import { mainContext } from '../context/mainContext'
-import { Loading } from '../components/Loading'
+import {createSignal, Show, useContext} from 'solid-js'
+import {mainContext} from '../context/mainContext'
+import {Loading} from '../components/Loading'
 
-export default function Login () {
-  const [ctx, setCtx] = useContext(mainContext)
+export default function Login() {
+    const [ctx, setCtx] = useContext(mainContext)
 
-  const [email_address, set_email_address] = createSignal('')
-  const [login_status, set_login_status] = createSignal('waiting')
+    const [email_address, set_email_address] = createSignal('')
+    const [login_status, set_login_status] = createSignal('waiting')
 
-  return (<div className={'login py-6'}>
+    return (<div className={'login py-6'}>
         <div className={'text-center pt-2 pb-8'}>
             <h2 className={'my-0'}>💪 I Do Sets</h2>
         </div>
         <Show when={login_status() === 'waiting'}>
 
             <form onSubmit={(e) => {
-              e.preventDefault()
-              set_login_status('processing')
-              ctx.tryLogin(email_address()).then(json => {
-                if (json.status === 'success') {
-                  set_login_status('success')
-                } else {
-                  set_login_status('error')
-                }
-              })
+                e.preventDefault()
+                set_login_status('processing')
+                ctx.tryLogin(email_address()).then(json => {
+                    if (json.status === 'success') {
+                        set_login_status('success')
+                    } else {
+                        set_login_status('error')
+                    }
+                })
             }}>
                 <input
                     type="email"
@@ -35,14 +35,14 @@ export default function Login () {
                 <button
                     type="button"
                     onClick={() => {
-                      set_login_status('processing')
-                      ctx.tryLogin(email_address()).then(json => {
-                        if (json.status === 'success') {
-                          set_login_status('success')
-                        } else {
-                          set_login_status('error')
-                        }
-                      })
+                        set_login_status('processing')
+                        ctx.tryLogin(email_address()).then(json => {
+                            if (json.status === 'success') {
+                                set_login_status('success')
+                            } else {
+                                set_login_status('error')
+                            }
+                        })
                     }}>
                     Login / Signup
                 </button>
@@ -103,13 +103,10 @@ export default function Login () {
                      src="https://mirrors.creativecommons.org/presskit/icons/nd.svg?ref=chooser-v1"/>
             </div>
             <p>
-                <a rel="cc:attributionURL dct:creator"
-                   property="cc:attributionName"
-                   className={'underline opacity-70 hover:opacity-90'}
-                   href="https://github.com/CheeseCake87"> Creator Profile
-                </a> - <a className={'underline opacity-70 hover:opacity-90'}
-                          href="https://github.com/CheeseCake87/idosets.app"> GitHub
-            </a>
+                <a className={'underline opacity-70 hover:opacity-90'}
+                   href="https://github.com/CheeseCake87/idosets.app"
+                   target={'_blank'}> GitHub
+                </a>
             </p>
 
         </div>
