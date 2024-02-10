@@ -1,5 +1,4 @@
 from datetime import datetime
-from time import sleep
 
 from flask import session, request
 from flask_imp.security import api_login_check

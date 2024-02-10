@@ -1,5 +1,3 @@
-from time import sleep
-
 from flask import session, request
 from flask_imp.security import api_login_check
 
@@ -102,8 +100,6 @@ def sessions_start_(workout_id):
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def sessions_stop_(workout_id, workout_session_id):
-    sleep(5)
-
     jsond = request.json
 
     _ = workout_id
