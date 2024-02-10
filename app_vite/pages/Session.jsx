@@ -46,10 +46,10 @@ export default function Session () {
   }
 
   function SetDisplay (props) {
-    const { set, set_i, set_log } = props
+    const { exercise_id, set, set_i, set_log } = props
 
     return (
-            <div className={'flex-reactive justify-between'} id={`set_${set_i()}`}>
+            <div className={'flex-reactive justify-between'} id={`${exercise_id}_set_${set_i()}`}>
 
                 <div className={'flex gap-4 items-center'}>
                     <h1 className={'m-0 opacity-50'}>{set_i() + 1}</h1>
@@ -641,7 +641,7 @@ export default function Session () {
     return (
             <div className={'display-box flex-col'}>
 
-                <SetDisplay set={set} set_i={set_i} set_log={log}/>
+                <SetDisplay exercise_id={exercise_id} set={set} set_i={set_i} set_log={log}/>
 
                 <Show when={undoSet() === set_i()}>
                     <UndoSet log={log} setLog={setLog}/>
@@ -726,7 +726,8 @@ export default function Session () {
                               reset_view()
                               setRepsManualInput(false)
                               setWeightManualInput(false)
-                              const scrollDiv = document.getElementById(`set_${set_i()}`).offsetTop
+                              const scrollDiv = document.getElementById(
+                                  `${exercise_id}_set_${set_i()}`).offsetTop
                               window.scrollTo({ top: scrollDiv - 70, behavior: 'smooth' })
                             }}>
                             Add
