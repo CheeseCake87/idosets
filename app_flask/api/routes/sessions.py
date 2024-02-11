@@ -131,6 +131,22 @@ def sessions_stop_(workout_id, workout_session_id):
     }
 
 
+@bp.delete("/workout/<workout_id>/sessions/<workout_session_id>/cancel")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def sessions_cancel_(workout_id, workout_session_id):
+    WorkoutSessions.delete_session(
+        account_id=session.get("account_id", 0),
+        workout_session_id=workout_session_id,
+    )
+    return {
+        "status": "success",
+        "message": "Workout session canceled.",
+        "workout_session_id": workout_session_id,
+    }
+
+
 @bp.post("/workouts/<workout_id>/sessions/<workout_session_id>/log-set")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}

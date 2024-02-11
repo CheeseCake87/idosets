@@ -322,6 +322,13 @@ export function MainContextProvider (props) {
                 params.data
       )
     },
+      async cancelSession (params) {
+      return await deleteFetch(
+                `${API_URL}/api/` +
+                `workout/${params.workout_id}/` +
+                `sessions/${params.workout_session_id}/cancel`
+      )
+    },
     async getSession (params) {
       return await getFetch(
                 `${API_URL}/api/` +

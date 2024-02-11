@@ -149,6 +149,8 @@ class WorkoutSessions(db.Model, UtilityMixin):
             )
         )
 
+        db.session.commit()
+
         return {
             "session_id": workout_session_id,
         }

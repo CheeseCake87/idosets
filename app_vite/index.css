@@ -200,6 +200,11 @@ body {
         background-color: var(--html-default-button-hover-bg-color);
     }
 
+    .button-large {
+        padding-top: 0.8rem !important;
+        padding-bottom: 0.8rem !important;
+    }
+
 
     .login {
         @apply p-5 mx-auto my-4 text-center;
@@ -309,6 +314,11 @@ body {
         background-color: var(--card-bg-color);
     }
 
+    .display-box-slim {
+        @apply flex rounded-md;
+        background-color: var(--card-bg-color);
+    }
+
     .display-box-thin {
         @apply flex p-2 rounded-md border;
         border-color: var(--html-default-border-color);
@@ -394,6 +404,9 @@ body {
     .no-bg {
         background-color: transparent;
     }
+    .no-border {
+        background-color: transparent;
+    }
 
     .warning {
         background-color: var(--button-bad-bg-color);
@@ -409,24 +422,32 @@ body {
         border-color: var(--button-good-border-color);
     }
 
+    .button-ghost {
+        background-color: rgba(229, 229, 229, 0.05) !important;
+    }
+
+    .button-ghost:hover, .button-ghost:focus {
+        background-color: rgba(219, 218, 218, 0.1) !important;
+    }
+
     .button-good {
         background-color: var(--button-good-bg-color) !important;
-        border-color: var(--button-good-border-color) !important;;
+        border-color: var(--button-good-border-color) !important;
     }
 
     .button-good:hover, .button-good:focus {
-        background-color: var(--button-good-hf-bg-color) !important;;
-        border-color: var(--button-good-hf-border-color) !important;;
+        background-color: var(--button-good-hf-bg-color) !important;
+        border-color: var(--button-good-hf-border-color) !important;
     }
 
     .button-bad {
         background-color: var(--button-bad-bg-color) !important;
-        border-color: var(--button-bad-border-color) !important;;
+        border-color: var(--button-bad-border-color) !important;
     }
 
     .button-bad:hover, .button-bad:focus {
-        background-color: var(--button-bad-hf-bg-color) !important;;
-        border-color: var(--button-bad-hf-border-color) !important;;
+        background-color: var(--button-bad-hf-bg-color) !important;
+        border-color: var(--button-bad-hf-border-color) !important;
     }
 
     .flashing-good {
