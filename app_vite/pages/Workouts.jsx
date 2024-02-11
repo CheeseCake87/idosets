@@ -87,7 +87,7 @@ export default function Workouts () {
                                     <div className={'action'} onClick={() => {
                                       navigate(`/workout/${workout.workout_id}`)
                                     }}>
-                                        <span className="material-icons">edit</span>
+                                        <span className="material-icons">remove_red_eye</span>
                                     </div>
                                     <Show
                                         when={activeSessions()[workout.workout_id] !== undefined}

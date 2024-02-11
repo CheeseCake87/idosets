@@ -160,7 +160,7 @@ export default function Workout () {
                                 <div className={'action'} onClick={() => {
                                   navigate(`/workout/${params.workout_id}/exercise/${exercise.exercise_id}`)
                                 }}>
-                                    <span className="material-icons">edit</span>
+                                    <span className="material-icons">remove_red_eye</span>
                                 </div>
                             </div>
                         </div>
