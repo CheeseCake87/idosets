@@ -27,6 +27,11 @@ class Accounts(db.Model, UtilityMixin):
         db.session.commit()
 
     @classmethod
+    def get_all_accounts(cls):
+        q = select(cls)
+        return db.session.execute(q).scalars().all()
+
+    @classmethod
     def get_account(cls, email_address: str):
         q = select(cls).where(cls.email_address == email_address)
         return db.session.execute(q).scalar_one_or_none()

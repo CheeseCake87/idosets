@@ -108,7 +108,7 @@ class UtilityMixin:
 
     @classmethod
     def exe(cls, query: t.Any):
-        return db.session.execute(query).all()
+        return db.session.execute(query)
 
     @classmethod
     def count_by_key(cls, pk_value: int):

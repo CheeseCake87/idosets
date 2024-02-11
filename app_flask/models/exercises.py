@@ -28,6 +28,11 @@ class Exercises(db.Model, UtilityMixin):
     )
 
     @classmethod
+    def get_by_workout_id(cls, workout_id: int):
+        q = select(cls).where(cls.workout_id == workout_id)
+        return db.session.execute(q).scalars().all()
+
+    @classmethod
     def count_by_account_id(cls, account_id: int) -> int:
         return db.session.execute(
             select(func.count(cls.exercise_id)).where(

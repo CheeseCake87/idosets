@@ -1,12 +1,11 @@
 import pytz
 
-from . import *
-from .__mixins__ import UtilityMixin
-
 from app_flask.resources.utilities.weight_converter import (
     grams_to_pounds,
     grams_to_kilograms,
 )
+from . import *
+from .__mixins__ import UtilityMixin
 
 
 class WorkoutSessions(db.Model, UtilityMixin):
@@ -180,6 +179,11 @@ class Workouts(db.Model, UtilityMixin):
         viewonly=True,
         cascade="all, delete-orphan",
     )
+
+    @classmethod
+    def get_by_account_id(cls, account_id: int):
+        q = select(cls).where(cls.account_id == account_id)
+        return db.session.execute(q).scalars().all()
 
     @classmethod
     def get_session(
