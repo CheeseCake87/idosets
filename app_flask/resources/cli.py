@@ -82,3 +82,27 @@ def backup_db():
         backup_file.write_text(json.dumps(backup), encoding="utf-8")
 
         print("Backup complete.")
+
+
+@app.cli.command("restore-db")
+def restore_db():
+    with app.app_context():
+        from app_flask.models.accounts import Accounts
+        from app_flask.models.workouts import Workouts
+        from app_flask.models.exercises import Exercises
+
+        instance_dir = Path(app.root_path) / "instance"
+        backup_file = instance_dir / "backup.json"
+
+        backup = json.loads(backup_file.read_text(encoding="utf-8"))
+
+        for account, data in backup.items():
+            Accounts.insert(
+                single={
+                    "email_address": account,
+                    "settings": data["settings"],
+                }
+            )
+            print(account)
+            print(data)
+            print()
