@@ -84,8 +84,11 @@ export default function Workouts () {
                                     <span className="material-icons">delete</span>
                                 </div>
                                 <div className={'flex gap-2'}>
+                                    <div className={'action'}>
+                                        <span className="material-icons">show_chart</span>
+                                    </div>
                                     <div className={'action'} onClick={() => {
-                                      navigate(`/workout/${workout.workout_id}`)
+                                        navigate(`/workout/${workout.workout_id}`)
                                     }}>
                                         <span className="material-icons">remove_red_eye</span>
                                     </div>
@@ -93,18 +96,18 @@ export default function Workouts () {
                                         when={activeSessions()[workout.workout_id] !== undefined}
                                         fallback={
                                             <div className={'action'} onClick={() => {
-                                              setStartWorkout(i())
+                                                setStartWorkout(i())
                                             }}>
                                                 <span className="material-icons">start</span>
                                             </div>
                                         }
                                     >
                                         <div className={'action flashing-good'} onClick={() => {
-                                          navigate(
+                                            navigate(
                                                 `/workout/${workout.workout_id}/` +
                                                 'session/' +
                                                 `${activeSessions()[workout.workout_id].workout_session_id}`
-                                          )
+                                            )
                                         }}>
                                             <span className="material-icons">start</span>
                                         </div>
@@ -120,7 +123,7 @@ export default function Workouts () {
     )
   }
 
-  function StartWorkoutPopOut (props) {
+    function StartWorkoutPopOut (props) {
     const workout = props.workout
     const i = props.i
     return (
