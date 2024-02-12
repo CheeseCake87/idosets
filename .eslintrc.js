@@ -22,7 +22,7 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
-    "no-unused-vars": false,
-    camelcase: false
+    camelcase: 0,
+    'no-unused-vars': 0
   }
 }
