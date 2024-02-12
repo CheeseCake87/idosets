@@ -286,6 +286,13 @@ export function MainContextProvider (props) {
     async getLastWorkoutSession () {
       return await getFetch(`${API_URL}/api/workouts/last`)
     },
+    async getWorkoutLogs (params) {
+      return await getFetch(
+          `${API_URL}/api/` +
+          `workouts/${params.workout_id}` +
+          '/logs'
+      )
+    },
     async getWorkouts () {
       return await getFetch(`${API_URL}/api/workouts`)
     },
@@ -322,7 +329,7 @@ export function MainContextProvider (props) {
                 params.data
       )
     },
-      async cancelSession (params) {
+    async cancelSession (params) {
       return await deleteFetch(
                 `${API_URL}/api/` +
                 `workout/${params.workout_id}/` +
