@@ -59,12 +59,14 @@ def backup_db():
                     continue
 
                 for exercise in exercises:
-                    store["__exercises__"].append({
-                        "order": exercise.order,
-                        "name": exercise.name,
-                        "info_url": exercise.info_url,
-                        "info_url_favicon": exercise.info_url_favicon,
-                    })
+                    store["__exercises__"].append(
+                        {
+                            "order": exercise.order,
+                            "name": exercise.name,
+                            "info_url": exercise.info_url,
+                            "info_url_favicon": exercise.info_url_favicon,
+                        }
+                    )
 
                 backup[account.email_address]["__workouts__"].append(store)
 
@@ -97,12 +99,34 @@ def restore_db():
         backup = json.loads(backup_file.read_text(encoding="utf-8"))
 
         for account, data in backup.items():
-            Accounts.insert(
-                single={
+            _account = Accounts.um_create(
+                values={
                     "email_address": account,
                     "settings": data["settings"],
-                }
+                },
+                return_record=True,
             )
-            print(account)
-            print(data)
-            print()
+
+            _workouts = data.get("__workouts__")
+            for workout in _workouts:
+                _workout = Workouts.um_create(
+                    values={
+                        "account_id": _account.account_id,
+                        "name": workout["name"],
+                    },
+                    return_record=True,
+                )
+
+                _exercises = workout.get("__exercises__")
+                for exercise in _exercises:
+                    Exercises.um_create(
+                        values={
+                            "account_id": _account.account_id,
+                            "workout_id": _workout.workout_id,
+                            "order": exercise["order"],
+                            "name": exercise["name"],
+                            "info_url": exercise["info_url"],
+                            "info_url_favicon": exercise["info_url_favicon"],
+                        }
+                    )
+
