@@ -56,6 +56,17 @@ def workout_(workout_id):
         return {"status": "success", **_workout, **_exercises}
 
 
+@bp.get("/workouts/<workout_id>/logs")
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
+def workout_logs_(workout_id):
+    _workout = Workouts.select_by_id(session.get("account_id", 0), workout_id)
+    _exercises = Exercises.select_all(session.get("account_id", 0), workout_id)
+    if _workout:
+        return {"status": "success", **_workout, **_exercises}
+
+
 @bp.post("/workouts/add")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
@@ -67,17 +78,18 @@ def workouts_add_():
     account_id = session.get("account_id", 0)
 
     if name and len(name) > 0:
-        _workout, _workout_id = Workouts.insert(
+        _workout = Workouts.um_create(
             {
                 "account_id": account_id,
                 "name": name,
                 "created": DatetimeDelta().datetime,
-            }
+            },
+            return_record=True,
         )
         return {
             "status": "success",
             "message": "Workout added successfully.",
-            "workout_id": _workout_id,
+            "workout_id": _workout.workout_id,
         }
 
     return {
