@@ -13,9 +13,9 @@ solidjs_routes = (
     ("/account/delete/<account_id>/<auth_code>", "solidjs"),
     ("/workouts", "solidjs"),
     ("/workout/<workout_id>", "solidjs"),
-    ("/workout/<workout_id>/exercise/<exercise_id>", "solidjs"),
     ("/workout/<workout_id>/logs", "solidjs"),
-    ("/workout/<workout_id>/session/<workout_session_id>", "solidjs")
+    ("/workout/<workout_id>/exercise/<exercise_id>", "solidjs"),
+    ("/workout/<workout_id>/session/<workout_session_id>", "solidjs"),
 )
 
 
