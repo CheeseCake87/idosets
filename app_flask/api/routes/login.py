@@ -48,13 +48,14 @@ def login():
 
     if not account:
         pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
-        new_account, account_id = Accounts.insert(
+        new_account = Accounts.um_create(
             {
                 "email_address": email_address,
                 "settings": {"theme": "dark", "units": "kgs"},
                 "auth_code": pk,
                 "auth_code_expiry": DatetimeDelta().days(1).datetime,
-            }
+            },
+            return_record=True,
         )
 
         send_zepto_email(
@@ -64,7 +65,7 @@ def login():
             body=render_template(
                 "welcome-email.html",
                 url=url,
-                account_id=account_id,
+                account_id=new_account.account_id,
                 auth=pk,
             ),
         )
