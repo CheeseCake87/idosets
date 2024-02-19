@@ -65,7 +65,7 @@ def exercises_add_(workout_id):
                 favicon_url = favicon_icon["href"]
 
     if name and len(name) > 0:
-        _exercise, _exercise_id = Exercises.insert(
+        _exercise = Exercises.um_create(
             {
                 "account_id": account_id,
                 "workout_id": workout_id,
@@ -74,12 +74,13 @@ def exercises_add_(workout_id):
                 "info_url": info_url,
                 "info_url_favicon": favicon_url,
                 "created": DatetimeDelta().datetime,
-            }
+            },
+            return_record=True,
         )
         return {
             "status": "success",
             "message": "Exercise added successfully.",
-            "exercise_id": _exercise_id,
+            "exercise_id": _exercise.exercise_id,
         }
 
     return {
@@ -132,7 +133,7 @@ def exercises_edit_(workout_id, exercise_id):
 )
 def exercises_delete_(workout_id, exercise_id):
     _ = workout_id
-    Exercises.delete(exercise_id)
+    Exercises.um_delete(exercise_id)
     Sets.delete_all_by_exercise_id(exercise_id)
     SetLogs.delete_all_by_exercise_id(exercise_id)
     return {
