@@ -51,7 +51,7 @@ def set_add_(workout_id, exercise_id):
     reps_max = jsond.get("reps_max", 0)
     order = jsond.get("order")
 
-    _set, _set_id = Sets.insert(
+    _set = Sets.um_create(
         {
             "account_id": account_id,
             "workout_id": workout_id,
@@ -65,11 +65,12 @@ def set_add_(workout_id, exercise_id):
             "reps_max": reps_max,
         },
         allow_none=True,
+        return_record=True,
     )
     return {
         "status": "success",
         "message": "Set added successfully.",
-        "set_id": _set_id,
+        "set_id": _set.set_id,
     }
 
 
@@ -79,9 +80,9 @@ def set_add_(workout_id, exercise_id):
 )
 def set_copy_(workout_id, exercise_id, set_id):
     _ = workout_id
-    to_copy = Sets.get_by_key(set_id)
+    to_copy = Sets.um_read(set_id, one_or_none=True)
     count = Sets.count_by_exercise_id(exercise_id)
-    _set, _set_id = Sets.insert(
+    _set = Sets.um_create(
         {
             "account_id": to_copy.account_id,
             "workout_id": to_copy.workout_id,
@@ -95,11 +96,12 @@ def set_copy_(workout_id, exercise_id, set_id):
             "reps_max": to_copy.reps_max,
         },
         allow_none=True,
+        return_record=True,
     )
     return {
         "status": "success",
         "message": "Set added successfully.",
-        "set_id": _set_id,
+        "set_id": _set.set_id,
     }
 
 
