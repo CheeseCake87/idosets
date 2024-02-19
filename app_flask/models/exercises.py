@@ -27,6 +27,12 @@ class Exercises(db.Model, UtilityMixin):
         cascade="all, delete-orphan",
     )
 
+    rel_set_logs = relationship(
+        "SetLogs",
+        viewonly=True,
+        cascade="all, delete-orphan",
+    )
+
     @classmethod
     def get_by_workout_id(cls, workout_id: int):
         q = select(cls).where(cls.workout_id == workout_id)
@@ -54,6 +60,16 @@ class Exercises(db.Model, UtilityMixin):
                 asc(cls.order),
             ),
             include_joins=["rel_sets"],
+        )
+
+    @classmethod
+    def json_exercise_set_logs_by_workout_id(cls, workout_id):
+        return cls.um_read(
+            fields={
+                "workout_id": workout_id,
+            },
+            as_json=True,
+            json_cast_joins=[("rel_set_logs", "rel_set_logs.limit(10)")],
         )
 
     @classmethod

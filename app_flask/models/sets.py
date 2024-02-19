@@ -124,11 +124,11 @@ class SetLogs(db.Model, UtilityMixin):
     set_log_id = Column(Integer, primary_key=True)
 
     # Indexes
-    workout_session_id = Column(Integer, default=0, index=True)
-    account_id = Column(Integer, default=0, index=True)
-    workout_id = Column(Integer, default=0, index=True)
-    exercise_id = Column(Integer, default=0, index=True)
-    set_id = Column(Integer, default=0, index=True)
+    workout_session_id = ForeignKey("workout_sessions.workout_session_id")
+    account_id = ForeignKey("accounts.account_id")
+    workout_id = ForeignKey("workouts.workout_id")
+    exercise_id = ForeignKey("exercises.exercise_id")
+    set_id = ForeignKey("sets.set_id")
 
     weight = Column(Float, nullable=True)  # In grams
     duration = Column(Integer, nullable=True)

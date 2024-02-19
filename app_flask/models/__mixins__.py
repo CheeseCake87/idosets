@@ -179,6 +179,7 @@ class UtilityMixin:
             paginate_count: bool = True,
             as_json: bool = False,
             json_include_joins: list[tuple[str, str] | str] = None,
+            json_cast_joins: list[tuple[str, str]] = None,
             json_return_key_name: str = None,
             json_only_columns: list = None,
             json_remove_return_key: bool = False,
@@ -248,6 +249,7 @@ class UtilityMixin:
                 else cls.__name__,
                 one_or_none=one_or_none,
                 include_joins=json_include_joins,
+                cast_joins=json_cast_joins,
                 only_columns=json_only_columns,
                 remove_return_key=json_remove_return_key,
                 **{
