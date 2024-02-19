@@ -103,10 +103,10 @@ def account_delete_():
     _account = Accounts.process_auth_code(account_id, auth_code)
 
     if _account:
-        Accounts.delete(account_id)
-        Workouts.delete(fk=[("account_id", account_id)])
-        Exercises.delete(fk=[("account_id", account_id)])
-        Sets.delete(fk=[("account_id", account_id)])
+        Accounts.um_delete(account_id)
+        Workouts.um_delete(fields={"account_id": account_id})
+        Exercises.um_delete(fields={"account_id": account_id})
+        Sets.um_delete(fields={"account_id": account_id})
 
         session.clear()
 

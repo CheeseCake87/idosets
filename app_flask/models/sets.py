@@ -38,7 +38,7 @@ class Sets(db.Model, UtilityMixin):
 
     @classmethod
     def select_all(cls, account_it, workout_id, exercise_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls)
             .where(
                 and_(
@@ -54,7 +54,7 @@ class Sets(db.Model, UtilityMixin):
 
     @classmethod
     def select_by_id(cls, account_id, workout_id, exercise_id, set_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
@@ -74,7 +74,7 @@ class Sets(db.Model, UtilityMixin):
                 cls.exercise_id == exercise_id,
             )
         )
-        _sets = cls.as_jsonable_dict(q).get("sets", [])
+        _sets = cls.um_as_jsonable_dict(q).get("sets", [])
         if _sets:
             for i, _set in enumerate(_sets):
                 _set.order = i
@@ -136,7 +136,7 @@ class SetLogs(db.Model, UtilityMixin):
 
     @classmethod
     def get_by_workout_id(cls, workout_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 cls.workout_id == workout_id,
             )

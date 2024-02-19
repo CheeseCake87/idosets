@@ -42,7 +42,7 @@ class Exercises(db.Model, UtilityMixin):
 
     @classmethod
     def select_all(cls, account_it, workout_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls)
             .where(
                 and_(
@@ -58,7 +58,7 @@ class Exercises(db.Model, UtilityMixin):
 
     @classmethod
     def select_by_id(cls, account_id, workout_id, exercise_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,

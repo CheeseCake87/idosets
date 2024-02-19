@@ -48,7 +48,7 @@ class WorkoutSessions(db.Model, UtilityMixin):
 
     @classmethod
     def sessions(cls, account_id: int) -> dict:
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
@@ -58,7 +58,7 @@ class WorkoutSessions(db.Model, UtilityMixin):
 
     @classmethod
     def active_sessions(cls, account_id: int) -> dict:
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
@@ -71,7 +71,7 @@ class WorkoutSessions(db.Model, UtilityMixin):
 
     @classmethod
     def get_session(cls, account_id: int, workout_session_id: int) -> dict:
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
@@ -202,7 +202,7 @@ class Workouts(db.Model, UtilityMixin):
 
         total_weight = 0
 
-        workout_session = WorkoutSessions.as_jsonable_dict(
+        workout_session = WorkoutSessions.um_as_jsonable_dict(
             select(WorkoutSessions).where(
                 and_(
                     WorkoutSessions.account_id == account_id,
@@ -218,7 +218,7 @@ class Workouts(db.Model, UtilityMixin):
                 "error": "Workout session not found.",
             }
 
-        workout = cls.as_jsonable_dict(
+        workout = cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
@@ -234,7 +234,7 @@ class Workouts(db.Model, UtilityMixin):
                 "error": "Workout not found.",
             }
 
-        exercises = Exercises.as_jsonable_dict(
+        exercises = Exercises.um_as_jsonable_dict(
             select(Exercises)
             .where(
                 and_(
@@ -246,13 +246,13 @@ class Workouts(db.Model, UtilityMixin):
             remove_return_key=True,
         )
 
-        if not exercises:
+        if not exercises.get("items"):
             return {
                 "error": "Workout has no exercises.",
             }
 
-        for exercise in exercises:
-            exercise["sets"] = Sets.as_jsonable_dict(
+        for exercise in exercises.get("items"):
+            _sets = Sets.um_as_jsonable_dict(
                 select(Sets)
                 .where(
                     and_(
@@ -263,8 +263,9 @@ class Workouts(db.Model, UtilityMixin):
                 .order_by(asc(Sets.order)),
                 remove_return_key=True,
             )
+            exercise["sets"] = _sets.get("items")
             for set_ in exercise["sets"]:
-                set_["set_log"] = SetLogs.as_jsonable_dict(
+                set_["set_log"] = SetLogs.um_as_jsonable_dict(
                     select(SetLogs).where(
                         and_(
                             SetLogs.account_id == account_id,
@@ -309,7 +310,7 @@ class Workouts(db.Model, UtilityMixin):
 
     @classmethod
     def select_all(cls, account_it: int):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls)
             .where(cls.account_id == account_it)
             .order_by(desc(cls.created)),
@@ -318,7 +319,7 @@ class Workouts(db.Model, UtilityMixin):
 
     @classmethod
     def select_by_id(cls, account_id, workout_id: int):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
@@ -329,7 +330,7 @@ class Workouts(db.Model, UtilityMixin):
 
     @classmethod
     def get_workout(cls, workout_id: int):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(cls.workout_id == workout_id),
             one_or_none=True,
             remove_return_key=True,
