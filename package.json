@@ -27,7 +27,7 @@
     "chart.js": "^4.4.1",
     "eslint": "^8.56.0",
     "material-icons": "^1.13.12",
-    "solid-js": "^1.8.1",
+    "solid-js": "^1.8.15",
     "tw-colors": "^3.3.1"
   }
 }
