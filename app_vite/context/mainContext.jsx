@@ -313,7 +313,9 @@ export function MainContextProvider (props) {
 
     // Sessions
     async getSessions (params) {
-      return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/sessions`)
+      return await getFetch(
+          `${API_URL}/api/` +
+          `workout/${params.workout_id}/sessions`)
     },
     async getActiveSessions (params) {
       return await getFetch(`${API_URL}/api/sessions/active`)
@@ -414,7 +416,7 @@ export function MainContextProvider (props) {
         location.pathname.includes('/logout')
   ) {
     return (
-            <mainContext.Provider value={[store, setStore]}>
+            <mainContext.Provider value={[store, setStore, connection]}>
                 <Outlet/>
             </mainContext.Provider>
     )
