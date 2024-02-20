@@ -129,4 +129,3 @@ def restore_db():
                             "info_url_favicon": exercise["info_url_favicon"],
                         }
                     )
-

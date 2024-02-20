@@ -6,7 +6,8 @@ from flask_imp.security import api_login_check
 
 from app_flask.models.workouts import Workouts
 from app_flask.models.exercises import Exercises
-from app_flask.models.sets import Sets, SetLogs
+from app_flask.models.sets import Sets
+from app_flask.models.set_logs import SetLogs
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
 

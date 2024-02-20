@@ -96,6 +96,7 @@ def create_app():
 
     # Set the CORS headers if in the development environment
     if app.config["RUN_ENV"] == "development":
+
         @app.after_request
         def after_request(response):
             response.headers.add(

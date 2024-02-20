@@ -58,16 +58,16 @@ class SetLogs(db.Model, UtilityMixin):
 
     @classmethod
     def add_log(
-            cls,
-            account_id=0,
-            workout_session_id=0,
-            workout_id=0,
-            exercise_id=0,
-            set_id=0,
-            weight=0.0,
-            duration=0,
-            reps=0,
-            weight_unit="kgs",
+        cls,
+        account_id=0,
+        workout_session_id=0,
+        workout_id=0,
+        exercise_id=0,
+        set_id=0,
+        weight=0.0,
+        duration=0,
+        reps=0,
+        weight_unit="kgs",
     ):
         converters = {"kgs": kilograms_to_grams, "lbs": pounds_to_grams}
         q = (
