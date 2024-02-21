@@ -4,8 +4,10 @@ from flask import session, request
 from flask_imp.security import api_login_check
 
 from app_flask.models.exercises import Exercises
-from app_flask.models.sets import Sets, SetLogs
-from app_flask.models.workouts import Workouts, WorkoutSessions
+from app_flask.models.sets import Sets
+from app_flask.models.set_logs import SetLogs
+from app_flask.models.workout_sessions import WorkoutSessions
+from app_flask.models.workouts import Workouts
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
 
@@ -57,14 +59,15 @@ def workout_(workout_id):
 
 
 @bp.get("/workouts/<workout_id>/logs")
-@api_login_check(
-    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
-)
+# @api_login_check(
+#     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+# )
 def workout_logs_(workout_id):
-    _workout = Workouts.select_by_id(session.get("account_id", 0), workout_id)
-    _exercises = Exercises.select_all(session.get("account_id", 0), workout_id)
-    if _workout:
-        return {"status": "success", **_workout, **_exercises}
+    _exercises = Exercises.json_exercise_set_logs_by_workout_id(workout_id)
+    if _exercises:
+        return {"status": "success", **_exercises}
+    else:
+        return {"status": "failed", "message": "No logs found."}
 
 
 @bp.post("/workouts/add")

@@ -2,7 +2,8 @@ from flask import session, request
 from flask_imp.security import api_login_check
 
 from app_flask.models.set_logs import SetLogs
-from app_flask.models.workouts import Workouts, WorkoutSessions
+from app_flask.models.workouts import Workouts
+from app_flask.models.workout_sessions import WorkoutSessions
 from .. import bp
 
 

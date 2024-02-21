@@ -1,12 +1,9 @@
-import pytz
-
 from app_flask.resources.utilities.weight_converter import (
     grams_to_pounds,
     grams_to_kilograms,
 )
 from . import *
 from .__mixins__ import UtilityMixin
-from .workout_sessions import WorkoutSessions
 
 
 class Workouts(db.Model, UtilityMixin):
@@ -42,6 +39,7 @@ class Workouts(db.Model, UtilityMixin):
         from app_flask.models.exercises import Exercises
         from app_flask.models.sets import Sets
         from app_flask.models.set_logs import SetLogs
+        from app_flask.models.workout_sessions import WorkoutSessions
 
         converters = {"kgs": grams_to_kilograms, "lbs": grams_to_pounds}
 
@@ -159,7 +157,7 @@ class Workouts(db.Model, UtilityMixin):
             select(cls)
             .where(cls.account_id == account_it)
             .order_by(desc(cls.created)),
-            include_joins=["rel_exercises"],
+            relationships=["rel_exercises"],
         )
 
     @classmethod

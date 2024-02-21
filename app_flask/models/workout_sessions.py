@@ -2,7 +2,6 @@ import pytz
 
 from . import *
 from .__mixins__ import UtilityMixin
-from .set_logs import SetLogs
 
 
 class WorkoutSessions(db.Model, UtilityMixin):
@@ -130,6 +129,8 @@ class WorkoutSessions(db.Model, UtilityMixin):
 
     @classmethod
     def delete_session(cls, account_id: int, workout_session_id: int) -> dict:
+        from .set_logs import SetLogs
+
         db.session.execute(
             delete(cls).where(
                 and_(

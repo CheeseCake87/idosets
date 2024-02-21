@@ -1,5 +1,5 @@
 from . import *
-from .__mixins__ import UtilityMixin
+from .__mixins__ import UtilityMixin, RelationshipCast
 
 
 class Exercises(db.Model, UtilityMixin):
@@ -28,9 +28,7 @@ class Exercises(db.Model, UtilityMixin):
     )
 
     rel_set_logs = relationship(
-        "SetLogs",
-        viewonly=True,
-        cascade="all, delete-orphan",
+        "SetLogs", viewonly=True, cascade="all, delete-orphan", lazy="dynamic"
     )
 
     @classmethod
@@ -59,17 +57,22 @@ class Exercises(db.Model, UtilityMixin):
             .order_by(
                 asc(cls.order),
             ),
-            include_joins=["rel_sets"],
+            relationships=["rel_sets"],
         )
 
     @classmethod
     def json_exercise_set_logs_by_workout_id(cls, workout_id):
-        return cls.um_read(
-            fields={
-                "workout_id": workout_id,
-            },
-            as_json=True,
-            json_cast_joins=[("rel_set_logs", "rel_set_logs.limit(10)")],
+        return cls.um_as_jsonable_dict(
+            select(cls)
+            .where(
+                cls.workout_id == workout_id,
+            )
+            .order_by(
+                asc(cls.order),
+            ),
+            relationships=[
+                RelationshipCast(relationship="rel_set_logs", limit=2)
+            ],
         )
 
     @classmethod
