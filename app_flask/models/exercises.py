@@ -61,7 +61,9 @@ class Exercises(db.Model, UtilityMixin):
         )
 
     @classmethod
-    def json_exercise_set_logs_by_workout_id(cls, workout_id):
+    def json_exercise_set_logs_by_workout_id(
+        cls, workout_id: int, limit: int = 30
+    ):
         return cls.um_as_jsonable_dict(
             select(cls)
             .where(
@@ -71,7 +73,7 @@ class Exercises(db.Model, UtilityMixin):
                 asc(cls.order),
             ),
             relationships=[
-                RelationshipCast(relationship="rel_set_logs", limit=2)
+                RelationshipCast(relationship="rel_set_logs", limit=limit)
             ],
         )
 
