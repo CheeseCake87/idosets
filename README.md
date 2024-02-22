@@ -7,9 +7,11 @@ A workout webapp that is focused towards doing sets.
 ## Stack 🥞
 
 - [Flask](https://flask.palletsprojects.com/)
+- [Huey](https://huey.readthedocs.io/en/stable/)
 - [SolidJS](https://www.solidjs.com/)
 - [TailwindCSS](https://tailwindcss.com/)
 - [SQLite](https://www.sqlite.org/index.html)
+- [Docker](https://www.docker.com/)
 
 ## License 📜
 
