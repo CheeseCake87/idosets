@@ -73,7 +73,11 @@ class Exercises(db.Model, UtilityMixin):
                 asc(cls.order),
             ),
             relationships=[
-                RelationshipCast(relationship="rel_set_logs", limit=limit)
+                RelationshipCast(
+                    relationship="rel_set_logs",
+                    return_attribute="logs",
+                    limit=limit
+                )
             ],
         )
 

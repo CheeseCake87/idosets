@@ -95,6 +95,9 @@ export default function Session () {
                             <div className={'action-options items-center justify-end gap-2'}>
                                 <div className={'action'} onClick={() => {
                                   setFinishSet(`${exercise_id}_set_${set_i()}`)
+                                  const scrollDiv = document.getElementById(
+                                    `${exercise_id}_set_${set_i()}`).offsetTop
+                                  window.scrollTo({ top: scrollDiv - 30, behavior: 'smooth' })
                                 }}>
                                     <span className="material-icons">done</span>
                                 </div>

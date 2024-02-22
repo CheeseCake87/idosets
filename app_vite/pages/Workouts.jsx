@@ -84,7 +84,9 @@ export default function Workouts () {
                                     <span className="material-icons">delete</span>
                                 </div>
                                 <div className={'flex gap-2'}>
-                                    <div className={'action'}>
+                                    <div className={'action'} onClick={() => {
+                                      navigate(`/workout/${workout.workout_id}/logs`)
+                                    }}>
                                         <span className="material-icons">show_chart</span>
                                     </div>
                                     <div className={'action'} onClick={() => {
