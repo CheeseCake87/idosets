@@ -50,10 +50,13 @@ export default function WorkoutLogs () {
   function RepChart (props) {
     onMount(() => {
       const el_id = document.getElementById(`${props.exercise_id}_rep_chart`)
-      const config = {
+      const labels = Array.from({ length: props.rep_logs.length }, (_, i) => i + 1)
+      const max = Math.max(...props.rep_logs)
+      const min = Math.min(...props.rep_logs)
+      const _ = new Chart(el_id, {
         type: 'line',
         data: {
-          labels: Array.from({ length: props.rep_logs.length }, (_, i) => i + 1),
+          labels,
           datasets: [{
             label: 'Reps',
             data: props.rep_logs,
@@ -64,36 +67,52 @@ export default function WorkoutLogs () {
           }]
         },
         options: {
+          legend: {
+            display: false
+          },
+          tooltips: {
+            enabled: false
+          },
           scales: {
             y: {
-              beginAtZero: false
+              ticks: {
+                callback: function (value, index, ticks) {
+                  return value + ' Reps'
+                },
+                stepSize: 1
+              },
+              min: min - 1,
+              max: max + 1
             },
             x: {
-              display: false
+              ticks: {
+                callback: function (value, index, ticks) {
+                  return 'Set Log ' + (value + 1)
+                }
+              }
             }
           }
         }
-      }
-      const _ = new Chart(el_id, config)
+      })
     })
 
     return (
-        <div className={'flex-reactive'}>
-            <canvas id={`${props.exercise_id}_rep_chart`}></canvas>
-        </div>
+            <div className={'flex-reactive'}>
+                <canvas id={`${props.exercise_id}_rep_chart`}></canvas>
+            </div>
     )
   }
 
   function WeightChart (props) {
     onMount(() => {
       const el_id = document.getElementById(`${props.exercise_id}_weight_chart`)
-      const data = {
-
-      }
-      const config = {
+      const labels = Array.from({ length: props.weight_logs.length }, (_, i) => i + 1)
+      const max = Math.max(...props.weight_logs)
+      const min = Math.min(...props.weight_logs)
+      const _ = new Chart(el_id, {
         type: 'line',
         data: {
-          labels: Array.from({ length: props.weight_logs.length }, (_, i) => i + 1),
+          labels,
           datasets: [{
             label: 'Weight (Kg)',
             data: props.weight_logs,
@@ -106,30 +125,38 @@ export default function WorkoutLogs () {
         options: {
           scales: {
             y: {
-              beginAtZero: false
+              ticks: {
+                callback: function (value, index, ticks) {
+                  return value + ' Kg'
+                },
+                stepSize: 1
+              },
+              min: min >= 1 ? min - 1 : 0,
+              max: max + 1
             },
             x: {
-              display: false
+              ticks: {
+                callback: function (value, index, ticks) {
+                  return 'Set Log ' + (value + 1)
+                }
+              }
             }
           }
         }
-      }
-      const _ = new Chart(el_id, config)
+      })
     })
 
     return (
-        <div className={'flex-reactive'}>
-            <canvas id={`${props.exercise_id}_weight_chart`}></canvas>
-        </div>
+            <div className={'flex-reactive'}>
+                <canvas id={`${props.exercise_id}_weight_chart`}></canvas>
+            </div>
     )
   }
 
   function DurationChart (props) {
     onMount(() => {
       const el_id = document.getElementById(`${props.exercise_id}_duration_chart`)
-      const data = {
-
-      }
+      const data = {}
       const config = {
         type: 'line',
         data: {
@@ -146,10 +173,18 @@ export default function WorkoutLogs () {
         options: {
           scales: {
             y: {
-              beginAtZero: false
+              ticks: {
+                callback: function (value, index, ticks) {
+                  return ctx.fancyTimeFormat(value)
+                }
+              }
             },
             x: {
-              display: false
+              ticks: {
+                callback: function (value, index, ticks) {
+                  return 'Set Log ' + (value + 1)
+                }
+              }
             }
           }
         }
@@ -158,9 +193,9 @@ export default function WorkoutLogs () {
     })
 
     return (
-        <div className={'flex-reactive'}>
-            <canvas id={`${props.exercise_id}_duration_chart`}></canvas>
-        </div>
+            <div className={'flex-reactive'}>
+                <canvas id={`${props.exercise_id}_duration_chart`}></canvas>
+            </div>
     )
   }
 
@@ -187,12 +222,13 @@ export default function WorkoutLogs () {
                 {repTotal() > 0
                   ? <RepChart exercise_id={props.exercise_id} rep_logs={repLogs()}/>
                   : ''}
-                {weightTotal() > 0
-                  ? <WeightChart exercise_id={props.exercise_id} weight_logs={weightLogs()}/>
-                  : ''}
                 {durationTotal() > 0
                   ? <DurationChart exercise_id={props.exercise_id} duration_logs={durationLogs()}/>
                   : ''}
+                {weightTotal() > 0
+                  ? <WeightChart exercise_id={props.exercise_id} weight_logs={weightLogs()}/>
+                  : ''}
+
             </>
     )
   }
