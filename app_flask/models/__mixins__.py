@@ -43,6 +43,7 @@ class RelationshipCast:
     return_attribute - name to give the attribute storing the value on output
     limit - can only be used with lazy="dynamic" set on your relationship
     """
+
     relationship: str = None
     return_attribute: str = None
     limit: int = None
