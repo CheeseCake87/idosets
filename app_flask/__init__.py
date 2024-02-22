@@ -13,8 +13,9 @@ solidjs_routes = (
     ("/account/delete/<account_id>/<auth_code>", "solidjs"),
     ("/workouts", "solidjs"),
     ("/workout/<workout_id>", "solidjs"),
+    ("/workout/<workout_id>/logs", "solidjs"),
     ("/workout/<workout_id>/exercise/<exercise_id>", "solidjs"),
-    ("/workout/<workout_id>/session/<workout_session_id>", "solidjs")
+    ("/workout/<workout_id>/session/<workout_session_id>", "solidjs"),
 )
 
 
@@ -95,6 +96,7 @@ def create_app():
 
     # Set the CORS headers if in the development environment
     if app.config["RUN_ENV"] == "development":
+
         @app.after_request
         def after_request(response):
             response.headers.add(

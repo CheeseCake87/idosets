@@ -10,7 +10,7 @@ import Exercise from './pages/Exercise'
 import Account from './pages/Account'
 import DeleteAccount from './pages/DeleteAccount'
 import Session from './pages/Session'
-import Sessions from './pages/Sessions'
+import WorkoutLogs from './pages/WorkoutLogs'
 
 const root = document.getElementById('root')
 
@@ -35,7 +35,7 @@ render(() => (
                 <Route path="/workout/:workout_id" component={Workout}/>
                 <Route path="/workout/:workout_id/exercise/:exercise_id" component={Exercise}/>
 
-                <Route path="/workout/sessions" component={Sessions}/>
+                <Route path="/workout/:workout_id/logs" component={WorkoutLogs}/>
                 <Route path="/workout/:workout_id/session/:workout_session_id" component={Session}/>
             </Route>
         </Routes>

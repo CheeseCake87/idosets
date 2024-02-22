@@ -1,5 +1,5 @@
 from . import *
-from .__mixins__ import UtilityMixin
+from .__mixins__ import UtilityMixin, RelationshipCast
 
 
 class Exercises(db.Model, UtilityMixin):
@@ -27,6 +27,10 @@ class Exercises(db.Model, UtilityMixin):
         cascade="all, delete-orphan",
     )
 
+    rel_set_logs = relationship(
+        "SetLogs", viewonly=True, cascade="all, delete-orphan", lazy="dynamic"
+    )
+
     @classmethod
     def get_by_workout_id(cls, workout_id: int):
         q = select(cls).where(cls.workout_id == workout_id)
@@ -42,7 +46,7 @@ class Exercises(db.Model, UtilityMixin):
 
     @classmethod
     def select_all(cls, account_it, workout_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls)
             .where(
                 and_(
@@ -53,12 +57,33 @@ class Exercises(db.Model, UtilityMixin):
             .order_by(
                 asc(cls.order),
             ),
-            include_joins=["rel_sets"],
+            relationships=["rel_sets"],
+        )
+
+    @classmethod
+    def json_exercise_set_logs_by_workout_id(
+        cls, workout_id: int, limit: int = 30
+    ):
+        return cls.um_as_jsonable_dict(
+            select(cls)
+            .where(
+                cls.workout_id == workout_id,
+            )
+            .order_by(
+                asc(cls.order),
+            ),
+            relationships=[
+                RelationshipCast(
+                    relationship="rel_set_logs",
+                    return_attribute="logs",
+                    limit=limit
+                )
+            ],
         )
 
     @classmethod
     def select_by_id(cls, account_id, workout_id, exercise_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,

@@ -85,6 +85,11 @@ export default function Workouts () {
                                 </div>
                                 <div className={'flex gap-2'}>
                                     <div className={'action'} onClick={() => {
+                                      navigate(`/workout/${workout.workout_id}/logs`)
+                                    }}>
+                                        <span className="material-icons">show_chart</span>
+                                    </div>
+                                    <div className={'action'} onClick={() => {
                                       navigate(`/workout/${workout.workout_id}`)
                                     }}>
                                         <span className="material-icons">remove_red_eye</span>

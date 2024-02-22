@@ -4,8 +4,10 @@ from flask import session, request
 from flask_imp.security import api_login_check
 
 from app_flask.models.exercises import Exercises
-from app_flask.models.sets import Sets, SetLogs
-from app_flask.models.workouts import Workouts, WorkoutSessions
+from app_flask.models.sets import Sets
+from app_flask.models.set_logs import SetLogs
+from app_flask.models.workout_sessions import WorkoutSessions
+from app_flask.models.workouts import Workouts
 from app_flask.resources.utilities.datetime_delta import DatetimeDelta
 from .. import bp
 
@@ -56,6 +58,22 @@ def workout_(workout_id):
         return {"status": "success", **_workout, **_exercises}
 
 
+@bp.post("/workouts/<workout_id>/logs")
+# @api_login_check(
+#     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+# )
+def workout_logs_(workout_id):
+    jsond = request.json
+    _workout = Workouts.get_workout(workout_id)
+    _exercises = Exercises.json_exercise_set_logs_by_workout_id(
+        workout_id, jsond.get("limit", 10)
+    )
+    if _exercises:
+        return {"status": "success", **_workout, **_exercises}
+    else:
+        return {"status": "failed", "message": "No logs found."}
+
+
 @bp.post("/workouts/add")
 @api_login_check(
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
@@ -67,17 +85,18 @@ def workouts_add_():
     account_id = session.get("account_id", 0)
 
     if name and len(name) > 0:
-        _workout, _workout_id = Workouts.insert(
+        _workout = Workouts.um_create(
             {
                 "account_id": account_id,
                 "name": name,
                 "created": DatetimeDelta().datetime,
-            }
+            },
+            return_record=True,
         )
         return {
             "status": "success",
             "message": "Workout added successfully.",
-            "workout_id": _workout_id,
+            "workout_id": _workout.workout_id,
         }
 
     return {

@@ -34,7 +34,9 @@ export function MainContextProvider (props) {
 
     if (response.ok) {
       clearTimeout(fetch_timeout)
-      if (!connection()) { setConnection(true) }
+      if (!connection()) {
+        setConnection(true)
+      }
 
       if (response.headers.get('content-type')?.includes('application/json')) {
         const json = await response.json()
@@ -81,7 +83,9 @@ export function MainContextProvider (props) {
 
     if (response.ok) {
       clearTimeout(fetch_timeout)
-      if (!connection()) { setConnection(true) }
+      if (!connection()) {
+        setConnection(true)
+      }
 
       if (response.headers.get('content-type')?.includes('application/json')) {
         const json = await response.json()
@@ -122,7 +126,9 @@ export function MainContextProvider (props) {
 
     if (response.ok) {
       clearTimeout(fetch_timeout)
-      if (!connection()) { setConnection(true) }
+      if (!connection()) {
+        setConnection(true)
+      }
 
       if (response.headers.get('content-type')?.includes('application/json')) {
         const json = await response.json()
@@ -153,6 +159,14 @@ export function MainContextProvider (props) {
     store,
     setStore
   ] = createStore({
+
+    system_error: false,
+
+    logged_in: false,
+    theme: 'dark',
+    units: 'kgs',
+    account_id: 0,
+    email_address: '',
 
     // Utilities
     truncate: (str, n) => {
@@ -200,6 +214,9 @@ export function MainContextProvider (props) {
         ret += '' + min_reps + ' reps'
       }
       return ret
+    },
+    gramsToKgs (grams) {
+      return (grams / 1000).toFixed(2)
     },
     async fold (container_id, content_id) {
       const container = document.getElementById(container_id)
@@ -286,6 +303,14 @@ export function MainContextProvider (props) {
     async getLastWorkoutSession () {
       return await getFetch(`${API_URL}/api/workouts/last`)
     },
+    async getWorkoutLogs (params) {
+      return await postFetch(
+                `${API_URL}/api/` +
+                `workouts/${params.workout_id}` +
+                '/logs',
+                { limit: params.limit ? params.limit : 10 }
+      )
+    },
     async getWorkouts () {
       return await getFetch(`${API_URL}/api/workouts`)
     },
@@ -306,7 +331,9 @@ export function MainContextProvider (props) {
 
     // Sessions
     async getSessions (params) {
-      return await getFetch(`${API_URL}/api/` + `workout/${params.workout_id}/sessions`)
+      return await getFetch(
+                `${API_URL}/api/` +
+                `workout/${params.workout_id}/sessions`)
     },
     async getActiveSessions (params) {
       return await getFetch(`${API_URL}/api/sessions/active`)
@@ -381,14 +408,6 @@ export function MainContextProvider (props) {
       return await deleteFetch(`${API_URL}/api/` + `workouts/${params.workout_id}/` + `exercises/${params.exercise_id}/` + `sets/${params.set_id}/delete`)
     },
 
-    system_error: false,
-
-    logged_in: false,
-    theme: 'dark',
-    units: 'kgs',
-    account_id: 0,
-    email_address: '',
-
     session: new Fetcher(getAuthSession)
 
   })
@@ -407,7 +426,7 @@ export function MainContextProvider (props) {
         location.pathname.includes('/logout')
   ) {
     return (
-            <mainContext.Provider value={[store, setStore]}>
+            <mainContext.Provider value={[store, setStore, connection]}>
                 <Outlet/>
             </mainContext.Provider>
     )

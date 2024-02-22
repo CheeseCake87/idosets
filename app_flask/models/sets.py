@@ -1,7 +1,3 @@
-from app_flask.resources.utilities.weight_converter import (
-    pounds_to_grams,
-    kilograms_to_grams,
-)
 from . import *
 from .__mixins__ import UtilityMixin
 
@@ -38,7 +34,7 @@ class Sets(db.Model, UtilityMixin):
 
     @classmethod
     def select_all(cls, account_it, workout_id, exercise_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls)
             .where(
                 and_(
@@ -54,7 +50,7 @@ class Sets(db.Model, UtilityMixin):
 
     @classmethod
     def select_by_id(cls, account_id, workout_id, exercise_id, set_id):
-        return cls.as_jsonable_dict(
+        return cls.um_as_jsonable_dict(
             select(cls).where(
                 and_(
                     cls.account_id == account_id,
@@ -74,7 +70,7 @@ class Sets(db.Model, UtilityMixin):
                 cls.exercise_id == exercise_id,
             )
         )
-        _sets = cls.as_jsonable_dict(q).get("sets", [])
+        _sets = cls.um_as_jsonable_dict(q).get("sets", [])
         if _sets:
             for i, _set in enumerate(_sets):
                 _set.order = i
@@ -117,88 +113,3 @@ class Sets(db.Model, UtilityMixin):
             )
         )
         db.session.commit()
-
-
-class SetLogs(db.Model, UtilityMixin):
-    # PriKey
-    set_log_id = Column(Integer, primary_key=True)
-
-    # Indexes
-    workout_session_id = Column(Integer, default=0, index=True)
-    account_id = Column(Integer, default=0, index=True)
-    workout_id = Column(Integer, default=0, index=True)
-    exercise_id = Column(Integer, default=0, index=True)
-    set_id = Column(Integer, default=0, index=True)
-
-    weight = Column(Float, nullable=True)  # In grams
-    duration = Column(Integer, nullable=True)
-    reps = Column(Integer, nullable=True)
-
-    @classmethod
-    def get_by_workout_id(cls, workout_id):
-        return cls.as_jsonable_dict(
-            select(cls).where(
-                cls.workout_id == workout_id,
-            )
-        )
-
-    @classmethod
-    def delete_by_set_log_id(cls, set_log_id):
-        db.session.execute(
-            delete(cls).where(
-                cls.set_log_id == set_log_id,
-            )
-        )
-        db.session.commit()
-
-    @classmethod
-    def delete_all_by_workout_id(cls, workout_id: int):
-        db.session.execute(
-            delete(cls).where(
-                cls.workout_id == workout_id,
-            )
-        )
-        db.session.commit()
-
-    @classmethod
-    def delete_all_by_exercise_id(cls, exercise_id: int):
-        db.session.execute(
-            delete(cls).where(
-                cls.exercise_id == exercise_id,
-            )
-        )
-        db.session.commit()
-
-    @classmethod
-    def add_log(
-        cls,
-        account_id=0,
-        workout_session_id=0,
-        workout_id=0,
-        exercise_id=0,
-        set_id=0,
-        weight=0.0,
-        duration=0,
-        reps=0,
-        weight_unit="kgs",
-    ):
-        converters = {"kgs": kilograms_to_grams, "lbs": pounds_to_grams}
-        q = (
-            insert(cls)
-            .values(
-                {
-                    "account_id": account_id,
-                    "workout_session_id": workout_session_id,
-                    "workout_id": workout_id,
-                    "exercise_id": exercise_id,
-                    "set_id": set_id,
-                    "weight": converters.get(weight_unit)(weight),
-                    "duration": duration,
-                    "reps": reps,
-                }
-            )
-            .returning(cls.set_log_id)
-        )
-        _set_log_id = db.session.execute(q).scalar()
-        db.session.commit()
-        return _set_log_id
