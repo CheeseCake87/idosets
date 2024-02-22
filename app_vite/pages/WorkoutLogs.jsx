@@ -48,58 +48,28 @@ export default function WorkoutLogs () {
   }
 
   function RepChart (props) {
-    const el_id = document.getElementById(`${props.exercise_id}_rep_chart`)
-    const data = {
-      datasets: [{
-        label: 'Reps',
-        data: props.rep_logs,
-        fill: false,
-        backgroundColor: 'rgba(192,75,192,0.8)',
-        tension: 0.25
-      }]
-    }
-    const config = {
-      type: 'bar',
-      data,
-      options: {
-        scales: {
-          x: {
-            display: false
-          },
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    }
-    const _ = new Chart(el_id, config)
-    return (
-            <canvas id={`${props.exercise_id}_rep_chart`}></canvas>
-    )
-  }
-
-  function WeightChart (props) {
     onMount(() => {
-      const el_id = document.getElementById(`${props.exercise_id}_weight_chart`)
-      const data = {
-        datasets: [{
-          label: 'Weight (Kg)',
-          data: props.weight_logs,
-          fill: false,
-          backgroundColor: 'rgba(75,192,192,0.8)',
-          tension: 0.25
-        }]
-      }
+      const el_id = document.getElementById(`${props.exercise_id}_rep_chart`)
       const config = {
-        type: 'bar',
-        data,
+        type: 'line',
+        data: {
+          labels: Array.from({ length: props.rep_logs.length }, (_, i) => i + 1),
+          datasets: [{
+            label: 'Reps',
+            data: props.rep_logs,
+            fill: false,
+            borderColor: 'rgba(192,75,192,0.8)',
+            backgroundColor: 'rgba(192,75,192,0.8)',
+            tension: 0.1
+          }]
+        },
         options: {
           scales: {
+            y: {
+              beginAtZero: false
+            },
             x: {
               display: false
-            },
-            y: {
-              beginAtZero: true
             }
           }
         }
@@ -108,7 +78,89 @@ export default function WorkoutLogs () {
     })
 
     return (
+        <div className={'flex-reactive'}>
+            <canvas id={`${props.exercise_id}_rep_chart`}></canvas>
+        </div>
+    )
+  }
+
+  function WeightChart (props) {
+    onMount(() => {
+      const el_id = document.getElementById(`${props.exercise_id}_weight_chart`)
+      const data = {
+
+      }
+      const config = {
+        type: 'line',
+        data: {
+          labels: Array.from({ length: props.weight_logs.length }, (_, i) => i + 1),
+          datasets: [{
+            label: 'Weight (Kg)',
+            data: props.weight_logs,
+            fill: false,
+            borderColor: 'rgba(75,192,192,0.8)',
+            backgroundColor: 'rgba(75,192,192,0.8)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: false
+            },
+            x: {
+              display: false
+            }
+          }
+        }
+      }
+      const _ = new Chart(el_id, config)
+    })
+
+    return (
+        <div className={'flex-reactive'}>
             <canvas id={`${props.exercise_id}_weight_chart`}></canvas>
+        </div>
+    )
+  }
+
+  function DurationChart (props) {
+    onMount(() => {
+      const el_id = document.getElementById(`${props.exercise_id}_duration_chart`)
+      const data = {
+
+      }
+      const config = {
+        type: 'line',
+        data: {
+          labels: Array.from({ length: props.duration_logs.length }, (_, i) => i + 1),
+          datasets: [{
+            label: 'Duration',
+            data: props.duration_logs,
+            fill: false,
+            borderColor: 'rgba(140,0,255,0.8)',
+            backgroundColor: 'rgba(140,0,255,0.8)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: false
+            },
+            x: {
+              display: false
+            }
+          }
+        }
+      }
+      const _ = new Chart(el_id, config)
+    })
+
+    return (
+        <div className={'flex-reactive'}>
+            <canvas id={`${props.exercise_id}_duration_chart`}></canvas>
+        </div>
     )
   }
 
@@ -121,25 +173,26 @@ export default function WorkoutLogs () {
     const [repTotal, setRepTotal] = createSignal(0)
     const [durationTotal, setDurationTotal] = createSignal(0)
 
-    const [indexes, setIndexes] = createSignal([])
-    props.logs.forEach((log, i) => {
+    for (const log of props.logs) {
       setWeightLogs([...weightLogs(), ctx.gramsToKgs(log.weight)])
       setRepLogs([...repLogs(), log.reps])
       setDurationLogs([...durationLogs(), log.duration])
       setWeightTotal(weightTotal() + parseInt(log.weight))
       setRepTotal(repTotal() + parseInt(log.reps))
       setDurationTotal(durationTotal() + parseInt(log.duration))
-    })
-
-    console.log(weightTotal())
+    }
 
     return (
             <>
-                {
-                    weightTotal() > 0
-                      ? <WeightChart exercise_id={props.exercise_id} weight_logs={weightLogs()}/>
-                      : ''
-                }
+                {repTotal() > 0
+                  ? <RepChart exercise_id={props.exercise_id} rep_logs={repLogs()}/>
+                  : ''}
+                {weightTotal() > 0
+                  ? <WeightChart exercise_id={props.exercise_id} weight_logs={weightLogs()}/>
+                  : ''}
+                {durationTotal() > 0
+                  ? <DurationChart exercise_id={props.exercise_id} duration_logs={durationLogs()}/>
+                  : ''}
             </>
     )
   }
@@ -168,14 +221,11 @@ export default function WorkoutLogs () {
                                         <span className={'underline'}>Instructions</span>
                                     </a>
                                 </Show>
-                                <p>{exercise.logs.length} Logs</p>
                             </div>
-
                         </div>
-                        <div className={'flex-reactive'}>
+                        <div className={'flex flex-col gap-4'}>
                             <GenerateCharts exercise_id={exercise.exercise_id} logs={exercise.logs}/>
                         </div>
-
                     </div>
                 }
             </For>
