@@ -2,6 +2,23 @@ import json
 from pathlib import Path
 
 from flask import current_app as app
+from sqlalchemy import text
+
+
+@app.cli.command("reset-set-logs")
+def reset_set_logs():
+    with app.app_context():
+        from app_flask.models import db
+
+        try:
+            db.session.execute(text("DROP TABLE set_logs"))
+            db.session.execute(text("DROP TABLE workout_sessions"))
+            db.session.commit()
+        except Exception as _:
+            pass
+        print("WorkoutSessions and SetLogs dropped.")
+        db.create_all()
+        print("WorkoutSessions and SetLogs created.")
 
 
 @app.cli.command("init-db")
