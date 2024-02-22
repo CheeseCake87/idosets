@@ -49,8 +49,8 @@ export default function Session () {
 
   function reset_view () {
     setShowRepsInput(true)
+    setShowDurationInput(true)
     setShowWeightInput(false)
-    setShowDurationInput(false)
     setFinishSet(null)
   }
 
@@ -892,7 +892,7 @@ export default function Session () {
                 {/* Workout name */}
                 <div className={'action-options gap-5 pb-4'} id={'workout-name'}>
                     <div className={'action-options-text'}>
-                        <h1 className={'m-0'}>
+                        <h1 className={'m-0 text-5xl px-4 pb-4'}>
                             {workout_session.get('workout').name}
                         </h1>
                     </div>
