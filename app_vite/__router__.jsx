@@ -1,6 +1,6 @@
 /* @refresh reload */
 import { render } from 'solid-js/web'
-import { Navigate, Route, Router, Routes } from '@solidjs/router'
+import { Route, Router, Routes } from '@solidjs/router'
 import { MainContextProvider } from './context/mainContext'
 import Workouts from './pages/Workouts'
 import Login from './pages/Login'
@@ -11,7 +11,7 @@ import Account from './pages/Account'
 import DeleteAccount from './pages/DeleteAccount'
 import Session from './pages/Session'
 import WorkoutLogs from './pages/WorkoutLogs'
-import Index from "./pages";
+import Index from './pages'
 
 const root = document.getElementById('root')
 

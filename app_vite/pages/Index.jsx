@@ -1,5 +1,9 @@
 import { createEffect, createSignal, onMount, Show } from 'solid-js'
 
+import screenshot_large from '../screenshot-large.png'
+import screenshot_home from '../screenshot-home.png'
+import screenshot_logs from '../screenshot-logs.png'
+
 export default function Index () {
   const DEV = import.meta.env.DEV
   const API_URL = DEV ? import.meta.env.VITE_FLASK_URL : ''
@@ -79,15 +83,15 @@ export default function Index () {
                 </div>
             </div>
             <div className={'container'}>
-                <img src="/screenshot-large.png"
+                <img src={screenshot_large}
                      className={'w-full rounded-lg shadow-2xl mb-4'}
                      alt="Screenshot of setting a workout"/>
             </div>
             <div className={'container flex justify-center fp-screenshots'}>
-                <img src="/screenshot-home.png"
+                <img src={screenshot_home}
                      className={'rounded-lg w-full m-4 shadow-2xl mb-4'}
                      alt="Screenshot of the workouts page"/>
-                <img src="/screenshot-logs.png"
+                <img src={screenshot_logs}
                      className={'rounded-lg w-full m-4 shadow-2xl mb-4'}
                      alt="Screenshot of workout logs"/>
             </div>
