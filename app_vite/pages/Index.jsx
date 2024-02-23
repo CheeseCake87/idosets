@@ -1,56 +1,56 @@
-import {createEffect, createSignal, onMount, Show} from 'solid-js'
+import { createEffect, createSignal, onMount, Show } from 'solid-js'
 
 import screenshot_large from '../screenshot-large.png'
 import screenshot_home from '../screenshot-home.png'
 import screenshot_logs from '../screenshot-logs.png'
 
-export default function Index() {
-    const DEV = import.meta.env.DEV
-    const API_URL = DEV ? import.meta.env.VITE_FLASK_URL : ''
+export default function Index () {
+  const DEV = import.meta.env.DEV
+  const API_URL = DEV ? import.meta.env.VITE_FLASK_URL : ''
 
-    const [themeVar, setThemeVar] = createSignal('dark')
+  const [themeVar, setThemeVar] = createSignal('dark')
 
-    async function getFetch(url) {
-        const response = await fetch(url, {
-            credentials: 'include', method: 'GET'
-        })
-
-        if (response.ok) {
-            return await response.json()
-        }
-    }
-
-    async function getTheme() {
-        return await getFetch(`${API_URL}/api/get/theme`)
-    }
-
-    async function setTheme(theme) {
-        return await getFetch(`${API_URL}/api/set/theme/${theme}`)
-    }
-
-    let html
-
-    onMount(() => {
-        html = document.querySelector('html')
-        getTheme().then(json => {
-            setThemeVar(json.theme)
-        })
-    })
-    createEffect(() => {
-        html.setAttribute('data-theme', themeVar())
+  async function getFetch (url) {
+    const response = await fetch(url, {
+      credentials: 'include', method: 'GET'
     })
 
-    return (
+    if (response.ok) {
+      return await response.json()
+    }
+  }
+
+  async function getTheme () {
+    return await getFetch(`${API_URL}/api/get/theme`)
+  }
+
+  async function setTheme (theme) {
+    return await getFetch(`${API_URL}/api/set/theme/${theme}`)
+  }
+
+  let html
+
+  onMount(() => {
+    html = document.querySelector('html')
+    getTheme().then(json => {
+      setThemeVar(json.theme)
+    })
+  })
+  createEffect(() => {
+    html.setAttribute('data-theme', themeVar())
+  })
+
+  return (
         <>
             <div className={'container'}>
                 <div className={'text-center p-10'}>
-                    <h1 className={'text-6xl mb-5'}>💪 I Do Sets</h1>
+                    <h1 className={'text-4xl mb-5'}>💪 I Do Sets</h1>
                     <p>A workout app focused on doing sets.</p>
                     <button
                         type="button"
                         className={'button-good mt-10'}
                         onClick={() => {
-                            window.location.href = '/login'
+                          window.location.href = '/login'
                         }}>
                         Login / Signup
                     </button>
@@ -60,9 +60,9 @@ export default function Index() {
                         <button
                             className={'flex rounded-full'}
                             onClick={() => {
-                                setTheme('light').then(json => {
-                                    setThemeVar(json.theme)
-                                })
+                              setTheme('light').then(json => {
+                                setThemeVar(json.theme)
+                              })
                             }}
                         >
                             <span className="material-icons-round">light_mode</span>
@@ -73,9 +73,9 @@ export default function Index() {
                         <button
                             className={'flex rounded-full'}
                             onClick={() => {
-                                setTheme('dark').then(json => {
-                                    setThemeVar(json.theme)
-                                })
+                              setTheme('dark').then(json => {
+                                setThemeVar(json.theme)
+                              })
                             }}>
                             <span className="material-icons-round">dark_mode</span>
                         </button>
@@ -172,5 +172,5 @@ export default function Index() {
                     to the account, navigate to Account, then Delete Account.</p>
             </div>
         </>
-    )
+  )
 };
