@@ -120,6 +120,10 @@ body {
         background: var(--html-scrollbar-thumb-hover);
     }
 
+    .fp-screenshots {
+        margin-top: -20rem;
+    }
+
     dialog::backdrop {
         background-color: rgba(0, 0, 0, 0.7);
     }
@@ -379,6 +383,10 @@ body {
     }
 
     @media (max-width: 768px) {
+        .fp-screenshots {
+            margin-top: -10rem;
+        }
+
         .action-box-reactive {
             @apply flex-col gap-2 items-center;
         }
@@ -404,6 +412,7 @@ body {
     .no-bg {
         background-color: transparent;
     }
+
     .no-border {
         background-color: transparent;
     }

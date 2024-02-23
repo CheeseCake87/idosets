@@ -11,6 +11,7 @@ import Account from './pages/Account'
 import DeleteAccount from './pages/DeleteAccount'
 import Session from './pages/Session'
 import WorkoutLogs from './pages/WorkoutLogs'
+import Index from "./pages";
 
 const root = document.getElementById('root')
 
@@ -22,9 +23,8 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 render(() => (
     <Router>
         <Routes>
+            <Route path="/" component={Index}/>
             <Route path="" component={MainContextProvider}>
-                <Route path="/" element={<Navigate href={'/login'}/>}/>
-
                 <Route path="/auth/:account_id/:auth_code" component={Auth}/>
                 <Route path="/login" component={Login}/>
 

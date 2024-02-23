@@ -46,7 +46,8 @@ export default function Auth (props) {
                         <p>Logging in, please wait...</p>
                     </Show>
                     <Show when={auth() === 'error'}>
-                        <p className={'pb-6'}>This login link has expired.</p>
+                        <p className={'pb-2'}>Looks like there was an error. </p>
+                        <p className={'pb-6'}>Your login link might have expired, or be incorrect.</p>
                         <button type="button" onClick={
                             () => {
                               navigate('/login')
