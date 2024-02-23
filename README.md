@@ -1,6 +1,6 @@
 # 💪 I Do Sets
 
-idosets.app
+[https://idosets.app](https://idosets.app)
 
 A workout webapp that is focused towards doing sets.
 
