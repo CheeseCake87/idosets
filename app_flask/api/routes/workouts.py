@@ -59,14 +59,14 @@ def workout_(workout_id):
 
 
 @bp.post("/workouts/<workout_id>/logs")
-# @api_login_check(
-#     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
-# )
+@api_login_check(
+    "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
+)
 def workout_logs_(workout_id):
     jsond = request.json
     _workout = Workouts.get_workout(workout_id)
     _exercises = Exercises.json_exercise_set_logs_by_workout_id(
-        workout_id, jsond.get("limit", 10)
+        workout_id, jsond.get("limit", 30)
     )
     if _exercises:
         return {"status": "success", **_workout, **_exercises}
