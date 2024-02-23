@@ -4,6 +4,8 @@ idosets.app
 
 A workout webapp that is focused towards doing sets.
 
+![screenshot-readme.png](_assets%2Fscreenshot-readme.png)
+
 ## Stack 🥞
 
 - [Flask](https://flask.palletsprojects.com/)
