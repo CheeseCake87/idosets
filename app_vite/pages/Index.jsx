@@ -1,46 +1,46 @@
-import { createEffect, createSignal, onMount, Show } from 'solid-js'
+import {createEffect, createSignal, onMount, Show} from 'solid-js'
 
 import screenshot_large from '../screenshot-large.png'
 import screenshot_home from '../screenshot-home.png'
 import screenshot_logs from '../screenshot-logs.png'
 
-export default function Index () {
-  const DEV = import.meta.env.DEV
-  const API_URL = DEV ? import.meta.env.VITE_FLASK_URL : ''
+export default function Index() {
+    const DEV = import.meta.env.DEV
+    const API_URL = DEV ? import.meta.env.VITE_FLASK_URL : ''
 
-  const [themeVar, setThemeVar] = createSignal('dark')
+    const [themeVar, setThemeVar] = createSignal('dark')
 
-  async function getFetch (url) {
-    const response = await fetch(url, {
-      credentials: 'include', method: 'GET'
-    })
+    async function getFetch(url) {
+        const response = await fetch(url, {
+            credentials: 'include', method: 'GET'
+        })
 
-    if (response.ok) {
-      return await response.json()
+        if (response.ok) {
+            return await response.json()
+        }
     }
-  }
 
-  async function getTheme () {
-    return await getFetch(`${API_URL}/api/get/theme`)
-  }
+    async function getTheme() {
+        return await getFetch(`${API_URL}/api/get/theme`)
+    }
 
-  async function setTheme (theme) {
-    return await getFetch(`${API_URL}/api/set/theme/${theme}`)
-  }
+    async function setTheme(theme) {
+        return await getFetch(`${API_URL}/api/set/theme/${theme}`)
+    }
 
-  let html
+    let html
 
-  onMount(() => {
-    html = document.querySelector('html')
-    getTheme().then(json => {
-      setThemeVar(json.theme)
+    onMount(() => {
+        html = document.querySelector('html')
+        getTheme().then(json => {
+            setThemeVar(json.theme)
+        })
     })
-  })
-  createEffect(() => {
-    html.setAttribute('data-theme', themeVar())
-  })
+    createEffect(() => {
+        html.setAttribute('data-theme', themeVar())
+    })
 
-  return (
+    return (
         <>
             <div className={'container'}>
                 <div className={'text-center p-10'}>
@@ -50,7 +50,7 @@ export default function Index () {
                         type="button"
                         className={'button-good mt-10'}
                         onClick={() => {
-                          window.location.href = '/login'
+                            window.location.href = '/login'
                         }}>
                         Login / Signup
                     </button>
@@ -60,9 +60,9 @@ export default function Index () {
                         <button
                             className={'flex rounded-full'}
                             onClick={() => {
-                              setTheme('light').then(json => {
-                                setThemeVar(json.theme)
-                              })
+                                setTheme('light').then(json => {
+                                    setThemeVar(json.theme)
+                                })
                             }}
                         >
                             <span className="material-icons-round">light_mode</span>
@@ -73,9 +73,9 @@ export default function Index () {
                         <button
                             className={'flex rounded-full'}
                             onClick={() => {
-                              setTheme('dark').then(json => {
-                                setThemeVar(json.theme)
-                              })
+                                setTheme('dark').then(json => {
+                                    setThemeVar(json.theme)
+                                })
                             }}>
                             <span className="material-icons-round">dark_mode</span>
                         </button>
@@ -87,13 +87,17 @@ export default function Index () {
                      className={'w-full rounded-lg shadow-2xl mb-4'}
                      alt="Screenshot of setting a workout"/>
             </div>
-            <div className={'container flex justify-center fp-screenshots'}>
-                <img src={screenshot_home}
-                     className={'rounded-lg w-full m-4 shadow-2xl mb-4'}
-                     alt="Screenshot of the workouts page"/>
-                <img src={screenshot_logs}
-                     className={'rounded-lg w-full m-4 shadow-2xl mb-4'}
-                     alt="Screenshot of workout logs"/>
+            <div className={'container flex justify-center fp-screenshots gap-4'}>
+                <div className={'flex flex-grow justify-center'}>
+                    <img src={screenshot_home}
+                         className={'rounded-lg shadow-2xl'}
+                         alt="Screenshot of the workouts page"/>
+                </div>
+                <div className={'flex flex-grow justify-center'}>
+                    <img src={screenshot_logs}
+                         className={'rounded-lg shadow-2xl'}
+                         alt="Screenshot of workout logs"/>
+                </div>
             </div>
             <div className={'flex flex-col gap-2 text-sm text-center p-8'}
                  xmlns:cc="http://creativecommons.org/ns#"
@@ -137,7 +141,8 @@ export default function Index () {
                     <li>Email Address</li>
                     <li>Workout Data</li>
                 </ul>
-                <p className={'pb-2'}>This data is stored in a secure database and is not, and will never be shared with any third
+                <p className={'pb-2'}>This data is stored in a secure database and is not, and will never be shared with
+                    any third
                     party.</p>
                 <p>To delete your account, login, then navigate to Account, then Delete Account. Your email address,
                     workouts, and workout logs will be completely deleted. There is no way of reversing this.</p>
@@ -162,10 +167,10 @@ export default function Index () {
                 <p className={'pb-2'}>This site is under the jurisdiction of the United Kingdom, by using this
                     site you agree to settle any legal matters within the United Kingdom.</p>
                 <p>This site does not address persons under the age of 13; You are not to use
-                this site if you are under this age. If you are the parent or guardian of an account
-                found to be on this site which has been made by a person of this age please login
-                to the account, navigate to Account, then Delete Account.</p>
+                    this site if you are under this age. If you are the parent or guardian of an account
+                    found to be on this site which has been made by a person of this age please login
+                    to the account, navigate to Account, then Delete Account.</p>
             </div>
         </>
-  )
+    )
 };
