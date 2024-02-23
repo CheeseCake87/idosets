@@ -34,6 +34,6 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.yml:/traefik.yml
+      - ./traefik.yaml:/traefik.yaml
       - letsencrypt:/letsencrypt
     restart: always
