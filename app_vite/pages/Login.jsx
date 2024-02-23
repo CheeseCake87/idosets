@@ -1,4 +1,4 @@
-import { createSignal, Show, useContext } from 'solid-js'
+import { createEffect, createSignal, onMount, Show, useContext } from 'solid-js'
 import { mainContext } from '../context/mainContext'
 import { Loading } from '../components/Loading'
 
@@ -7,6 +7,15 @@ export default function Login () {
 
   const [email_address, set_email_address] = createSignal('')
   const [login_status, set_login_status] = createSignal('waiting')
+
+  let html
+
+  onMount(() => {
+    html = document.querySelector('html')
+    ctx.getTheme().then(json => {
+      html.setAttribute('data-theme', json.theme)
+    })
+  })
 
   return (<div className={'login py-6'}>
         <div className={'text-center pt-2 pb-8'}>

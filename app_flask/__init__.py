@@ -83,6 +83,8 @@ def create_app():
 
             return redirect("/workouts")
 
+        return render_template("index.html")
+
     # Add the index route to the app
     @app.route("/")
     def index():

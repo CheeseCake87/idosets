@@ -262,6 +262,9 @@ export function MainContextProvider (props) {
     },
 
     // Settings
+    async getTheme () {
+      return await getFetch(`${API_URL}/api/get/theme`)
+    },
     async setTheme (theme) {
       return await getFetch(`${API_URL}/api/set/theme/${theme}`)
     },
