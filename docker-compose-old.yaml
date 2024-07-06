@@ -1,0 +1,39 @@
+volumes:
+  letsencrypt:
+  instance:
+
+services:
+  app:
+    container_name: "idosets"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    volumes:
+      - instance:/main/app_flask/instance
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flask.rule=Host(`idosets.app`, `www.idosets.app`)"
+      - "traefik.http.routers.flask.entrypoints=web, websecure"
+      - "traefik.http.routers.flask.tls=true"
+      - "traefik.http.routers.flask.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.redirect-to-non-www.redirectregex.regex=^https?://www.idosets.app/(.*)"
+      - "traefik.http.middlewares.redirect-to-non-www.redirectregex.replacement=https://idosets.app/$${1}"
+      - "traefik.http.middlewares.redirect-to-non-www.redirectregex.permanent=true"
+
+  traeffik:
+    image: traefik:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yaml:/traefik.yaml
+      - letsencrypt:/letsencrypt
+    restart: always
