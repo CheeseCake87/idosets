@@ -1,5 +1,5 @@
 flask
-flask-imp
+flask-imp==3.0.1
 flask-sqlalchemy
 sqlalchemy
 python-dotenv
