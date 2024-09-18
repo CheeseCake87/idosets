@@ -18,3 +18,9 @@ flask-static-folder = "app_flask/resources/static"
 flask-templates-folder = "app_flask/resources/templates"
 huey-consumer = "huey_consumer"
 huey = "app_flask.huey.run"
+
+[tool.vite_transporter]
+npm_exec = "npm"
+npx_exec = "npx"
+serve_app = "app_flask"
+vite_apps = ["app_vite"]

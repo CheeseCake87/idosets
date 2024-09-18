@@ -3,7 +3,7 @@ volumes:
 
 services:
   app:
-    container_name: "idosets"
+    container_name: "app-idosets"
     build:
       context: .
       dockerfile: Dockerfile

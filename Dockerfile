@@ -1,7 +1,12 @@
-FROM idosets-base:latest
+FROM python:alpine
+ENV TZ=Europe/London
+RUN apk add --update --no-cache linux-headers tzdata
 WORKDIR /main
-COPY app_flask app_flask
-COPY gunicorn.conf.py gunicorn.conf.py
+COPY requirements.txt requirements.txt
+RUN python -m pip install --upgrade pip
+RUN pip install -r requirements.txt
+COPY app app_flask
+COPY configs/gunicorn.conf.py gunicorn.conf.py
 COPY supervisord.conf supervisord.conf
 COPY supervisor.ini supervisor.ini
 COPY .env .env
