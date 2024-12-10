@@ -264,7 +264,7 @@ body {
     }
 
     .action-box-reactive {
-        @apply flex-row
+        @apply flex-row;
     }
 
     .action-box-clickable {

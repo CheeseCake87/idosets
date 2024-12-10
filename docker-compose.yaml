@@ -7,10 +7,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
     ports:
       - "4014:5000"
     volumes:
-      - instance:/main/app_flask/instance
+      - instance:/main/instance
     restart: always

@@ -1,4 +1,4 @@
-from app.resources.utilities.weight_converter import (
+from app.utilities.weight_converter import (
     pounds_to_grams,
     kilograms_to_grams,
 )

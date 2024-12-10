@@ -27,15 +27,7 @@ def login():
 
     account = Accounts.get_account(email_address)
 
-    url = (
-        f"{current_app.config['VITE_URL']}/auth"
-        if current_app.debug
-        else (
-            f"{current_app.config['PREFERRED_URL_SCHEME']}://"
-            f"{current_app.config['SERVER_NAME']}"
-            "/auth"
-        )
-    )
+    url = f"{current_app.config['SET_HOST_URL']}/auth"
 
     if not account:
         pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
@@ -44,7 +36,7 @@ def login():
                 "email_address": email_address,
                 "settings": {"theme": "dark", "units": "kgs"},
                 "auth_code": pk,
-                "auth_code_expiry": DatetimeDelta().days(1).datetime,
+                "auth_code_expiry": DatetimeDelta().days(30).datetime,
             },
             return_record=True,
         )

@@ -1,0 +1,9 @@
+FROM python:alpine
+ENV TZ=Europe/London
+RUN apk add --update --no-cache linux-headers tzdata
+WORKDIR /main
+
+COPY requirements/main.txt r.txt
+
+RUN python -m pip install --upgrade pip
+RUN pip install -r r.txt

@@ -1,7 +1,7 @@
 from flask import Flask, session, render_template, redirect
 
 from app.config import flask_config, imp_config, solidjs_routes
-from app.extensions import imp, db
+from app.extensions import imp, db, vt
 from app.models.accounts import Accounts
 
 
@@ -15,7 +15,15 @@ def create_app():
     imp.import_blueprint("api")
     imp.import_models("models")
 
-    # Init the database
+    vt.init_app(
+        app,
+        cors_allowed_hosts=[
+            "http://127.0.0.1:5002",
+        ]
+        if app.debug
+        else None,
+    )
+
     db.init_app(app)
 
     # Add the solidjs routes to the app

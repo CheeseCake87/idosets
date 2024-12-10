@@ -11,10 +11,10 @@ export default defineConfig({
     // devtools(),
     solidPlugin()
   ],
-  root: 'app_vite',
+  root: '.',
   server: {
     host: '127.0.0.1',
-    port: 3000
+    port: 5002
   },
   build: {}
 })
