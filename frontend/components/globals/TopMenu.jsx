@@ -1,9 +1,9 @@
 import { Show, useContext } from 'solid-js'
-import { mainContext } from '../context/mainContext'
+import { mainContext } from '../../contextManagers/mainContext'
 import { A, useLocation, useNavigate } from '@solidjs/router'
 
 export default function TopMenu (props) {
-  const [ctx, setCtx, connection] = useContext(mainContext)
+  const ctxMain = useContext(mainContext)
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -11,7 +11,7 @@ export default function TopMenu (props) {
         <nav className={'sticky top-0 z-40'}>
             <A href={'/workouts'}>
                 <h3 className={'my-0'}>💪 I Do Sets
-                    <Show when={!connection()}>
+                    <Show when={!ctxMain.connection()}>
                         &nbsp;
                         <span style={'font-size: 18px'} className={'material-icons-round px-1 flashing-warning-color'}>
                                 signal_wifi_off
@@ -46,16 +46,15 @@ export default function TopMenu (props) {
                           </button>
                       }
                 />
-
                 <button onClick={
                     () => {
-                      ctx.tryLogout().then(json => {
+                      ctxMain.tryLogout().then(json => {
                         if (json.status === 'success') {
-                          setCtx('logged_in', false)
-                          setCtx('theme', 'dark')
-                          setCtx('units', 'kgs')
-                          setCtx('account_id', 0)
-                          setCtx('email_address', '')
+                          ctxMain.setLoggedIn(false)
+                          ctxMain.setTheme('dark')
+                          ctxMain.setUnits('kgs')
+                          ctxMain.setAccountId(0)
+                          ctxMain.setEmailAddress('')
                           window.location.href = '/login'
                         }
                       })

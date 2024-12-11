@@ -24,6 +24,24 @@ class Workouts(db.Model, UtilityMixin):
     )
 
     @classmethod
+    def update_(cls, data: dict):
+        q = db.session.execute(
+            update(cls)
+            .where(cls.workout_id == data["workout_id"])
+            .values({
+                "name": data["name"],
+            })
+            .returning(cls.workout_id)
+        )
+
+        result = q.scalar_one()
+
+        if result:
+            db.session.commit()
+
+        return result
+
+    @classmethod
     def get_by_account_id(cls, account_id: int):
         q = select(cls).where(cls.account_id == account_id)
         return db.session.execute(q).scalars().all()

@@ -59,7 +59,7 @@ def login():
         }
 
     pk = generate_private_key(f"{DatetimeDelta().datetime}{email_address}")
-    account.update_auth_code(pk, DatetimeDelta().days(1).datetime)
+    account.update_auth_code(pk, DatetimeDelta().days(30).datetime)
 
     send_zepto_email(
         zepto_service_settings,

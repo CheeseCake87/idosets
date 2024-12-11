@@ -61,7 +61,7 @@ class Accounts(db.Model, UtilityMixin):
     def process_auth_code(cls, account_id: int, auth_code: str):
         q = select(cls).where(
             cls.account_id == account_id,
-            and_(cls.auth_code == auth_code),
+            cls.auth_code == auth_code
         )
         r = db.session.execute(q).scalar_one_or_none()
 
@@ -70,7 +70,6 @@ class Accounts(db.Model, UtilityMixin):
 
         if isinstance(r.auth_code_expiry, datetime):
             if DatetimeDelta().datetime < pytz.UTC.localize(r.auth_code_expiry):
-                r.remove_auth_code()
                 return r
 
         return None

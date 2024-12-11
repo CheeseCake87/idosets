@@ -32,6 +32,22 @@ class Exercises(db.Model, UtilityMixin):
     )
 
     @classmethod
+    def update_(cls, data: dict):
+        q = db.session.execute(
+            update(cls)
+            .where(cls.exercise_id == data["exercise_id"])
+            .values(data)
+            .returning(cls.exercise_id)
+        )
+
+        result = q.scalar_one()
+
+        if result:
+            db.session.commit()
+
+        return result
+
+    @classmethod
     def get_by_workout_id(cls, workout_id: int):
         q = select(cls).where(cls.workout_id == workout_id)
         return db.session.execute(q).scalars().all()
@@ -62,7 +78,7 @@ class Exercises(db.Model, UtilityMixin):
 
     @classmethod
     def json_exercise_set_logs_by_workout_id(
-        cls, workout_id: int, limit: int = 30
+            cls, workout_id: int, limit: int = 30
     ):
         return cls.um_as_jsonable_dict(
             select(cls)

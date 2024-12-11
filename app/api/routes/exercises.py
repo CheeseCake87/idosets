@@ -116,15 +116,16 @@ def exercises_edit_(workout_id, exercise_id):
         {
             "workout_id": workout_id,
             "exercise_id": exercise_id,
+            "name": jsond.get("name"),
+            "info_url": jsond.get("info_url"),
             "info_url_favicon": favicon_url,
-            **jsond,
         }
     )
 
     return {
         "status": "success",
         "message": "Exercise edited successfully.",
-        "exercise_id": _exercise.get("exercise_id"),
+        "exercise_id": _exercise,
     }
 
 

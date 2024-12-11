@@ -1,19 +1,19 @@
 import { createSignal, Show, useContext } from 'solid-js'
-import { mainContext } from '../context/mainContext'
-import TopMenu from '../components/TopMenu'
-import { Loading } from '../components/Loading'
-import Fetcher from '../utilities/fetcher'
+import { mainContext } from '../../contextManagers/mainContext'
+import TopMenu from '../globals/TopMenu'
+import { Loading } from '../globals/Loading'
+import Fetcher from '../../utilities/fetcher'
 
 export default function Account () {
-  const [ctx, setCtx] = useContext(mainContext)
+  const ctxMain = useContext(mainContext)
 
   const [deleteAccount, setDeleteAccount] = createSignal(false)
   const [deleteEmailSent, setDeleteEmailSent] = createSignal(false)
   const [deleteEmailError, setDeleteErrorSent] = createSignal(false)
 
   const account = new Fetcher(
-    { account_id: ctx.account_id },
-    ctx.getAccount
+    { account_id: ctxMain.accountId() },
+    ctxMain.getAccount
   )
 
   function Page () {
@@ -42,11 +42,11 @@ export default function Account () {
                 <div className={'display-box flex-col gap-2 mb-2'}>
                     <p className={'font-bold mb-2'}>Change Theme</p>
                     <div>
-                        <Show when={ctx.theme === 'dark'}>
+                        <Show when={ctxMain.theme() === 'dark'}>
                             <button
                                 className={'flex rounded-full'}
                                 onClick={() => {
-                                  ctx.setTheme('light').then(json => {
+                                  ctxMain.saveTheme('light').then(json => {
                                     location.reload()
                                   })
                                 }}
@@ -55,11 +55,11 @@ export default function Account () {
                             </button>
                         </Show>
 
-                        <Show when={ctx.theme === 'light'}>
+                        <Show when={ctxMain.theme() === 'light'}>
                             <button
                                 className={'flex rounded-full'}
                                 onClick={() => {
-                                  ctx.setTheme('dark').then(json => {
+                                  ctxMain.saveTheme('dark').then(json => {
                                     location.reload()
                                   })
                                 }}>
@@ -82,7 +82,7 @@ export default function Account () {
                                       <div className={'flex gap-2'}>
                                           <button className={'button-bad flex-1'}
                                                   onClick={() => {
-                                                    ctx.sendDeleteAccountAuth().then(json => {
+                                                    ctxMain.sendDeleteAccountAuth().then(json => {
                                                       if (json.status === 'success') {
                                                         setDeleteEmailSent(true)
                                                       } else {

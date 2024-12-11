@@ -1,38 +1,39 @@
-import { createEffect, createSignal, onMount, Show, useContext } from 'solid-js'
-import { mainContext } from '../context/mainContext'
-import { Loading } from '../components/Loading'
+import {createSignal, onMount, Show, useContext} from 'solid-js'
+import {mainContext} from '../../contextManagers/mainContext'
+import {Loading} from '../globals/Loading'
 
-export default function Login () {
-  const [ctx, setCtx] = useContext(mainContext)
+export default function Login() {
+    const ctxMain = useContext(mainContext)
 
-  const [email_address, set_email_address] = createSignal('')
-  const [login_status, set_login_status] = createSignal('waiting')
+    const [email_address, set_email_address] = createSignal('')
+    const [login_status, set_login_status] = createSignal(0)
+    // 0 = waiting, 1 = processing, 2 = success, 9 = error
 
-  let html
+    let html
 
-  onMount(() => {
-    html = document.querySelector('html')
-    ctx.getTheme().then(json => {
-      html.setAttribute('data-theme', json.theme)
+    onMount(() => {
+        html = document.querySelector('html')
+        ctxMain.getTheme().then(json => {
+            html.setAttribute('data-theme', json.theme)
+        })
     })
-  })
 
-  return (<div className={'login py-6'}>
+    return (<div className={'login py-6'}>
         <div className={'text-center pt-2 pb-8'}>
             <h2 className={'my-0'}>💪 I Do Sets</h2>
         </div>
-        <Show when={login_status() === 'waiting'}>
+        <Show when={login_status() === 0}>
 
             <form onSubmit={(e) => {
-              e.preventDefault()
-              set_login_status('processing')
-              ctx.tryLogin(email_address()).then(json => {
-                if (json.status === 'success') {
-                  set_login_status('success')
-                } else {
-                  set_login_status('error')
-                }
-              })
+                e.preventDefault()
+                set_login_status(1)
+                ctxMain.tryLogin(email_address()).then(json => {
+                    if (json.status === 'success') {
+                        set_login_status(2)
+                    } else {
+                        set_login_status(9)
+                    }
+                })
             }}>
                 <input
                     type="email"
@@ -44,14 +45,14 @@ export default function Login () {
                 <button
                     type="button"
                     onClick={() => {
-                      set_login_status('processing')
-                      ctx.tryLogin(email_address()).then(json => {
-                        if (json.status === 'success') {
-                          set_login_status('success')
-                        } else {
-                          set_login_status('error')
-                        }
-                      })
+                        set_login_status(1)
+                        ctxMain.tryLogin(email_address()).then(json => {
+                            if (json.status === 'success') {
+                                set_login_status(2)
+                            } else {
+                                set_login_status(9)
+                            }
+                        })
                     }}>
                     Login / Signup
                 </button>
@@ -59,11 +60,11 @@ export default function Login () {
 
         </Show>
 
-        <Show when={login_status() === 'processing'}>
+        <Show when={login_status() === 1}>
             <div className={'py-8'}><Loading/></div>
         </Show>
 
-        <Show when={login_status() === 'success'}>
+        <Show when={login_status() === 2}>
             <div className={'pb-6 flex flex-col gap-4'}>
                 <p>
                     Your login link has been emailed to you.
@@ -72,7 +73,7 @@ export default function Login () {
             </div>
         </Show>
 
-        <Show when={login_status() === 'error'}>
+        <Show when={login_status() === 9}>
             <div className={'pb-6 flex flex-col gap-4'}>
                 <p>
                     Looks like there has been an error when attempting
@@ -82,7 +83,7 @@ export default function Login () {
             </div>
             <button
                 type="button"
-                onClick={() => set_login_status('waiting')}>
+                onClick={() => set_login_status(0)}>
                 Try Again
             </button>
         </Show>

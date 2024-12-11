@@ -117,7 +117,7 @@ def workouts_edit_(workout_id):
     return {
         "status": "success",
         "message": "Workout edited successfully.",
-        "workout_id": _workout.get("workout_id"),
+        "workout_id": _workout,
     }
 
 
@@ -126,7 +126,7 @@ def workouts_edit_(workout_id):
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def workouts_delete_(workout_id):
-    Workouts.delete(workout_id)
+    Workouts.um_delete(workout_id)
     WorkoutSessions.delete_all_by_workout_id(workout_id)
     Exercises.delete_all_by_workout_id(workout_id)
     Sets.delete_all_by_workout_id(workout_id)

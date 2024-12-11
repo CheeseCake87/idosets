@@ -40,25 +40,13 @@ def account_():
     "logged_in", True, {"status": "unauthorized", "message": "unauthorized"}
 )
 def account_send_delete_():
-
-
-    account = Accounts.get_by_key(session.get("account_id", 0))
+    account = Accounts.um_read(session.get("account_id", 0), one_or_none=True)
 
     if account:
-        url = (
-            f"{current_app.config['VITE_URL']}/auth"
-            if current_app.debug
-            else (
-                f"{current_app.config['PREFERRED_URL_SCHEME']}://"
-                f"{current_app.config['SERVER_NAME']}"
-                "/auth"
-            )
-        )
-
-        pk = generate_private_key(
-            f"{DatetimeDelta().datetime}{account.email_address}"
-        )
+        pk = generate_private_key(f"{DatetimeDelta().datetime}{account.email_address}")
         account.update_auth_code(pk, DatetimeDelta().days(1).datetime)
+
+        url = f"{current_app.config['SET_HOST_URL']}/account/delete"
 
         send_zepto_email(
             zepto_email_service_settings=zepto_service_settings,

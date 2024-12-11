@@ -15,6 +15,12 @@ def auth_():
     account_ = Accounts.process_auth_code(account_id, auth_code)
 
     if account_:
+        if not account_.auth_code:
+            return {
+                "status": "failed",
+                "message": "Auth code expired. Please log in again.",
+            }
+
         settings = account_.settings
 
         session["logged_in"] = True
@@ -79,7 +85,6 @@ def check_login():
     if session.get("logged_in"):
         return {"status": "passed", "message": "Logged in."}
     return {"status": "failed", "message": "Not logged in."}
-
 
 # @bp.get("/auth/force/login")
 # def force_login():

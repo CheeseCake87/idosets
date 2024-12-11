@@ -1,8 +1,8 @@
 import { createEffect, createSignal, onMount, Show } from 'solid-js'
 
-import screenshot_large from '../screenshot-large.png'
-import screenshot_home from '../screenshot-home.png'
-import screenshot_logs from '../screenshot-logs.png'
+import screenshot_large from '../../assets/screenshot-large.png'
+import screenshot_home from '../../assets/screenshot-home.png'
+import screenshot_logs from '../../assets/screenshot-logs.png'
 
 export default function Index () {
   const DEV = import.meta.env.DEV
@@ -24,7 +24,7 @@ export default function Index () {
     return await getFetch(`${API_URL}/api/get/theme`)
   }
 
-  async function setTheme (theme) {
+  async function saveTheme (theme) {
     return await getFetch(`${API_URL}/api/set/theme/${theme}`)
   }
 
@@ -60,7 +60,7 @@ export default function Index () {
                         <button
                             className={'flex rounded-full'}
                             onClick={() => {
-                              setTheme('light').then(json => {
+                              saveTheme('light').then(json => {
                                 setThemeVar(json.theme)
                               })
                             }}
@@ -73,7 +73,7 @@ export default function Index () {
                         <button
                             className={'flex rounded-full'}
                             onClick={() => {
-                              setTheme('dark').then(json => {
+                              saveTheme('dark').then(json => {
                                 setThemeVar(json.theme)
                               })
                             }}>
