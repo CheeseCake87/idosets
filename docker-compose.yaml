@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "4014:5000"
+      - "7010:5000"
     volumes:
       - instance:/main/instance
     restart: always
